@@ -244,6 +244,7 @@
 #include "llvm/Transforms/Vectorize/LoopVectorize.h"
 #include "llvm/Transforms/Vectorize/SLPVectorizer.h"
 #include "llvm/Transforms/Vectorize/VectorCombine.h"
+#include "llvm/Transforms/Omnifuzz/OmnifuzzInstrumentation.h"
 
 using namespace llvm;
 
