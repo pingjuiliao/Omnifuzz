@@ -119,6 +119,7 @@ MODULE_PASS("sancov-module", ModuleSanitizerCoveragePass())
 MODULE_PASS("memprof-module", ModuleMemProfilerPass())
 MODULE_PASS("poison-checking", PoisonCheckingPass())
 MODULE_PASS("pseudo-probe-update", PseudoProbeUpdatePass())
+MODULE_PASS("omnifuzz-debug", OmnifuzzInstrumentationPass<omnifuzz::DebugFeedback>())
 #undef MODULE_PASS
 
 #ifndef MODULE_PASS_WITH_PARAMS
@@ -364,7 +365,6 @@ FUNCTION_PASS("view-cfg-only", CFGOnlyViewerPass())
 FUNCTION_PASS("transform-warning", WarnMissedTransformationsPass())
 FUNCTION_PASS("tsan", ThreadSanitizerPass())
 FUNCTION_PASS("memprof", MemProfilerPass())
-FUNCTION_PASS("omnifuzz-debug", OmnifuzzInstrumentationPass<omnifuzz::DebugFeedback>())
 #undef FUNCTION_PASS
 
 #ifndef FUNCTION_PASS_WITH_PARAMS

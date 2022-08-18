@@ -13,7 +13,7 @@ class DebugFeedback : public Feedback {
  public:
   DebugFeedback() {};
   virtual ~DebugFeedback() {};
-  virtual void operatesOnBasicBlock(uint32_t);
+  virtual void operatesOnBasicBlock(uint32_t) override;
 };
 
 }

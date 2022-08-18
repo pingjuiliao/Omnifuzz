@@ -8,10 +8,12 @@ namespace llvm {
 template <class FeedbackT>
 class OmnifuzzInstrumentationPass : public PassInfoMixin<OmnifuzzInstrumentationPass<FeedbackT>> {
  public:
-  PreservedAnalyses run(Function &F, FunctionAnalysisManager &AM) {
-    for (auto &BB: F) {
-      errs() << "Basicblock size: " <<  BB.size() << "\n";
-      _feedback.operatesOnBasicBlock(BB.size());
+  PreservedAnalyses run(Module &M, ModuleAnalysisManager &AM) {
+    for (auto &F: M) {
+      for (auto &BB: F) {
+        errs() << "Basicblock size: " <<  BB.size() << "\n";
+        _feedback.operatesOnBasicBlock(BB.size());
+      }
     }
     return PreservedAnalyses::all();
   }
