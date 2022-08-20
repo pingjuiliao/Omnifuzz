@@ -1,5 +1,7 @@
 #include "llvm/Transforms/Omnifuzz/debug_feedback.h"
 #include "llvm/Transforms/Omnifuzz/feedback.h"
+#include "llvm/IR/IRBuilder.h"
+#include "llvm/IR/InlineAsm.h"
 
 namespace omnifuzz {
 
