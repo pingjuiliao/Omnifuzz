@@ -7,14 +7,18 @@ CXX=${LLVM_BIN_PATH}/clang++
 OPT=$(LLVM_BIN_PATH)/opt
 LLC=${LLVM_BIN_PATH}/llc
 
-PASSES=omnifuzz-debug
+DEBUG_PASS=omnifuzz-debug
+AFL_PASS=omnifuzz-afl
 
-all: a
-debug: a
-	$(OPT) -passes=${PASSES} -disable-output a.ll -debug-pass-manager
-a: a.c
+all: debug
+	# $(OPT) -passes=${DEBUG_PASS} -disable-output a.ll -debug-pass-manager
+debug: a.c
 	$(CC) -o a.ll -O1 -m64 -emit-llvm -S $< 
-	$(OPT) -o a.bc -passes=${PASSES} a.ll
+	$(OPT) -o a.bc -passes=${DEBUG_PASS} a.ll
+	$(CC) -o a.exe a.bc
+afl: a.c
+	$(CC) -o a.ll -O1 -m64 -emit-llvm -S $<
+	$(OPT) -o a.bc -passes=${AFL_PASS} a.ll
 	$(CC) -o a.exe a.bc
 clean:
 	rm $(wildcard *.exe) $(wildcard *.bc) $(wildcard *.ll)

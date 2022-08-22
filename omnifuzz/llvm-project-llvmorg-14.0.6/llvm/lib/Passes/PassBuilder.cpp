@@ -245,7 +245,9 @@
 #include "llvm/Transforms/Vectorize/SLPVectorizer.h"
 #include "llvm/Transforms/Vectorize/VectorCombine.h"
 #include "llvm/Transforms/Omnifuzz/OmnifuzzInstrumentation.h"
-#include "llvm/Transforms/Omnifuzz/debug_feedback.h"
+#include "llvm/Transforms/Omnifuzz/Feedback/debug_feedback.h"
+#include "llvm/Transforms/Omnifuzz/Feedback/afl_feedback.h"
+
 
 using namespace llvm;
 

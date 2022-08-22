@@ -1,12 +1,13 @@
 #ifndef FEEDBACK_H
 #define FEEDBACK_H
+#include <string>
 
 namespace omnifuzz {
 
 class Feedback {
  public:
   virtual ~Feedback() = default;
-  virtual void operatesOnBasicBlock(uint32_t) = 0;
+  virtual void WriteOnBasicBlock(std::string&) const = 0;
 };
 
 }

@@ -7,30 +7,19 @@
 #include "llvm/IR/PassManager.h"
 #include "llvm/IR/Type.h"
 #include "llvm/Support/raw_ostream.h"
+#include "llvm/Transforms/Omnifuzz/Feedback/feedback.h"
 
 namespace llvm {
 
-template <class FeedbackT>
-class OmnifuzzInstrumentationPass : public PassInfoMixin<OmnifuzzInstrumentationPass<FeedbackT>> {
+class OmnifuzzPass : public PassInfoMixin<OmnifuzzPass> {
  public:
-  PreservedAnalyses run(Module &M, ModuleAnalysisManager &AM) {
-    for (auto &F: M) {
-      for (auto &BB: F) {
-        IRBuilder<> IRB(BB.getFirstNonPHI());
-        std::string AsmStr;
-        raw_string_ostream AsmPerBlock(AsmStr);
-        AsmPerBlock << "nop\nnop\nnop\n";
-        SmallVector<Value*, 16> AsmArgs;
-        InlineAsm *BlockAsm =
-          InlineAsm::get(FunctionType::get(IRB.getVoidTy(), {}, 
-             false), AsmPerBlock.str(), "", false);
-        IRB.CreateCall(BlockAsm, {});
-      }
-    }
-    return PreservedAnalyses::all();
-  }
+  OmnifuzzPass(std::unique_ptr<omnifuzz::Feedback>);
+  PreservedAnalyses run(Module&, ModuleAnalysisManager&);
+  
  private:
-  FeedbackT _feedback;
+  bool initialize(Module&);
+  void instrumentsBasicBlockAssembly(BasicBlock& BB);
+  std::unique_ptr<omnifuzz::Feedback> feedback_;
 };
 
 } // namespace llvm

@@ -1,10 +1,10 @@
 #ifndef DEBUG_FEEDBACK_H
 #define DEBUG_FEEDBACK_H
 
-#include <cstdint>
 #include <iostream>
+#include <sstream>
 
-#include "llvm/Transforms/Omnifuzz/feedback.h"
+#include "llvm/Transforms/Omnifuzz/Feedback/feedback.h"
 
 
 namespace omnifuzz {
@@ -13,7 +13,7 @@ class DebugFeedback : public Feedback {
  public:
   DebugFeedback() {};
   virtual ~DebugFeedback() {};
-  virtual void operatesOnBasicBlock(uint32_t) override;
+  virtual void WriteOnBasicBlock(std::string&) const override;
 };
 
 }
