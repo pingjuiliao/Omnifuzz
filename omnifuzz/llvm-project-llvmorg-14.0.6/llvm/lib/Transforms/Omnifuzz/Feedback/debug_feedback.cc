@@ -2,6 +2,12 @@
 
 namespace omnifuzz {
 
+DebugFeedback::DebugFeedback() {}
+
+DebugFeedback::~DebugFeedback() {}
+
+void DebugFeedback::RegisterFeedbackData(void) {}
+
 void DebugFeedback::WriteOnBasicBlock(std::string& assembly) const {
   std::stringstream ss;
   ss << "push %rax\n"

@@ -34,19 +34,30 @@ bool OmnifuzzPass::initialize(Module &M) {
   IntegerType *Int8Ty = IntegerType::getInt8Ty(C);
   IntegerType *Int32Ty = IntegerType::getInt32Ty(C);
   ConstantInt *IntZero = ConstantInt::get(Int32Ty, 0);
-
+  /*
   GlobalVariable* AflMapPtr = 
     new GlobalVariable(M, PointerType::get(Int8Ty, 0), false, 
                        GlobalValue::ExternalLinkage, 0, "__afl_area_ptr");
   GlobalVariable* AflPrevLoc = new GlobalVariable(
       M, Int32Ty, false, GlobalValue::ExternalLinkage, 
       IntZero, "__afl_prev_loc");
+  */
+  for (auto data: feedback_->feedback_data_map_) {
+    // TODO: fit Type, Size
+    GlobalVariable* GV = new GlobalVariable(M, Int32Ty, false, GlobalValue::ExternalLinkage, 
+        IntZero, data.second.GetName());
+    errs() << "GV: "  << data.second.GetName() << "\n";
+  }
+
   
   for (auto &F: M) {
     for (auto &BB: F) {
       BasicBlock::iterator IP = BB.getFirstInsertionPt();
       IRBuilder<> IRB(&(*IP));
-
+      
+      GlobalVariable* AflPrevLoc = M.getNamedGlobal("__afl_prev_loc");
+      if (!AflPrevLoc) 
+        break;
       LoadInst* counter = IRB.CreateLoad(Int32Ty, AflPrevLoc);
       Value* added = IRB.CreateAdd(counter, IRB.getInt32(0xda));
       IRB.CreateStore(added, AflPrevLoc);

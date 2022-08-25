@@ -11,8 +11,9 @@ namespace omnifuzz {
 
 class DebugFeedback : public Feedback {
  public:
-  DebugFeedback() {};
-  virtual ~DebugFeedback() {};
+  DebugFeedback();
+  virtual ~DebugFeedback();
+  virtual void RegisterFeedbackData(void) override;
   virtual void WriteOnBasicBlock(std::string&) const override;
 };
 

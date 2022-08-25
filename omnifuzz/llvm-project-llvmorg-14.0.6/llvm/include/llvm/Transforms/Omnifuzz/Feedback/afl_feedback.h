@@ -10,11 +10,12 @@ namespace omnifuzz {
 
 class AflFeedback : public Feedback {
  public:
-  AflFeedback() {}
-  virtual ~AflFeedback() {}
+  AflFeedback();
+  virtual ~AflFeedback();
+  virtual void RegisterFeedbackData(void) override;
   virtual void WriteOnBasicBlock(std::string&) const override;
  protected:
-  unsigned int kCoverageBitMapEntry = 64 * 1024;
+  const unsigned int kCoverageBitMapEntry = 64 * 1024;
 };
 
 } // namespace omnifuzz
