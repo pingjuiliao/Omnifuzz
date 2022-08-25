@@ -43,9 +43,34 @@ bool OmnifuzzPass::initialize(Module &M) {
       IntZero, "__afl_prev_loc");
   */
   for (auto data: feedback_->feedback_data_map_) {
-    // TODO: fit Type, Size
-    GlobalVariable* GV = new GlobalVariable(M, Int32Ty, false, GlobalValue::ExternalLinkage, 
-        IntZero, data.second.GetName());
+    Type* type;
+    Constant* InitValue;
+    switch(data.second.GetType()) {
+      case omnifuzz::FeedbackData::Type::Int64:
+        type = IntegerType::getInt64Ty(C);
+        InitValue = ConstantInt::get(type, 0);
+        break;
+      case omnifuzz::FeedbackData::Type::Int32:
+        type = Int32Ty;
+        InitValue = ConstantInt::get(type, 0);
+        break;
+      case omnifuzz::FeedbackData::Type::Int16:
+        type = IntegerType::getInt16Ty(C);
+        InitValue = ConstantInt::get(type, 0);
+        break;
+      case omnifuzz::FeedbackData::Type::Int8:
+        type = Int8Ty;
+        InitValue = ConstantInt::get(type, 0);
+        break;
+      case omnifuzz::FeedbackData::Type::Pointer:
+        type = PointerType::get(Int8Ty, 0);
+        InitValue = ConstantPointerNull::get(static_cast<PointerType*>(type)); 
+        break;
+
+    }
+
+    GlobalVariable* GV = new GlobalVariable(M, type, false, GlobalValue::ExternalLinkage, 
+        InitValue, data.second.GetName());
     errs() << "GV: "  << data.second.GetName() << "\n";
   }
 

@@ -8,7 +8,7 @@ DebugFeedback::~DebugFeedback() {}
 
 void DebugFeedback::RegisterFeedbackData(void) {}
 
-void DebugFeedback::WriteOnBasicBlock(std::string& assembly) const {
+void DebugFeedback::WriteOnBasicBlock(std::string& assembly) {
   std::stringstream ss;
   ss << "push %rax\n"
      << "add $$0x1337, %rax\n"

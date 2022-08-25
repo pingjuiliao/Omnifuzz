@@ -14,7 +14,7 @@ class DebugFeedback : public Feedback {
   DebugFeedback();
   virtual ~DebugFeedback();
   virtual void RegisterFeedbackData(void) override;
-  virtual void WriteOnBasicBlock(std::string&) const override;
+  virtual void WriteOnBasicBlock(std::string&) override;
 };
 
 }

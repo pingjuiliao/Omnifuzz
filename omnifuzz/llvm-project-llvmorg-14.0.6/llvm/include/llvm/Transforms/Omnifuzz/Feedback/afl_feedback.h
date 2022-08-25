@@ -13,7 +13,7 @@ class AflFeedback : public Feedback {
   AflFeedback();
   virtual ~AflFeedback();
   virtual void RegisterFeedbackData(void) override;
-  virtual void WriteOnBasicBlock(std::string&) const override;
+  virtual void WriteOnBasicBlock(std::string&) override;
  protected:
   const unsigned int kCoverageBitMapEntry = 64 * 1024;
 };
