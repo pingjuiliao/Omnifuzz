@@ -1,1 +1,4 @@
 **/build
+omnifuzz/fuzzer/**/*.ll
+omnifuzz/fuzzer/**/*.bc
+omnifuzz/fuzzer/**/*.exe
