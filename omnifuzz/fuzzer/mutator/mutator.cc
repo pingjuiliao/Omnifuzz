@@ -3,7 +3,7 @@
 
 namespace omnifuzz {
 
-int Mutator::GetGranularitySize(MutationGranularity g) {
+uint32_t Mutator::GetGranularitySize(MutationGranularity g) {
   
   switch(g) {
     case MutationGranularity::kBit:
@@ -23,7 +23,7 @@ int Mutator::GetGranularitySize(MutationGranularity g) {
     default:
       break;  
   }
-  return -1;
+  return 0;
 }
 
 

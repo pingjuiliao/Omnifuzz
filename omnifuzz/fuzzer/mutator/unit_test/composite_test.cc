@@ -27,7 +27,7 @@ int main(int argc, char** argv) {
   AllBitFlipMutator mutator;
   
   memset((char *)buf, 0, kBufSize);
-  omnifuzz::MutationResult r = omnifuzz::MutationResult::kNoResult;
+  omnifuzz::MutationResult r = omnifuzz::MutationResult::kNumResults;
   
   while (r != omnifuzz::MutationResult::kCycleDone) {
     r = mutator.Mutate(buf, kBufSize);

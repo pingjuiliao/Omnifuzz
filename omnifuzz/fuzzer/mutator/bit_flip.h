@@ -17,9 +17,10 @@ class BitFlipMutator : public Mutator {
  protected:
   inline void BitFlip(uint8_t*, size_t);
  private:
-  // current flipping index, 
+  // current flipping index. 
   uint32_t bit_index_start_; 
-  int num_bits_;
+  // number of bits for each mutation, determined by MutationGranularity.
+  uint32_t num_bits_;
 };
 
 } // namespace omnifuzz

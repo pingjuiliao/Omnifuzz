@@ -20,8 +20,7 @@ enum class MutationResult {
     kSuccess=0, 
     kCycleDone,
     kAbort, 
-    kNoResult, 
-    kNumResult,
+    kNumResults,
 };
 
 class Mutator {
@@ -34,7 +33,7 @@ class Mutator {
   // Mutation, true on Success.
   virtual MutationResult Mutate(uint8_t*, size_t) = 0;
  protected:
-  virtual int GetGranularitySize(MutationGranularity);
+  virtual uint32_t GetGranularitySize(MutationGranularity);
 };
 
 class MutatorComposite : public Mutator {
