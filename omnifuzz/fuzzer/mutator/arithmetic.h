@@ -14,7 +14,7 @@ class ArithmeticMutator : public Mutator {
   virtual MutationResult Mutate(uint8_t*, size_t) override;
  protected:
   template <typename T>
-  MutationResult MutateAndIterate(T*);
+  MutationResult MutateAndIterate(T*, size_t);
   const size_t kArithmeticMax = 10;
   uint8_t *ptr_start_;
   uint8_t *ptr_end_;

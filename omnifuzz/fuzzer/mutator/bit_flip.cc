@@ -20,6 +20,7 @@ MutationResult BitFlipMutator::Mutate(uint8_t* data, size_t len) {
     for (int i = 0; i < num_bits_; ++i) {
       BitFlip(data, len_in_bits-1-i);
     }
+    bit_index_start_ = 0;
     return MutationResult::kCycleDone;
   }
 
