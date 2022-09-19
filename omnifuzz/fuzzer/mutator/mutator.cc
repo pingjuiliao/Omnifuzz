@@ -47,23 +47,30 @@ void MutatorComposite::AddMutator(Mutator* mutator) {
 
 MutationResult MutatorComposite::Mutate(uint8_t* data, size_t len) {
 
-  // In initialized/finished state, return to the begining
-  if (iterator_ == mutators_.end()) {
-    iterator_ = mutators_.begin();
+  if (!data || !len) {
+    return MutationResult::kInvalidBuffer;
   }
 
-  MutationResult result = (*iterator_)->Mutate(data, len);
-  switch (result) {
-    case MutationResult::kSuccess:
+  while (true) {
+    
+    // new buffer/testcase comes in 
+    if (iterator_ == mutators_.end()) {
+      iterator_ = mutators_.begin();
+    }
+
+    MutationResult result = (*iterator_)->Mutate(data, len);
+    if (result == MutationResult::kSuccess) {
       break;
-    case MutationResult::kCycleDone:
+    } else if (result == MutationResult::kCycleDone) {
       iterator_ ++;
       if (iterator_ == mutators_.end()) {
         return MutationResult::kCycleDone;
+      } else {
+        continue;
       }
-      break;
-    default:
+    } else {
       return MutationResult::kAbort;
+    }
   }
   return MutationResult::kSuccess; 
 }

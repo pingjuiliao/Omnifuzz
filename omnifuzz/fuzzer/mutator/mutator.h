@@ -19,6 +19,7 @@ enum class MutationGranularity {
 enum class MutationResult {
     kSuccess=0, 
     kCycleDone,
+    kInvalidBuffer, 
     kAbort, 
     kNumResults,
 };
