@@ -6,8 +6,8 @@ Instrumentator::Instrumentator() {
   Instrumentator("/bin/");
 }
 
-Instrumentator::Instrumentator(const char* path) {
-  llvm_build_root_path_ = strdup(path);
+Instrumentator::Instrumentator(const char* llvm_path) {
+  llvm_build_root_path_ = strdup(llvm_path);
   static const char* kOpt = "/llvm-project-llvmorg-14.0.6/llvm/bin/opt";
   static const char* kClang = "/llvm-project-llvmorg-14.0.6/llvm/bin/clang";
   const size_t kBufSize = 0x100;

@@ -1,32 +1,38 @@
 #ifndef FUZZER_EXECUTOR_FORK_CLIENT_H
 #define FUZZER_EXECUTOR_FORK_CLIENT_H
 
+#include <fcntl.h>
+#include <stdio.h>
 #include <sys/resource.h>
+#include <sys/stat.h>
 #include <sys/time.h>
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <unistd.h>
 
-
 #include <cstdint>
+#include <string>
+#include <vector>
+
+#include "executor.h"
+#include "forkserver.h"
 
 namespace omnifuzz {
 
-#pragma pack(push, 1)
-struct ForkRequest {
-  const char signature[4];
-  uint32_t flag;
-};  
-#pragma pack(pop)
-
-class ForkClient {
+class ForkClient final {
  public:
-  ForkClient();
-  virtual ~ForkClient();
-  pid_t SendRequest();
+  ForkClient(): fsrv_(nullptr) {}; 
+  ~ForkClient();
+  void Connect(Forkserver*);
+  void SendRequest(void);
  private:
   pid_t pid_;
+  int request_fd_;
+  int response_fd_;
+  Forkserver* fsrv_;
+  CommonFD common_fd_;
 };
 
 } // namespace omnifuzz
+
 #endif  // FUZZER_EXECUTOR_FORK_CLIENT_H
