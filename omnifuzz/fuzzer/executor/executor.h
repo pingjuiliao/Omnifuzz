@@ -2,6 +2,10 @@
 #define FUZZER_EXECUTOR_EXECUTOR_H
 
 #include "fork_client.h"
+struct CommonFD {
+  int dev_null;
+  int urandom;
+};
 
 class Executor {
  public:

@@ -2,6 +2,7 @@
 
 namespace omnifuzz {
 
+
 void Fuzzer::run(void) {
   /*
   Preprocessor preprocessor;
