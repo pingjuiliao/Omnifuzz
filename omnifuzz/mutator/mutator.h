@@ -1,5 +1,5 @@
-#ifndef FUZZER_MUTATOR_H
-#define FUZZER_MUTATOR_H
+#ifndef OMNIFUZZ_MUTATOR_MUTATOR_H
+#define OMNIFUZZ_MUTATOR_MUTATOR_H
 
 #include <iostream>
 #include <list>
@@ -51,4 +51,4 @@ class MutatorComposite : public Mutator {
 
 } // namespace omnifuzz
 
-#endif  // FUZZER_MUTATOR_H
+#endif  // OMNIFUZZ_MUTATOR_MUTATOR_H

@@ -3,15 +3,9 @@
 
 #include <string>
 
-#ifndef UNIT_TEST
 #include "omnifuzz/mutator/mutator.h"
 #include "omnifuzz/preprocessor/instrumentor.h"
 #include "omnifuzz/executor/executor.h"
-#else 
-#include "mutator/mutator.h"
-#include "preprocessor/instrumentator.h"
-#include "executor/executor.h"
-#endif
 
 namespace omnifuzz {
 

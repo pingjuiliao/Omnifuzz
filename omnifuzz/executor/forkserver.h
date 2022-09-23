@@ -10,7 +10,7 @@
 #include <cstdint>
 #include <iostream>
 
-#include "file_descriptor.h"
+#include "omnifuzz/executor/file_descriptor.h"
 
 namespace omnifuzz {
 

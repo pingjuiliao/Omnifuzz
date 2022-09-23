@@ -1,5 +1,5 @@
 
-#include "mutator.h"
+#include "omnifuzz/mutator/mutator.h"
 
 namespace omnifuzz {
 

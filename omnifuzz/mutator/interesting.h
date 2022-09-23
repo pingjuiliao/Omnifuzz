@@ -1,8 +1,9 @@
-#ifndef FUZZER_MUTATOR_INTERESTING_H
-#define FUZZER_MUTATOR_INTERESTING_H
-#include "mutator.h"
+#ifndef OMNIFUZZ_MUTATOR_INTERESTING_H
+#define OMNIFUZZ_MUTATOR_INTERESTING_H
 
 #include <vector>
+
+#include "omnifuzz/mutator/mutator.h"
 
 namespace omnifuzz {
 
@@ -54,4 +55,4 @@ class InterestingInt32Mutator: public InterestingInt16Mutator {
 }; 
 } // namespace omnifuzz
 
-#endif  // FUZZER_MUTATOR_INTERESTING_H
+#endif  // OMNIFUZZ_MUTATOR_INTERESTING_H

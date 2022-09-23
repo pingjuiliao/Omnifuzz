@@ -6,8 +6,6 @@
 #include <iostream>
 #include <limits>
 
-
-
 #include "llvm/Transforms/Omnifuzz/Feedback/feedback.h"
 #include "omnifuzz/scheduler/scheduler.h"
 #include "omnifuzz/testcase.h"

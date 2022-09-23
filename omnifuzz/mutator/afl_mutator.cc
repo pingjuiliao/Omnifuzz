@@ -1,4 +1,4 @@
-#include "afl_mutator.h"
+#include "omnifuzz/mutator/afl_mutator.h"
 
 
 namespace omnifuzz {

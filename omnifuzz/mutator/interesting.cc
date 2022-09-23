@@ -1,4 +1,4 @@
-#include "interesting.h"
+#include "omnifuzz/mutator/interesting.h"
 
 namespace omnifuzz {
 

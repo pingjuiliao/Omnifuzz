@@ -1,4 +1,4 @@
-#include "bit_flip.h"
+#include "omnifuzz/mutator/bit_flip.h"
 
 namespace omnifuzz {
 

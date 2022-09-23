@@ -1,10 +1,10 @@
-#ifndef FUZZER_MUTATOR_AFL_MUTATOR_H
-#define FUZZER_MUTATOR_AFL_MUTATOR_H
+#ifndef OMNIFUZZ_MUTATOR_AFL_MUTATOR_H
+#define OMNIFUZZ_MUTATOR_AFL_MUTATOR_H
 
-#include "mutator.h"
-#include "bit_flip.h"
-#include "arithmetic.h"
-#include "interesting.h"
+#include "omnifuzz/mutator/mutator.h"
+#include "omnifuzz/mutator/bit_flip.h"
+#include "omnifuzz/mutator/arithmetic.h"
+#include "omnifuzz/mutator/interesting.h"
 
 
 namespace omnifuzz {
@@ -16,4 +16,4 @@ class AflMutator: public MutatorComposite {
 
 } // namespace omnifuzz
 
-#endif  // FUZZER_MUTATOR_AFL_MUTATOR_H
+#endif  // OMNIFUZZ_MUTATOR_AFL_MUTATOR_H

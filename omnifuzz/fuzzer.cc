@@ -1,4 +1,4 @@
-#include "fuzzer.h"
+#include "omnifuzz/fuzzer.h"
 
 namespace omnifuzz {
 

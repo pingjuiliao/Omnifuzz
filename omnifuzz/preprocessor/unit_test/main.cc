@@ -1,6 +1,6 @@
 #include <cstdlib>
 #include <iostream>
-#include "instrumentator.h"
+#include "omnifuzz/preprocessor/instrumentator.h"
 using namespace std;
 
 int main(int argc, char** argv) {

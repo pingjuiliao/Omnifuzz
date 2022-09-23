@@ -1,4 +1,4 @@
-#include "instrumentator.h"
+#include "omnifuzz/preprocessor/instrumentator.h"
 
 namespace omnifuzz {
 

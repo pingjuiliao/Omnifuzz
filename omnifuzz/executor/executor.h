@@ -1,5 +1,5 @@
-#ifndef FUZZER_EXECUTOR_EXECUTOR_H
-#define FUZZER_EXECUTOR_EXECUTOR_H
+#ifndef OMNIFUZZ_EXECUTOR_EXECUTOR_H
+#define OMNIFUZZ_EXECUTOR_EXECUTOR_H
 
 #include <stdlib.h>
 #include <string.h>
@@ -24,4 +24,4 @@ class Executor {
 };
 } // namespace omnifuzz
 
-#endif  // FUZZER_EXECUTOR_EXECUTOR_H
+#endif  // OMNIFUZZ_EXECUTOR_EXECUTOR_H

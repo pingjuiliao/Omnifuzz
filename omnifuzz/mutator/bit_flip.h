@@ -1,11 +1,11 @@
-#ifndef FUZZER_BASIC_MUTATOR_H
-#define FUZZER_BASIC_MUTATOR_H
+#ifndef OMNIFUZZ_MUTATOR_BIT_FLIP_H
+#define OMNIFUZZ_MUTATOR_BIT_FLIP_H
 
 #include <exception>
 #include <iostream>
 #include <cstdint>
 
-#include "mutator.h"
+#include "omnifuzz/mutator/mutator.h"
 
 namespace omnifuzz {
 
@@ -25,4 +25,4 @@ class BitFlipMutator : public Mutator {
 
 } // namespace omnifuzz
 
-#endif  // FUZZER_BASIC_MUTATOR_H
+#endif  // OMNIFUZZ_MUTATOR_BIT_FLIP_H

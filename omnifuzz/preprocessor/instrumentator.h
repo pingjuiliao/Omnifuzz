@@ -8,7 +8,6 @@
 #include <sys/wait.h>
 #include <unistd.h>
 
-
 namespace omnifuzz {
 
 class Instrumentator {

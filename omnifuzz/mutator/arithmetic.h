@@ -1,9 +1,9 @@
-#ifndef FUZZER_MUTATOR_ARITHMETIC_H
-#define FUZZER_MUTATOR_ARITHMETIC_H
+#ifndef OMNIFUZZ_MUTATOR_ARITHMETIC_H
+#define OMNIFUZZ_MUTATOR_ARITHMETIC_H
 
 #include <iostream>
 
-#include "mutator.h"
+#include "omnifuzz/mutator/mutator.h"
 
 namespace omnifuzz {
 
@@ -24,4 +24,4 @@ class ArithmeticMutator : public Mutator {
 
 } // namespace omnifuzz
 
-#endif  // FUZZER_MUTATOR_ARITHMETIC_H
+#endif  // OMNIFUZZ_MUTATOR_ARITHMETIC_H

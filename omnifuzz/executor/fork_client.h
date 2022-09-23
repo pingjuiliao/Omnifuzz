@@ -1,5 +1,5 @@
-#ifndef FUZZER_EXECUTOR_FORK_CLIENT_H
-#define FUZZER_EXECUTOR_FORK_CLIENT_H
+#ifndef OMNIFUZZ_EXECUTOR_FORK_CLIENT_H
+#define OMNIFUZZ_EXECUTOR_FORK_CLIENT_H
 
 #include <fcntl.h>
 #include <stdio.h>
@@ -14,8 +14,8 @@
 #include <string>
 #include <vector>
 
-#include "executor.h"
-#include "forkserver.h"
+#include "omnifuzz/executor/executor.h"
+#include "omnifuzz/executor/forkserver.h"
 
 namespace omnifuzz {
 
@@ -35,4 +35,4 @@ class ForkClient final {
 
 } // namespace omnifuzz
 
-#endif  // FUZZER_EXECUTOR_FORK_CLIENT_H
+#endif  // OMNIFUZZ_EXECUTOR_FORK_CLIENT_H
