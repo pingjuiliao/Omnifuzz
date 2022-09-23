@@ -3,6 +3,7 @@
 
 #include <cstdint>
 
+#include "omnifuzz/testcase.h"
 /* scheduler should aware of the feedback of exection */
 
 
@@ -10,9 +11,9 @@ namespace omnifuzz {
 
 class Scheduler {
  public:
-  virtual ~Scheduler();
-  virtual void Enqueue(Testcase);
-  virtual Testcase* Dequeue(void);
+  virtual ~Scheduler() = default;
+  virtual void Enqueue(Testcase) = 0;
+  virtual Testcase* Dequeue(void) = 0;
 };
 
 } // namespace omnifuzz

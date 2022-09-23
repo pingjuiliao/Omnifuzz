@@ -2,12 +2,15 @@
 #define TESTCASE_H
 
 #include <cstdint>
-#include <feedback
+
+#include "llvm/Transforms/Omnifuzz/Feedback/feedback.h"
+
+namespace omnifuzz {
 
 struct Testcase {
 
   // Testcase Information regardless what the fuzzer is.
-  char* file_name;      // file name
+  const char* file_name;      // file name
   uint32_t size;        // Input Length
   uint8_t trimmed;      // Was trimmed
   uint8_t fuzzed;       // Was Fuzzed
@@ -20,6 +23,7 @@ struct Testcase {
   Feedback *feedback;
 };
 
+} // namespace omnifuzz
 /*
  * struct queue_entry {
  *   u8* fname;                    // File name for the test case     
