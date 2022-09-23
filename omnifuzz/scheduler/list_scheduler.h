@@ -2,8 +2,9 @@
 #define OMNIFUZZ_SCHEDULER_LIST_SCHEDULER_H
 
 #include <list>
-#include "scheduler.h"
-#include "../testcase.h"
+
+#include "omnifuzz/scheduler/scheduler.h"
+#include "omnifuzz/testcase.h"
 
 namespace omnifuzz {
 

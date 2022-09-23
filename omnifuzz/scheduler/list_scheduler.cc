@@ -1,11 +1,12 @@
-#include "list_scheduler.h"
+
+#include "omnifuzz/scheduler/list_scheduler.h"
+
 namespace omnifuzz {
 
 ListScheduler::ListScheduler() {
   max_generation_ = 0;
 
 }
-
 
 ListScheduler::~ListScheduler() {
   for (auto testcase: list_) {

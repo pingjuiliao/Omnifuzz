@@ -4,9 +4,8 @@
 #include <cstdint>
 
 #include "omnifuzz/testcase.h"
+
 /* scheduler should aware of the feedback of exection */
-
-
 namespace omnifuzz {
 
 class Scheduler {

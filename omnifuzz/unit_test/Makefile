@@ -6,3 +6,5 @@ mngr_build_tree: mngr_build_tree.cc TFM
 	$(CXX) $@.o TFM.o -o $@.exe
 TFM: ../testcase_file_manager.cc
 	$(CXX) $(CXXFLAGS) -c $< -o $@.o
+clean:
+	rm $(wildcard *.o) $(wildcard *.exe)

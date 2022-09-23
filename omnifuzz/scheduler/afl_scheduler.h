@@ -1,7 +1,7 @@
 #ifndef OMNIFUZZ_SCHEDULER_AFL_SCHEDULER_H
 #define OMNIFUZZ_SCHEDULER_AFL_SCHEDULER_H
 
-#include "../testcase.h"
+#include "omnifuzz/testcase.h"
 namespace omnifuzz {
 
 struct AflQueue {
