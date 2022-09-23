@@ -15,6 +15,7 @@ namespace omnifuzz {
 // maybe there's a better name
 class ForkServerExecutor: public Executor {
  public:
+  // Not sure the use case, but we allow the executable comes in later.
   ForkServerExecutor();
   ForkServerExecutor(std::vector<std::string>);
   virtual ~ForkServerExecutor();

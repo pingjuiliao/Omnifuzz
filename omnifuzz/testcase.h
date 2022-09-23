@@ -1,13 +1,23 @@
 #ifndef TESTCASE_H
 #define TESTCASE_H
 
+#include <cstdint>
+#include <feedback
+
 struct Testcase {
-  std::string fname;
-  size_t len;
-  Testcase(std::string file_name) {
-    fname = file_name;
-    len = 0;
-  }
+
+  // Testcase Information regardless what the fuzzer is.
+  char* file_name;      // file name
+  uint32_t size;        // Input Length
+  uint8_t trimmed;      // Was trimmed
+  uint8_t fuzzed;       // Was Fuzzed
+  uint8_t dummy_a;      // Still thinking 
+  uint8_t dummy_b;      // Still thinking
+  uint64_t generation;  // Depth in generic algorithm
+  uint64_t exec_us;     // Execution time (us)
+                        
+  // Post-execution information is here.
+  Feedback *feedback;
 };
 
 /*

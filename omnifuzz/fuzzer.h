@@ -1,7 +1,8 @@
 #ifndef OMNIFUZZ_FUZZER_H
 #define OMNIFUZZ_FUZZER_H
 
-#define UNIT_TEST
+#include <string>
+
 #ifndef UNIT_TEST
 #include "omnifuzz/mutator/mutator.h"
 #include "omnifuzz/preprocessor/instrumentor.h"
@@ -13,12 +14,19 @@
 #endif
 
 namespace omnifuzz {
+
 class Fuzzer {
  public:
   virtual ~Fuzzer() {}
+  
+  // Run instrumented program without argv.
   virtual void Run(void);
+
  protected:
+  // Assemble fuzzer parts to determine fuzzing.
   virtual void Configure(void);
+
+  // Fuzzer parts, most of them are must-have.
   Instrumentator* instrumentator_;
   MutatorComposite* mutator_;
   Executor* executor_;

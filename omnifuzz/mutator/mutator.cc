@@ -3,6 +3,8 @@
 
 namespace omnifuzz {
 
+
+// Some mutators need to make sure the mutation is of 2 to the n
 uint32_t Mutator::GetGranularitySize(MutationGranularity g) {
   
   switch(g) {
