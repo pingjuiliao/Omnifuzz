@@ -29,9 +29,9 @@ class FeedbackData final {
 };
 
 
-class Feedback {
+class FeedbackMechanism {
  public:
-  virtual ~Feedback() = default;
+  virtual ~FeedbackMechanism() = default;
   virtual bool DeemInteresting(void) = 0;
   virtual void RegisterFeedbackData(void) = 0;
   virtual void WriteOnBasicBlock(std::string&) = 0;

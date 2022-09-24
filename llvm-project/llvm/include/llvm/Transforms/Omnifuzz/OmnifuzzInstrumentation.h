@@ -7,20 +7,19 @@
 #include "llvm/IR/PassManager.h"
 #include "llvm/IR/Type.h"
 #include "llvm/Support/raw_ostream.h"
-#include "omnifuzz/feedback/feedback.h"
-// #include "llvm/Transforms/Omnifuzz/Feedback/feedback.h"
+#include "omnifuzz/feedback/feedback_mechanism.h"
 
 namespace llvm {
 
 class OmnifuzzPass : public PassInfoMixin<OmnifuzzPass> {
  public:
-  OmnifuzzPass(std::unique_ptr<omnifuzz::Feedback>);
+  OmnifuzzPass(std::unique_ptr<omnifuzz::FeedbackMechanism>);
   PreservedAnalyses run(Module&, ModuleAnalysisManager&);
   
  private:
   bool initialize(Module&);
-  void instrumentsBasicBlockAssembly(BasicBlock& BB);
-  std::unique_ptr<omnifuzz::Feedback> feedback_;
+  void instrumentBasicBlockAssembly(BasicBlock& BB);
+  std::unique_ptr<omnifuzz::FeedbackMechanism> fdbk_mech_;
 };
 
 } // namespace llvm

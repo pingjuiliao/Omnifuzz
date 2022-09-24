@@ -119,8 +119,8 @@ MODULE_PASS("sancov-module", ModuleSanitizerCoveragePass())
 MODULE_PASS("memprof-module", ModuleMemProfilerPass())
 MODULE_PASS("poison-checking", PoisonCheckingPass())
 MODULE_PASS("pseudo-probe-update", PseudoProbeUpdatePass())
-MODULE_PASS("omnifuzz-debug", OmnifuzzPass(std::make_unique<omnifuzz::DebugFeedback>()))
-MODULE_PASS("omnifuzz-afl", OmnifuzzPass(std::make_unique<omnifuzz::AflFeedback>()))
+MODULE_PASS("omnifuzz-debug", OmnifuzzPass(std::make_unique<omnifuzz::DebugFeedbackMechanism>()))
+MODULE_PASS("omnifuzz-afl", OmnifuzzPass(std::make_unique<omnifuzz::AflFeedbackMechanism>()))
 #undef MODULE_PASS
 
 #ifndef MODULE_PASS_WITH_PARAMS

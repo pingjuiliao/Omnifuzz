@@ -31,7 +31,7 @@ void Fuzzer::Run(void) {
       if (executor_->CaptureCrash()) {
         testcase_file_manager_.CreateCrashReport();
       } 
-      if (feedback_.DeemInteresting(shm_feedback)) {
+      if (feedback_mechanism_.DeemInteresting(shm_feedback)) {
         Testcase new_testcase = new Testcase();
         new_testcase.generation = curr_testcase->generation + 1;
         testcase_file_manager_.CreateTestcaseFile(new_testcase);

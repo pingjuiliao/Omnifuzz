@@ -3,8 +3,6 @@
 
 #include <cstdint>
 
-#include "llvm/Transforms/Omnifuzz/Feedback/feedback.h"
-
 namespace omnifuzz {
 
 struct Testcase {
@@ -20,7 +18,7 @@ struct Testcase {
   uint64_t exec_us;     // Execution time (us)
                         
   // Post-execution information is here.
-  Feedback *feedback;
+  uintptr_t *feedback;
 };
 
 } // namespace omnifuzz

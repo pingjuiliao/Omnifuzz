@@ -6,3 +6,4 @@ omnifuzz/**/*.o
 **/.gdb_history
 **/core
 **/peda*
+**/omnifuzz_out/**

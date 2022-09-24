@@ -4,15 +4,15 @@
 #include <iostream>
 #include <sstream>
 
-#include "omnifuzz/feedback/feedback.h"
+#include "omnifuzz/feedback/feedback_mechanism.h"
 
 
 namespace omnifuzz {
 
-class DebugFeedback : public Feedback {
+class DebugFeedbackMechanism : public FeedbackMechanism {
  public:
-  DebugFeedback();
-  virtual ~DebugFeedback();
+  DebugFeedbackMechanism();
+  virtual ~DebugFeedbackMechanism();
   virtual bool DeemInteresting(void) override;
   virtual void RegisterFeedbackData(void) override;
   virtual void WriteOnBasicBlock(std::string&) override;

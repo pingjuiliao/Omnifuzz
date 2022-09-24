@@ -2,15 +2,15 @@
 
 namespace llvm {
 
-OmnifuzzPass::OmnifuzzPass(std::unique_ptr<omnifuzz::Feedback> feedback) {
-  feedback_ = std::move(feedback);
+OmnifuzzPass::OmnifuzzPass(std::unique_ptr<omnifuzz::FeedbackMechanism> feedback_mechanism) {
+  fdbk_mech_ = std::move(feedback_mechanism);
 }
 
 PreservedAnalyses OmnifuzzPass::run(Module& M, ModuleAnalysisManager& AM) {
   
   static bool inited = false;
 
-  if (!feedback_) {
+  if (!fdbk_mech_) {
     return PreservedAnalyses::all();
   }
 
@@ -20,7 +20,7 @@ PreservedAnalyses OmnifuzzPass::run(Module& M, ModuleAnalysisManager& AM) {
   
   for (auto &F: M) {
     for (auto &BB: F) {
-      instrumentsBasicBlockAssembly(BB);
+      instrumentBasicBlockAssembly(BB);
     }
   }
   return PreservedAnalyses::all();
@@ -42,7 +42,7 @@ bool OmnifuzzPass::initialize(Module &M) {
       M, Int32Ty, false, GlobalValue::ExternalLinkage, 
       IntZero, "__afl_prev_loc");
   */
-  for (auto data: feedback_->feedback_data_map_) {
+  for (auto data: fdbk_mech_->feedback_data_map_) {
     Type* type;
     Constant* InitValue;
     switch(data.second.GetType()) {
@@ -95,10 +95,10 @@ bool OmnifuzzPass::initialize(Module &M) {
 
 
 
-void OmnifuzzPass::instrumentsBasicBlockAssembly(BasicBlock& BB) {
+void OmnifuzzPass::instrumentBasicBlockAssembly(BasicBlock& BB) {
   IRBuilder<> IRB(BB.getFirstNonPHI());
   std::string AsmStr;
-  feedback_->WriteOnBasicBlock(AsmStr);
+  fdbk_mech_->WriteOnBasicBlock(AsmStr);
   /*AsmPerBlock << "push %rax\n"
               << "add $$0x1, %rax\n"
               << "pop %rax\n";
