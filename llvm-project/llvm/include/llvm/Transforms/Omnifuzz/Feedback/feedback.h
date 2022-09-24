@@ -31,8 +31,8 @@ class FeedbackData final {
 class Feedback {
  public:
   virtual ~Feedback() = default;
+  virtual bool DeemInteresting(void) = 0;
   virtual void RegisterFeedbackData(void) = 0;
-  virtual void DeemInteresting(void) = 0;
   virtual void WriteOnBasicBlock(std::string&) = 0;
   std::unordered_map<std::string, FeedbackData> feedback_data_map_;
 };

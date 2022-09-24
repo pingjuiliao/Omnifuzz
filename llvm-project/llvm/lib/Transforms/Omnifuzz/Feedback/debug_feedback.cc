@@ -6,6 +6,10 @@ DebugFeedback::DebugFeedback() {}
 
 DebugFeedback::~DebugFeedback() {}
 
+bool DebugFeedback::DeemInteresting(void) {
+  return false;
+}
+
 void DebugFeedback::RegisterFeedbackData(void) {}
 
 void DebugFeedback::WriteOnBasicBlock(std::string& assembly) {
@@ -15,5 +19,7 @@ void DebugFeedback::WriteOnBasicBlock(std::string& assembly) {
      << "pop %rax\n";
   assembly += ss.str();
 }
+
+
   
 } // namespace omnifuzz

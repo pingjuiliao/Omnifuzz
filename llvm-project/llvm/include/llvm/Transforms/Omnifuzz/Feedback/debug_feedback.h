@@ -13,6 +13,7 @@ class DebugFeedback : public Feedback {
  public:
   DebugFeedback();
   virtual ~DebugFeedback();
+  virtual bool DeemInteresting(void) override;
   virtual void RegisterFeedbackData(void) override;
   virtual void WriteOnBasicBlock(std::string&) override;
 };

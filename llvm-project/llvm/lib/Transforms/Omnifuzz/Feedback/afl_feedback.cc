@@ -28,4 +28,8 @@ void AflFeedback::WriteOnBasicBlock(std::string& assembly) {
   assembly += ss.str();
 }
 
+bool AflFeedback::DeemInteresting(void) {
+  return false;
+}
+
 } // namespace omnifuzz

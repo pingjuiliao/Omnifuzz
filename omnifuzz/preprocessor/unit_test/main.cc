@@ -9,7 +9,7 @@ int main(int argc, char** argv) {
     exit(-1);
   }
   
-  omnifuzz::Instrumentator instr("/home/pingjui/Omnifuzz/omnifuzz/build/");
+  omnifuzz::Instrumentator instr("/home/pingjui/Omnifuzz/build/");
   int r = instr.Instrument(argv[1]);
   if (r == 0) {
     cout << "Succeeded" << endl;
