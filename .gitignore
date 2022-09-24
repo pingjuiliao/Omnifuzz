@@ -1,4 +1,8 @@
 **/build
-omnifuzz/fuzzer/**/*.ll
-omnifuzz/fuzzer/**/*.bc
-omnifuzz/fuzzer/**/*.exe
+omnifuzz/**/*.ll
+omnifuzz/**/*.bc
+omnifuzz/**/*.exe
+omnifuzz/**/*.o
+**/.gdb_history
+**/core
+**/peda*
