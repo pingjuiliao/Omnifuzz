@@ -20,8 +20,8 @@ set(BUILD_SHARED_LIBS OFF)
 
 ## LLVM needs to know about Omnifuzz
 
-set(OMNIFUZZ_MAIN_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/omnifuzz/include)
-set(OMNIFUZZ_MAIN_SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/omnifuzz/src)
+set(OMNIFUZZ_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/")
+set(OMNIFUZZ_SRC_DIR "${CMAKE_CURRENT_SOURCE_DIR}/")
 message("omnifuzz_main_include: ${OMNIFUZZ_MAIN_INCLUDE_DIR}")
 message("I want to include: ${OMNIFUZZ_MAIN_INCLUDE_DIR}/Omnifuzz/FeedbackSystem/debug_feedback.h")
 add_subdirectory("llvm-project/llvm")
