@@ -1,6 +1,5 @@
 add_llvm_component_library(LLVMOmnifuzz
   OmnifuzzInstrumentation.cpp
-  ${OMNIFUZZ_SRC_DIR}/omnifuzz/feedback/debug_feedback_mechanism.cc
   ${OMNIFUZZ_SRC_DIR}/omnifuzz/feedback/afl_feedback_mechanism.cc
 
   ADDITIONAL_HEADER_DIRS

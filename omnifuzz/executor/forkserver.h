@@ -2,15 +2,19 @@
 #define OMNIFUZZ_EXECUTOR_FORK_SERVER_H
 
 #include <string.h>
+#include <sys/ipc.h>
+#include <sys/shm.h>
 #include <sys/time.h>
 #include <sys/types.h>
 #include <sys/resource.h>
 #include <unistd.h>
 
 #include <cstdint>
+#include <cstdlib>
 #include <iostream>
 
 #include "omnifuzz/executor/file_descriptor.h"
+#include "omnifuzz/feedback/feedback_mechanism.h"
 
 namespace omnifuzz {
 
@@ -36,7 +40,7 @@ class Forkserver {
   char** argv_; 
   pid_t forksrv_pid_;
   bool is_initialized_;
-
+  
   // file descriptors that should be managed
   CommonFD common_fd_;
   // pipe for communicate
@@ -47,9 +51,10 @@ class Forkserver {
 
   // state
   bool file_mode;
-  
+
   // For testing
  public:
+  inline static int testing_shm_id;
   static void SendInitResponse(int response_fd);
   static bool ServeRequest(int request_fd, int response_fd);
 };

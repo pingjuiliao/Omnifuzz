@@ -17,10 +17,9 @@ void Fuzzer::Prepare(char** argv) {
 
 void Fuzzer::Run(void) {
   Testcase* curr_testcase;
-  char* buf = malloc(kBufSizeMax);
 
   while (1) {
-    curr_testcase = scheduler_.Dequeue(buf);
+    curr_testcase = scheduler_.Dequeue();
      
     while (mutator_.Mutate(buf, testcase.size) != 
            omnifuzz::MutationResult::kCycleDone) {
@@ -31,7 +30,7 @@ void Fuzzer::Run(void) {
       if (executor_->CaptureCrash()) {
         testcase_file_manager_.CreateCrashReport();
       } 
-      if (feedback_mechanism_.DeemInteresting(shm_feedback)) {
+      if (fdbk_mech_->DeemInteresting((uintptr_t) shm_feedback)) {
         Testcase new_testcase = new Testcase();
         new_testcase.generation = curr_testcase->generation + 1;
         testcase_file_manager_.CreateTestcaseFile(new_testcase);

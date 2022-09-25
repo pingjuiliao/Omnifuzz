@@ -7,8 +7,9 @@ ForkServerExecutor::ForkServerExecutor() {
   fclnt_ = nullptr;
 }
 
-ForkServerExecutor::ForkServerExecutor(std::vector<std::string> argv) {
-  if (!LoadExecutable(argv)) {
+ForkServerExecutor::ForkServerExecutor(std::vector<std::string> argv, 
+                                       FeedbackMechanism* fdbk_mech) {
+  if (!Initialize(argv, fdbk_mech)) {
     std::cerr << "[FATAL] Cannot load executable" << std::endl;
     throw "Cannot Load executable";
   }
@@ -20,10 +21,17 @@ ForkServerExecutor::~ForkServerExecutor() {
 }
 
 
-bool ForkServerExecutor::LoadExecutable(std::vector<std::string> argv) {
- 
+bool ForkServerExecutor::Initialize(std::vector<std::string> argv,
+                                    FeedbackMechanism* fdbk_mech) {
+   
+  if (fdbk_mech) {
+    fdbk_mech_ = fdbk_mech;
+    AllocateFeedbackData();
+  }
+  
   // construct c_argv_ 
-  LoadArgument(argv);  
+  ParseArgument(argv);  
+
   if (!c_argv_) {
     std::cerr << "[FATAL] Cannot load arguments" << std::endl;
   }
@@ -55,7 +63,7 @@ bool ForkServerExecutor::LoadExecutable(std::vector<std::string> argv) {
     std::cerr << "[ERROR] Multiple forkservers not supported" << std::endl;
     return false;
   }
-
+  
   fsrv_ = new Forkserver(c_argv_, fd_);
   fclnt_ = new ForkClient();
   fclnt_->Connect(fsrv_);

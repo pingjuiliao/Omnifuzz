@@ -1,4 +1,6 @@
+#include <cstdlib>
 #include <iostream>
+
 #include "../forkserver.h"
 int main(int argc, char ** argv) {
   omnifuzz::Forkserver::SendInitResponse(/*response_fd =*/22);

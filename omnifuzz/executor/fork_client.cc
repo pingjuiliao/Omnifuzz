@@ -57,8 +57,6 @@ void ForkClient::SendRequest(void) {
   read(response_fd_, &res, 4);
   if (res == code) {
     std::cout << "[Client] Response received!" << std::endl;
-    std::cout << "[Message] Cycle completed!" << std::endl;
-    std::cout << std::endl << std::endl;
   }
 }
 } // namespace omnifuzz

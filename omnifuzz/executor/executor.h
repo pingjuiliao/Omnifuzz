@@ -3,23 +3,34 @@
 
 #include <stdlib.h>
 #include <string.h>
+#include <sys/ipc.h>
+#include <sys/shm.h>
 
 #include <iostream>
 #include <string>
 #include <vector>
+
+#include "omnifuzz/feedback/feedback_mechanism.h"
 
 namespace omnifuzz {
 
 class Executor {
  public:
   virtual ~Executor();
-  // Executor needs to wait for preprocessor so we cannot always 
-  // set up at initialization
-  virtual bool LoadExecutable(std::vector<std::string>) = 0;
+  // Executor sometimes needs to wait for preprocessor so we cannot always 
+  // load up executable in constructor
+  virtual bool Initialize(std::vector<std::string>, 
+                          FeedbackMechanism*) = 0;
   virtual void Execute(void) = 0;
+  virtual void AllocateFeedbackData(void);
+  virtual void* DumpFeedbackData(void);
+  const char* kShmEnv = "OMNIFUZZ_SHM_ENV";
  protected:
-  virtual void LoadArgument(std::vector<std::string>);
-  virtual void LoadArgument(char**);
+  virtual void ParseArgument(std::vector<std::string>);
+  virtual void ParseArgument(char**);
+  FeedbackMechanism* fdbk_mech_;
+  int shm_id_;
+  void* feedback_data_ptr_;
   char** c_argv_;
 };
 } // namespace omnifuzz

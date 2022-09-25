@@ -3,9 +3,11 @@
 
 #include <string>
 
+#include "omnifuzz/feedback/feedback_mechanism.h"
 #include "omnifuzz/mutator/mutator.h"
-#include "omnifuzz/preprocessor/instrumentor.h"
+#include "omnifuzz/preprocessor/instrumentator.h"
 #include "omnifuzz/executor/executor.h"
+#include "omnifuzz/testcase_file_manager.h"
 
 namespace omnifuzz {
 
@@ -24,6 +26,7 @@ class Fuzzer {
   Instrumentator* instrumentator_;
   MutatorComposite* mutator_;
   Executor* executor_;
+  FeedbackMechanism *fdbk_mech_;
 };
 
 } // namespace omnifuzz

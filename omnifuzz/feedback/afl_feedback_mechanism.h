@@ -1,10 +1,13 @@
 #ifndef LLVM_TRANSFORMS_OMNIFUZZ_FEEDBACK_AFL_FEEDBACK_H
 #define LLVM_TRANSFORMS_OMNIFUZZ_FEEDBACK_AFL_FEEDBACK_H
 
+#include <cstdint>
 #include <cstdlib>
 #include <sstream>
 
+#include "omnifuzz/feedback/fuzz_score.h"
 #include "omnifuzz/feedback/feedback_mechanism.h"
+#include "omnifuzz/testcase.h"
 
 namespace omnifuzz {
 
@@ -12,11 +15,17 @@ class AflFeedbackMechanism : public FeedbackMechanism {
  public:
   AflFeedbackMechanism();
   virtual ~AflFeedbackMechanism();
-  virtual void RegisterFeedbackData(void) override;
+  virtual void RegisterExecutionVariable(void) override;
   virtual void WriteOnBasicBlock(std::string&) override;
-  virtual bool DeemInteresting(void) override;
+  
+  virtual size_t RegisterFeedbackData(void) override;
+
+  virtual FuzzScore DeemInteresting(void*) override;
  protected:
-  const unsigned int kCoverageBitMapEntry = 64 * 1024;
+  const size_t kCoverageBitMapEntry = 64 * 1024;
+  Testcase* top_rated_;
+  // maintain a virgin bitmap to see if there's new interesting bits comes in.
+  uint8_t* virgin_map_; 
 };
 
 } // namespace omnifuzz

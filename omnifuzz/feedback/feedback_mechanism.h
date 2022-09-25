@@ -4,9 +4,11 @@
 #include <string>
 #include <unordered_map>
 
+#include "omnifuzz/feedback/fuzz_score.h"
+
 namespace omnifuzz {
 
-class FeedbackData final {
+class ExecutionVariable final {
  public:
   enum Type {
     Int8, 
@@ -16,27 +18,37 @@ class FeedbackData final {
     Pointer
   };
   // ISSUE: default ctor just for using unorder_map
-  FeedbackData() {}
-  FeedbackData(std::string name, FeedbackData::Type type) : name_(name), type_(type) {}
-  ~FeedbackData() {}
-  FeedbackData::Type GetType(void) const { return type_; }
+  ExecutionVariable() {}
+  ExecutionVariable(std::string name, ExecutionVariable::Type type) : name_(name), type_(type) {}
+  ~ExecutionVariable() {}
+  ExecutionVariable::Type GetType(void) const { return type_; }
   size_t GetSize(void) const { return size_; }
   std::string GetName(void) const { return name_; }
  private:
   std::string name_;
   size_t size_;
-  FeedbackData::Type type_;
+  ExecutionVariable::Type type_;
 };
 
-
+/* The key of the feedback fuzzer. */
 class FeedbackMechanism {
  public:
+  
   virtual ~FeedbackMechanism() = default;
-  virtual bool DeemInteresting(void) = 0;
-  virtual void RegisterFeedbackData(void) = 0;
+
+  // Pre-execution functions: talks to the Instrumentator
+  virtual void RegisterExecutionVariable(void) = 0;
   virtual void WriteOnBasicBlock(std::string&) = 0;
-  std::unordered_map<std::string, FeedbackData> feedback_data_map_;
+  
+  // In-execution functions: talks to the Excutor
+  virtual size_t RegisterFeedbackData(void) = 0;
+  std::unordered_map<std::string, ExecutionVariable> exec_var_map_;
+
+  // Post-execution functions: talks to the 
+  virtual FuzzScore DeemInteresting(void* data) = 0;
+  // virtual bool InterpretFeedback(void) = 0;
 };
+
 
 }
 

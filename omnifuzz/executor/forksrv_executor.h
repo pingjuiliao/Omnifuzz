@@ -9,6 +9,7 @@
 #include "omnifuzz/executor/file_descriptor.h"
 #include "omnifuzz/executor/forkserver.h"
 #include "omnifuzz/executor/fork_client.h"
+#include "omnifuzz/feedback/feedback_mechanism.h"
 
 namespace omnifuzz {
 
@@ -17,9 +18,11 @@ class ForkServerExecutor: public Executor {
  public:
   // Not sure the use case, but we allow the executable comes in later.
   ForkServerExecutor();
-  ForkServerExecutor(std::vector<std::string>);
+  ForkServerExecutor(std::vector<std::string>, 
+                     FeedbackMechanism*);
   virtual ~ForkServerExecutor();
-  virtual bool LoadExecutable(std::vector<std::string>) override;
+  virtual bool Initialize(std::vector<std::string>,
+                          FeedbackMechanism*) override;
   virtual void Execute(void) override;
  private:
   Forkserver* fsrv_;

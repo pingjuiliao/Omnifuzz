@@ -33,7 +33,7 @@ bool OmnifuzzPass::initialize(Module &M) {
   
   IntegerType *Int8Ty = IntegerType::getInt8Ty(C);
   IntegerType *Int32Ty = IntegerType::getInt32Ty(C);
-  ConstantInt *IntZero = ConstantInt::get(Int32Ty, 0);
+  // ConstantInt *IntZero = ConstantInt::get(Int32Ty, 0);
   /*
   GlobalVariable* AflMapPtr = 
     new GlobalVariable(M, PointerType::get(Int8Ty, 0), false, 
@@ -42,27 +42,27 @@ bool OmnifuzzPass::initialize(Module &M) {
       M, Int32Ty, false, GlobalValue::ExternalLinkage, 
       IntZero, "__afl_prev_loc");
   */
-  for (auto data: fdbk_mech_->feedback_data_map_) {
+  for (auto data: fdbk_mech_->exec_var_map_) {
     Type* type;
     Constant* InitValue;
     switch(data.second.GetType()) {
-      case omnifuzz::FeedbackData::Type::Int64:
+      case omnifuzz::ExecutionVariable::Type::Int64:
         type = IntegerType::getInt64Ty(C);
         InitValue = ConstantInt::get(type, 0);
         break;
-      case omnifuzz::FeedbackData::Type::Int32:
+      case omnifuzz::ExecutionVariable::Type::Int32:
         type = Int32Ty;
         InitValue = ConstantInt::get(type, 0);
         break;
-      case omnifuzz::FeedbackData::Type::Int16:
+      case omnifuzz::ExecutionVariable::Type::Int16:
         type = IntegerType::getInt16Ty(C);
         InitValue = ConstantInt::get(type, 0);
         break;
-      case omnifuzz::FeedbackData::Type::Int8:
+      case omnifuzz::ExecutionVariable::Type::Int8:
         type = Int8Ty;
         InitValue = ConstantInt::get(type, 0);
         break;
-      case omnifuzz::FeedbackData::Type::Pointer:
+      case omnifuzz::ExecutionVariable::Type::Pointer:
         type = PointerType::get(Int8Ty, 0);
         InitValue = ConstantPointerNull::get(static_cast<PointerType*>(type)); 
         break;
@@ -71,7 +71,7 @@ bool OmnifuzzPass::initialize(Module &M) {
 
     GlobalVariable* GV = new GlobalVariable(M, type, false, GlobalValue::ExternalLinkage, 
         InitValue, data.second.GetName());
-    errs() << "GV: "  << data.second.GetName() << "\n";
+    errs() << "GV: "  << data.second.GetName() << " " << GV << "\n";
   }
 
   

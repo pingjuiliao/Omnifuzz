@@ -1,11 +1,8 @@
-#define UNIT_TEST
-#ifndef UNIT_TEST
+
 #include "omnifuzz/executor/forkserver.h"
-#else
-#include "forkserver.h"
-#endif
 
 namespace {
+
 void ManageResources(void) {
   // TODO 
 }
@@ -96,10 +93,18 @@ void Forkserver::SendInitResponse(int response_fd) {
   if (write(response_fd, &code, sizeof(code)) < 4) {
     std::cerr << "[ERROR] Failed on write()" << std::endl;
   }
+  char* s = getenv("OMNIFUZZ_SHM_ENV");
+  if (!s) {
+    std::cerr << "[ERROR] Failed on getenv()" << std::endl;
+  }
+  testing_shm_id = atoi(s);
+  std::cout << "[Server] Get SHM id: " << testing_shm_id << std::endl;
 }
 
 
 bool Forkserver::ServeRequest(int request_fd, int response_fd) {
+  static size_t i = 0;
+  const char* message = "Hello";
   uint32_t buf;
   if (read(request_fd, &buf, 4) < 4) {
     std::cerr << "[ERROR] Failed on read()" 
@@ -110,6 +115,13 @@ bool Forkserver::ServeRequest(int request_fd, int response_fd) {
   // This std::cout part should be the real execution of program under test.
   std::cout << "[Server] Hello, I am forkserver" << std::endl;
   std::cout << "[Server] Executing, executing, executing" << std::endl;
+  char* p = (char *) shmat(testing_shm_id, NULL, 0);
+  if (!p) {
+    std::cerr << "[ERROR] Failed on shmat()" << std::endl; 
+  }
+  memset(p, message[i++ % strlen(message)], 10);
+  p[10] = '\0';
+  
   write(response_fd, &buf, 4);
   return true;
 }

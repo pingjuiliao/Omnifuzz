@@ -4,15 +4,23 @@
 namespace omnifuzz {
 
 AflFeedbackMechanism::AflFeedbackMechanism() {
-  RegisterFeedbackData();
+  virgin_map_ = new uint8_t[kCoverageBitMapEntry];
+  
+  RegisterExecutionVariable();
 }
 
-AflFeedbackMechanism::~AflFeedbackMechanism() {}
+AflFeedbackMechanism::~AflFeedbackMechanism() {
+  delete[] virgin_map_;
+}
 
-void AflFeedbackMechanism::RegisterFeedbackData(void) {
-  feedback_data_map_["__afl_prev_loc"] = FeedbackData("__afl_prev_loc", FeedbackData::Type::Int32);
-  feedback_data_map_["__afl_area_ptr"] = FeedbackData("__afl_area_ptr", 
-      FeedbackData::Type::Pointer);
+size_t AflFeedbackMechanism::RegisterFeedbackData(void) {
+  return sizeof(uint8_t) * kCoverageBitMapEntry;
+}
+
+void AflFeedbackMechanism::RegisterExecutionVariable(void) {
+  exec_var_map_["__afl_prev_loc"] = ExecutionVariable("__afl_prev_loc", ExecutionVariable::Type::Int32);
+  exec_var_map_["__afl_area_ptr"] = ExecutionVariable("__afl_area_ptr", 
+      ExecutionVariable::Type::Pointer);
 }
 
 void AflFeedbackMechanism::WriteOnBasicBlock(std::string& assembly) {
@@ -21,16 +29,47 @@ void AflFeedbackMechanism::WriteOnBasicBlock(std::string& assembly) {
   ss << "push %rcx\n"
      << "push %rdx\n"
      << "movq $$" << compile_time_random << ", %rcx\n"
-     << "xorq " << feedback_data_map_["__afl_prev_loc"].GetName() << "(%rip), %rcx\n"
-     << "xorq %rcx, " << feedback_data_map_["__afl_prev_loc"].GetName() << "(%rip)\n"
-     << "shrq $$1, " << feedback_data_map_["__afl_prev_loc"].GetName() << "(%rip)\n"
+     << "xorq " << exec_var_map_["__afl_prev_loc"].GetName() << "(%rip), %rcx\n"
+     << "xorq %rcx, " << exec_var_map_["__afl_prev_loc"].GetName() << "(%rip)\n"
+     << "shrq $$1, " << exec_var_map_["__afl_prev_loc"].GetName() << "(%rip)\n"
      << "popq %rdx\n"
      << "popq %rcx\n";
   assembly += ss.str();
 }
 
-bool AflFeedbackMechanism::DeemInteresting(void) {
-  return false;
+FuzzScore AflFeedbackMechanism::DeemInteresting(void* data) {
+  uint64_t* current = reinterpret_cast<uint64_t*>(data);
+  uint64_t* virgin = reinterpret_cast<uint64_t*>(virgin_map_);
+  uint32_t i = (kCoverageBitMapEntry >> 3);
+  
+  FuzzScore score = FuzzScore::kNotInteresting;
+
+  while (i--) {
+    if (__builtin_expect(*current, 0) && 
+        __builtin_expect(*current & *virgin, 0)) {
+      
+      if (__builtin_expect(score < FuzzScore::kNewVisitCoverage, 1)) {
+
+        uint8_t* cur = reinterpret_cast<uint8_t*>(current);
+        uint8_t* vir = reinterpret_cast<uint8_t*>(virgin);
+        if ((cur[0] && vir[0] == 0xff) || (cur[1] && vir[1] == 0xff) ||
+            (cur[2] && vir[2] == 0xff) || (cur[3] && vir[3] == 0xff) ||
+            (cur[4] && vir[4] == 0xff) || (cur[5] && vir[5] == 0xff) ||
+            (cur[6] && vir[6] == 0xff) || (cur[7] && vir[7] == 0xff)) {
+          score = FuzzScore::kNewVisitCoverage;
+        } else {
+          score = FuzzScore::kRevisitCoverage;
+        }
+      }
+
+      // update virgin map
+      *virgin &= ~*current;
+    }
+    current ++;
+    virgin ++;
+  }
+
+  return score;
 }
 
 } // namespace omnifuzz
