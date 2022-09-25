@@ -1,5 +1,5 @@
 CXX=g++
-CXXFLAGS=-I../../.. -std=c++17
+CXXFLAGS=-I../../.. -std=c++17 -g
 all: fsrv_instance fsrv_exec_test
 run: fsrv_exec_test.exe fsrv_instance.exe
 	./$<

@@ -17,6 +17,8 @@ namespace omnifuzz {
 class Executor {
  public:
   virtual ~Executor();
+
+  virtual bool Initialize(char**, FeedbackMechanism*);
   // Executor sometimes needs to wait for preprocessor so we cannot always 
   // load up executable in constructor
   virtual bool Initialize(std::vector<std::string>, 
@@ -26,7 +28,6 @@ class Executor {
   virtual void* DumpFeedbackData(void);
   const char* kShmEnv = "OMNIFUZZ_SHM_ENV";
  protected:
-  virtual void ParseArgument(std::vector<std::string>);
   virtual void ParseArgument(char**);
   FeedbackMechanism* fdbk_mech_;
   int shm_id_;

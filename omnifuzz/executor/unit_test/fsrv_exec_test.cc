@@ -1,3 +1,5 @@
+#include <string.h>
+
 #include <filesystem>
 #include <iostream>
 #include <string>
@@ -36,7 +38,10 @@ int main(int argc, char** argv) {
     std::cerr << "[ERROR] cannot find the executable" << instance << std::endl;
     return -1;
   }
-  std::vector<std::string> v_argv = {instance};
+  
+  std::vector<std::string> v_argv = {"./fsrv_instance.exe"};
+  // char* v_argv[] = {strdup("./fsrv_instance.exe"), nullptr};
+  
   executor.Initialize(v_argv, fdbk);
   for (size_t i = 0; i < kNumRequest; ++i) {
     executor.Execute();

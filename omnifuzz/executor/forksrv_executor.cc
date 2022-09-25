@@ -20,18 +20,12 @@ ForkServerExecutor::~ForkServerExecutor() {
   delete fclnt_;
 }
 
-
-bool ForkServerExecutor::Initialize(std::vector<std::string> argv,
+bool ForkServerExecutor::Initialize(char** argv, 
                                     FeedbackMechanism* fdbk_mech) {
-   
-  if (fdbk_mech) {
-    fdbk_mech_ = fdbk_mech;
-    AllocateFeedbackData();
+  if (!Executor::Initialize(argv, fdbk_mech)) {
+    std::cerr << "[FATAL] Cannot Initialize with parent" << std::endl;
+    return false;
   }
-  
-  // construct c_argv_ 
-  ParseArgument(argv);  
-
   if (!c_argv_) {
     std::cerr << "[FATAL] Cannot load arguments" << std::endl;
   }
@@ -69,6 +63,24 @@ bool ForkServerExecutor::Initialize(std::vector<std::string> argv,
   fclnt_->Connect(fsrv_);
 
   return true;
+}
+
+
+bool ForkServerExecutor::Initialize(std::vector<std::string> argv,
+                                    FeedbackMechanism* fdbk_mech) {
+  char** tmp_argv = (char **) malloc(sizeof(char *) * (argv.size() + 1));
+  for (size_t i = 0; i < argv.size(); ++i) {
+    tmp_argv[i] = strdup(argv[i].c_str());
+  }
+  tmp_argv[argv.size()] = nullptr;
+  bool result = Initialize(tmp_argv, fdbk_mech);
+  
+  // freeing temporary
+  for (size_t i = 0; i < argv.size(); ++i) {
+    free(tmp_argv[i]);
+  }
+  free(tmp_argv);
+  return result;
 }
 
 

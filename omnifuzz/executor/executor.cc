@@ -16,35 +16,36 @@ Executor::~Executor() {
   shmctl(shm_id_, IPC_RMID, NULL);
 }
 
-void Executor::ParseArgument(std::vector<std::string> argv) {
-  if (!argv.size()) {
-    std::cerr << "[FATAL] Wrong Argv\n";
-    c_argv_ = nullptr;
-    return;
+bool Executor::Initialize(char** argv, 
+                          FeedbackMechanism* fdbk_mech) {
+  if (!fdbk_mech || !argv) {
+    return false;
   }
-  c_argv_ = (char **) malloc(sizeof(char *) * (argv.size() + 1));
-  for (size_t i = 0; i < argv.size(); ++i) {
-    c_argv_[i] = strdup(argv[i].c_str());
-  }
-  c_argv_[argv.size()] = nullptr;
+  fdbk_mech_ = fdbk_mech;
+  AllocateFeedbackData();
+  ParseArgument(argv); 
+  
+  return true;
 }
 
 void Executor::ParseArgument(char** argv) {
-  if (!argv) 
+  if (!argv) {
+    c_argv_ = nullptr;
     return;
-  
-  size_t num_args = 0;
+  }
   char** p = argv;
+  size_t arg_size = 0;
   while (*p) {
-    num_args++;
     p++;
+    arg_size++;
   }
-  c_argv_ = (char **) malloc(sizeof(char *) * (num_args + 1));
-  for (size_t i = 0; i < num_args; ++i) {
-    c_argv_[i] = strdup(argv[i]);     
+  c_argv_ = (char **) malloc(sizeof(char *) * (arg_size + 1));
+  for (int i = 0; i < arg_size; ++i) {
+    c_argv_[i] = strdup(argv[i]); 
   }
-  c_argv_[num_args] = nullptr;
+  c_argv_[arg_size] = nullptr;
 }
+
 
 void Executor::AllocateFeedbackData(void) {
   if (!fdbk_mech_) {

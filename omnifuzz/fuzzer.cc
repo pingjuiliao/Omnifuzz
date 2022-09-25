@@ -11,12 +11,13 @@ void Fuzzer::CompileAndFuzzCycle(void) {
 }
 
 void Fuzzer::Prepare(char** argv) {
-  executor_->LoadExecutable(argv);
+  executor_->Initialize(argv);
   testcase_file_manager_->BuildDirectoryTree();
 }
 
 void Fuzzer::Run(void) {
   Testcase* curr_testcase;
+  void* shm_feedback;
 
   while (1) {
     curr_testcase = scheduler_.Dequeue();
@@ -30,7 +31,7 @@ void Fuzzer::Run(void) {
       if (executor_->CaptureCrash()) {
         testcase_file_manager_.CreateCrashReport();
       } 
-      if (fdbk_mech_->DeemInteresting((uintptr_t) shm_feedback)) {
+      if (fdbk_mech_->DeemInteresting(shm_feedback)) {
         Testcase new_testcase = new Testcase();
         new_testcase.generation = curr_testcase->generation + 1;
         testcase_file_manager_.CreateTestcaseFile(new_testcase);

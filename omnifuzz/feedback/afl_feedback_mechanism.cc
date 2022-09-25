@@ -45,6 +45,7 @@ FuzzScore AflFeedbackMechanism::DeemInteresting(void* data) {
   FuzzScore score = FuzzScore::kNotInteresting;
 
   while (i--) {
+
     if (__builtin_expect(*current, 0) && 
         __builtin_expect(*current & *virgin, 0)) {
       
