@@ -31,8 +31,7 @@ void ForkClient::Connect(Forkserver* fsrv) {
     std::cerr << "[ERROR] read() in connection failed" << std::endl;
   }
   
-  // 
-  if (status == 0x74696e69) {
+  if (status != 0x74696e69) {
   #ifndef UNIT_TEST
     std::cout << "[MESSAGE] Connection Succeeded!" << std::endl;
   #else 
@@ -40,6 +39,11 @@ void ForkClient::Connect(Forkserver* fsrv) {
               << std::endl << std::endl;
   #endif
   }
+
+  // Tell Server we are ready
+  status = 1;
+  write(request_fd_, &status, sizeof(int));
+
 }
 
 void ForkClient::SendRequest(void) {

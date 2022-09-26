@@ -90,14 +90,15 @@ void Forkserver::ExecuteEmbeddedForkserver(void) {
 // In most cases, these static function will not be in fuzzing cycles
 void Forkserver::SendInitResponse(int response_fd) {
   const uint32_t code = 0x74696e69; // "init"
-  if (write(response_fd, &code, sizeof(code)) < 4) {
-    std::cerr << "[ERROR] Failed on write()" << std::endl;
-  }
+  
   char* s = getenv("OMNIFUZZ_SHM_ENV");
   if (!s) {
     std::cerr << "[ERROR] Failed on getenv()" << std::endl;
   }
   testing_shm_id = atoi(s);
+  if (write(response_fd, &code, sizeof(code)) < 4) {
+    std::cerr << "[ERROR] Failed on write()" << std::endl;
+  }
   std::cout << "[Server] Get SHM id: " << testing_shm_id << std::endl;
 }
 
