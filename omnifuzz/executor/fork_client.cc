@@ -43,7 +43,6 @@ void ForkClient::Connect(Forkserver* fsrv) {
   // Tell Server we are ready
   status = 1;
   write(request_fd_, &status, sizeof(int));
-
 }
 
 void ForkClient::SendRequest(void) {

@@ -56,6 +56,7 @@ class Forkserver {
  public:
   inline static int testing_shm_id;
   static void SendInitResponse(int response_fd);
+  static bool ReceiveClientRegistration(int request_fd);
   static bool ServeRequest(int request_fd, int response_fd);
 };
 

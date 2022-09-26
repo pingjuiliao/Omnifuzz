@@ -90,18 +90,31 @@ void Forkserver::ExecuteEmbeddedForkserver(void) {
 // In most cases, these static function will not be in fuzzing cycles
 void Forkserver::SendInitResponse(int response_fd) {
   const uint32_t code = 0x74696e69; // "init"
-  
+
+  // Shm mechanism works first
   char* s = getenv("OMNIFUZZ_SHM_ENV");
   if (!s) {
     std::cerr << "[ERROR] Failed on getenv()" << std::endl;
   }
   testing_shm_id = atoi(s);
+  std::cout << "[Server] Get SHM id: " << testing_shm_id << std::endl;
+
+  // pipe works later
   if (write(response_fd, &code, sizeof(code)) < 4) {
     std::cerr << "[ERROR] Failed on write()" << std::endl;
   }
-  std::cout << "[Server] Get SHM id: " << testing_shm_id << std::endl;
 }
 
+bool Forkserver::ReceiveClientRegistration(int request_fd) {
+  int status = 0;
+  read(request_fd, &status, 4);
+  if (!status) {
+    std::cout << "[ERROR] Cannot Receive Client registration" << std::endl;
+    return false;
+  }
+  std::cout << "[Server] Client Registration works" << std::endl;
+  return true;
+}
 
 bool Forkserver::ServeRequest(int request_fd, int response_fd) {
   static size_t i = 0;
