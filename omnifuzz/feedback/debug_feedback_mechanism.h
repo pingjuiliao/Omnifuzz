@@ -1,19 +1,21 @@
 #ifndef OMNIFUZZ_FEEDBACK_DEBUG_FEEDBACK_MECHANISM_H
 #define OMNIFUZZ_FEEDBACK_DEBUG_FEEDBACK_MECHANISM_H
 
-class DummyFeedbackMechanism : public omnifuzz::FeedbackMechanism {
+#include "omnifuzz/feedback/feedback_mechanism.h"
+#include "omnifuzz/feedback/fuzz_score.h"
+
+namespace omnifuzz {
+
+class DebugFeedbackMechanism : public FeedbackMechanism {
  public:
-  DummyFeedbackMechanism() {}
-  virtual ~DummyFeedbackMechanism() {}
-  virtual size_t RegisterFeedbackData(void) override {
-    return 100; 
-  }
-  virtual void RegisterExecutionVariable(void) override {}
-  virtual omnifuzz::FuzzScore DeemInteresting(void* p) override {
-    return omnifuzz::FuzzScore::kRevisitCoverage;
-  }
-  virtual void WriteOnBasicBlock(std::string &s) override {
-  }
+  DebugFeedbackMechanism();
+  virtual ~DebugFeedbackMechanism();
+  virtual size_t RegisterFeedbackData(void) override;
+  virtual void RegisterExecutionVariable(void) override;
+  virtual FuzzScore DeemInteresting(void* p) override;
+  virtual void WriteOnBasicBlock(std::string &s) override;
 };
+
+} // namespace omnifuzz
 
 #endif  // OMNIFUZZ_FEEDBACK_DEBUG_FEEDBACK_MECHANISM_H

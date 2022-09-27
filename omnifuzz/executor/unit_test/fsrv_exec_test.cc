@@ -13,7 +13,7 @@ const size_t kNumRequest = 5;
 std::string instance = "./fsrv_instance.exe";
 
 int main(int argc, char** argv) {
-  DummyFeedbackMechanism* fdbk = new DummyFeedbackMechanism;
+  omnifuzz::DebugFeedbackMechanism* fdbk = new omnifuzz::DebugFeedbackMechanism;
   omnifuzz::ForkServerExecutor executor;
   if (std::filesystem::exists("./.cur_input")) {
     std::filesystem::remove("./.cur_input");
