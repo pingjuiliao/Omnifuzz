@@ -1,7 +1,10 @@
 #ifndef OMNIFUZZ_INSTRUMENTATION_H
 #define OMNIFUZZ_INSTRUMENTATION_H
 
+#include <sstream>
+
 #include "llvm/IR/DerivedTypes.h"
+#include "llvm/IR/Function.h"
 #include "llvm/IR/IRBuilder.h"
 #include "llvm/IR/InlineAsm.h"
 #include "llvm/IR/PassManager.h"
@@ -19,7 +22,15 @@ class OmnifuzzPass : public PassInfoMixin<OmnifuzzPass> {
  private:
   bool initialize(Module&);
   void instrumentBasicBlockAssembly(BasicBlock& BB);
+  void instrumentEmbeddedForkserver(BasicBlock* BB,
+                                    BasicBlock* SuccessBB, 
+                                    BasicBlock* RetBB);
   std::unique_ptr<omnifuzz::FeedbackMechanism> fdbk_mech_;
+
+  GlobalVariable* InitGV;
+  GlobalVariable* FailGV; 
+  GlobalVariable* ShmPtrGV; 
+  // Value* InitForksrvFunc;
 };
 
 } // namespace llvm
