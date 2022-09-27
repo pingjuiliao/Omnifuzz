@@ -7,6 +7,7 @@
 #include <sys/time.h>
 #include <sys/types.h>
 #include <sys/resource.h>
+#include <sys/wait.h>
 #include <unistd.h>
 
 #include <cstdint>
@@ -56,7 +57,7 @@ class Forkserver {
  public:
   inline static int testing_shm_id;
   static void SendInitResponse(int response_fd);
-  static bool ReceiveClientRegistration(int request_fd);
+  static bool ReceiveClientRequest(int request_fd);
   static bool ServeRequest(int request_fd, int response_fd);
 };
 

@@ -8,7 +8,7 @@
 #include "omnifuzz/feedback/feedback_mechanism.h"
 #include "omnifuzz/feedback/fuzz_score.h"
 
-const size_t kNumRequest = 50;
+const size_t kNumRequest = 5;
 std::string instance = "./fsrv_instance.exe";
 
 class DummyFeedbackMechanism : public omnifuzz::FeedbackMechanism {
@@ -16,7 +16,7 @@ class DummyFeedbackMechanism : public omnifuzz::FeedbackMechanism {
   DummyFeedbackMechanism() {}
   virtual ~DummyFeedbackMechanism() {}
   virtual size_t RegisterFeedbackData(void) override {
-    return 20; 
+    return 100; 
   }
   virtual void RegisterExecutionVariable(void) override {}
   virtual omnifuzz::FuzzScore DeemInteresting(void* p) override {

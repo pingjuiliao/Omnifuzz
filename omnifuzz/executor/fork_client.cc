@@ -40,26 +40,25 @@ void ForkClient::Connect(Forkserver* fsrv) {
   #endif
   }
 
-  // Tell Server we are ready
-  status = 1;
-  write(request_fd_, &status, sizeof(int));
 }
 
 void ForkClient::SendRequest(void) {
   if (!fsrv_) 
     return;
   int code = 2020;
-  int res;
+  int pid;
+  int status;
   
   if (write(request_fd_, &code, sizeof(int)) < 4) {
     std::cerr << "[Client] unable to write to request pipe" << std::endl;
     return;
   }
   
+  read(response_fd_, &pid, 4);
+  std::cout << "[Client] Pid received: knowing " << pid << " is executing."
+            << std::endl;
 
-  read(response_fd_, &res, 4);
-  if (res == code) {
-    std::cout << "[Client] Response received!" << std::endl;
-  }
+  read(response_fd_, &status, 4);
+  std::cout << "[Client] Pid exited: exit code:" << status << std::endl;
 }
 } // namespace omnifuzz

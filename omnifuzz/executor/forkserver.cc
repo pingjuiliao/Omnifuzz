@@ -105,38 +105,36 @@ void Forkserver::SendInitResponse(int response_fd) {
   }
 }
 
-bool Forkserver::ReceiveClientRegistration(int request_fd) {
+bool Forkserver::ReceiveClientRequest(int request_fd) {
   int status = 0;
+  // Commanding pipe
   read(request_fd, &status, 4);
   if (!status) {
-    std::cout << "[ERROR] Cannot Receive Client registration" << std::endl;
+    std::cout << "[ERROR] Cannot Receive Client request" << std::endl;
     return false;
   }
-  std::cout << "[Server] Client Registration works" << std::endl;
   return true;
 }
 
 bool Forkserver::ServeRequest(int request_fd, int response_fd) {
-  static size_t i = 0;
-  const char* message = "Hello";
-  uint32_t buf;
-  if (read(request_fd, &buf, 4) < 4) {
-    std::cerr << "[ERROR] Failed on read()" 
-              << " (or there are no more requests)" << std::endl;
-    return false;
+  pid_t child_pid;
+  int status;
+  child_pid = fork();
+  if (child_pid < 0) {
+    std::cerr << "[ERROR] Failed on fork()" << std::endl;
+    exit(-1);
   }
 
-  // This std::cout part should be the real execution of program under test.
-  std::cout << "[Server] Hello, I am forkserver" << std::endl;
-  std::cout << "[Server] Executing, executing, executing" << std::endl;
-  char* p = (char *) shmat(testing_shm_id, NULL, 0);
-  if (!p) {
-    std::cerr << "[ERROR] Failed on shmat()" << std::endl; 
+  if (!child_pid) {
+    char* buf = (char *) shmat(testing_shm_id, NULL, 0);
+    sleep(3);
+    sprintf(buf, "Hello, I am a forked instance.");
+    exit(0);
   }
-  memset(p, message[i++ % strlen(message)], 10);
-  p[10] = '\0';
-  
-  write(response_fd, &buf, 4);
+   
+  write(response_fd, &child_pid, 4);
+  waitpid(child_pid, &status, WIFEXITED(WNOHANG));
+  write(response_fd, &status, 4);
   return true;
 }
 
