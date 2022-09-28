@@ -101,17 +101,16 @@ void OmnifuzzPass::instrumentEmbeddedForkserver(BasicBlock* BB,
   FunctionCallee CloseFunc = M->getOrInsertFunction("close", FunctionType::get(Int32Ty, {Int32Ty}, false));
   FunctionCallee ExitFunc = M->getOrInsertFunction("exit", FunctionType::get(Type::getVoidTy(C), {Int32Ty}, false));
   FunctionCallee ForkFunc = M->getOrInsertFunction("fork", FunctionType::get(Int32Ty, {}, false));
-  FunctionCallee PutsFunc = M->getOrInsertFunction("puts", FunctionType::get(Int32Ty, {Ptr8Ty}, false));
+  FunctionCallee PrintfFunc = M->getOrInsertFunction("printf", FunctionType::get(Int32Ty, {Ptr8Ty}, true));
   FunctionCallee ReadFunc = M->getOrInsertFunction("read", FunctionType::get(Int32Ty, {Int32Ty, Ptr8Ty, Int32Ty}, false));
   FunctionCallee ShmatFunc = M->getOrInsertFunction("shmat", FunctionType::get(Ptr8Ty, {Int32Ty, Ptr8Ty, Int32Ty}, false));
   FunctionCallee WaitpidFunc = M->getOrInsertFunction("waitpid", FunctionType::get(Int32Ty, {Int32Ty, PointerType::get(Int32Ty, 0), Int32Ty}, false));
   FunctionCallee WriteFunc = M->getOrInsertFunction("write", FunctionType::get(Int32Ty, {Int32Ty, Ptr8Ty, Int32Ty}, false));
-  
-  // Basicblock spliting
-  // FailChkBB ---> GetenvBB ---> ForksrvInitBB ---> ForksrvParentBB ---> 
-  //  |
-  //  v
-  // AbortBB
+#ifdef OMNIFUZZ_DEBUG
+  FunctionCallee GetpidFunc = M->getOrInsertFunction("getpid", FunctionType::get(Int32Ty, {}, false));
+#endif
+
+  // Basic blocks splitting
   BasicBlock* FailChkBB = BB;
   BasicBlock* GetenvBB = BB->splitBasicBlock(BB->getTerminator(), "__omnifuzz_getenv_shm");
   BasicBlock* ForksrvInitBB = GetenvBB->splitBasicBlock(GetenvBB->getTerminator(), 
@@ -150,16 +149,23 @@ void OmnifuzzPass::instrumentEmbeddedForkserver(BasicBlock* BB,
   Value* ShmatRetVal = ForksrvInitIRB.CreateCall(ShmatFunc, {AtoiRetVal, NullPtr8, ForksrvInitIRB.getInt32(0)});
   ForksrvInitIRB.CreateStore(ShmatRetVal, ShmPtrGV);
   Value* InitStr = ForksrvInitIRB.CreateGlobalStringPtr("init");
-  Value* WriteInitCodeCall = ForksrvInitIRB.CreateCall(WriteFunc, {ForksrvInitIRB.getInt32(21), InitStr, ForksrvInitIRB.getInt32(4)});
+  Value* WriteInitCodeCall = ForksrvInitIRB.CreateCall(WriteFunc, {ForksrvInitIRB.getInt32(22), InitStr, ForksrvInitIRB.getInt32(4)});
   Value* WriteInitCodeRetVal = ForksrvInitIRB.CreateICmpUGE(WriteInitCodeCall, ForksrvInitIRB.getInt32(4));
   ForksrvInitIRB.CreateCondBr(WriteInitCodeRetVal, ForksrvWaitBB, AbortBB);
   ForksrvInitBB->getTerminator()->eraseFromParent();
   
   // ForksrvWait: The start of the forkserver main loop
   IRBuilder<> ForksrvWaitIRB(ForksrvWaitBB->getTerminator());
+#ifdef OMNIFUZZ_DEBUG
+  // check if the server loop works perfectly
+  Value* CallGetpid = ForksrvWaitIRB.CreateCall(GetpidFunc, {});
+  Value* FormatStr = ForksrvWaitIRB.CreateGlobalStringPtr("ServerPID: %d\n");
+  ForksrvWaitIRB.CreateCall(PrintfFunc, {FormatStr, CallGetpid});
+#endif
   AllocaInst* PidAlloca = ForksrvWaitIRB.CreateAlloca(Int32Ty);
-  Value* InitGVBitCast = ForksrvWaitIRB.CreateBitCast(InitGV, Ptr8Ty);
-  ForksrvWaitIRB.CreateCall(ReadFunc, {ForksrvInitIRB.getInt32(22), InitGVBitCast, ForksrvInitIRB.getInt32(4)});
+  AllocaInst* RequestCodeAlloca = ForksrvWaitIRB.CreateAlloca(Int32Ty);
+  Value* InitGVBitCast = ForksrvWaitIRB.CreateBitCast(RequestCodeAlloca, Ptr8Ty);
+  ForksrvWaitIRB.CreateCall(ReadFunc, {ForksrvInitIRB.getInt32(21), InitGVBitCast, ForksrvInitIRB.getInt32(4)});
   Value* ForkRetVal = ForksrvWaitIRB.CreateCall(ForkFunc, {});
   ForksrvWaitIRB.CreateStore(ForkRetVal, PidAlloca); 
   Value* ForkFailed = ForksrvWaitIRB.CreateICmpSLT(ForkRetVal, ForksrvWaitIRB.getInt32(0)); 
@@ -169,12 +175,12 @@ void OmnifuzzPass::instrumentEmbeddedForkserver(BasicBlock* BB,
   // ForksrvExit: if (pid < 0)
   IRBuilder<> ForksrvExitIRB(ForksrvExitBB->getTerminator());
   Constant* ExitMessage = ForksrvExitIRB.CreateGlobalStringPtr("Failed on fork()\n");
-  ForksrvExitIRB.CreateCall(PutsFunc, {ExitMessage});
+  ForksrvExitIRB.CreateCall(PrintfFunc, {ExitMessage});
   ForksrvExitIRB.CreateCall(ExitFunc, {ForksrvExitIRB.getInt32(-1)}); 
   ForksrvExitIRB.CreateUnreachable();
   ForksrvExitBB->getTerminator()->eraseFromParent();
 
-  // ForksrvSplit: determine whether (pid == 0) or (pid == child_pid)
+  // ForksrvSplit: split child/parent
   IRBuilder<> ForksrvSplitIRB(ForksrvSplitBB->getTerminator());
   Value* ForkPidIsParent = ForksrvSplitIRB.CreateICmpNE(ForkRetVal, ForksrvSplitIRB.getInt32(0));
   ForksrvSplitIRB.CreateCondBr(ForkPidIsParent, ForksrvParentBB, ForksrvResumeBB);
@@ -195,8 +201,12 @@ void OmnifuzzPass::instrumentEmbeddedForkserver(BasicBlock* BB,
   
   // ForksrvResume (ForksrvChild)
   IRBuilder<> ForksrvResumeIRB(ForksrvResumeBB->getTerminator());
+#ifdef OMNIFUZZ_DEBUG
+  Value* Flag = ForksrvResumeIRB.CreateGlobalStringPtr("__omnifuzz_forksrv_resume"); 
+  ForksrvResumeIRB.CreateCall(PrintfFunc, {Flag});
+#endif
   ForksrvResumeIRB.CreateCall(CloseFunc, {ForksrvResumeIRB.getInt32(21)});
-  ForksrvResumeIRB.CreateCall(CloseFunc, {ForksrvResumeIRB.getInt32(21)});
+  ForksrvResumeIRB.CreateCall(CloseFunc, {ForksrvResumeIRB.getInt32(22)});
   ForksrvResumeIRB.CreateBr(UpdateBB);
   ForksrvResumeBB->getTerminator()->eraseFromParent(); 
 
@@ -239,6 +249,12 @@ void OmnifuzzPass::instrumentBasicBlockAssembly(BasicBlock& BB) {
   // update BB
   IRBuilder<> UpdateIRB(UpdateBB->getTerminator());
   std::string AsmStr;
+#ifdef OMNIFUZZ_DEBUG
+  IntegerType *Int32Ty = IntegerType::getInt32Ty(C);
+  FunctionCallee PutsFunc = BB.getModule()->getOrInsertFunction("puts", FunctionType::get(Int32Ty, {Ptr8Ty}, false));
+  Value* Flag = UpdateIRB.CreateGlobalStringPtr("__omnifuzz_update");
+  UpdateIRB.CreateCall(PutsFunc, {Flag});
+#endif
   fdbk_mech_->WriteOnBasicBlock(AsmStr);
   InlineAsm *BlockAsm = InlineAsm::get(
       FunctionType::get(UpdateIRB.getVoidTy(), {}, false), AsmStr, 

@@ -25,7 +25,7 @@ void Fuzzer::Run(void) {
     while (mutator_.Mutate(buf, testcase.size) != 
            omnifuzz::MutationResult::kCycleDone) {
       
-      executor_.ExecuteWithInput(buf);
+      executor_.Execute(buf);
       shm_feedback = executor_.DumpFeedback();
 
       if (executor_->CaptureCrash()) {

@@ -1,6 +1,9 @@
 #ifndef OMNIFUZZ_FEEDBACK_DEBUG_FEEDBACK_MECHANISM_H
 #define OMNIFUZZ_FEEDBACK_DEBUG_FEEDBACK_MECHANISM_H
 
+#include <string>
+#include <sstream>
+
 #include "omnifuzz/feedback/feedback_mechanism.h"
 #include "omnifuzz/feedback/fuzz_score.h"
 

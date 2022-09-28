@@ -7,7 +7,7 @@ CLANG=$(ROOT)/build/llvm-project/llvm/bin/clang
 CLANGXX=$(ROOT)/build/llvm-project/llvm/bin/clang++
 OPT=$(ROOT)/build/llvm-project/llvm/bin/opt
 
-CXXFLAGS=-I$(ROOT) -std=c++17
+CXXFLAGS=-I$(ROOT) -std=c++17 -g
 
 
 all: fsrv_exec_test embedded
