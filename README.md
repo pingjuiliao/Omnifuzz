@@ -1,11 +1,8 @@
 # Omnifuzz
-fuzzing framework?
+Design fuzzers in object-oriented fashion
 
 ## Ideas and Goals
 
-- Practice C++ & its code style
-- Practice OOP design pattern
-- Practice CMake
 - Fuzzer extension should be easier
 ```
 // Not real code, 
@@ -23,8 +20,11 @@ class AflFast : public Afl {
     fuzzer_.scheduler_ = new MarkovChainScheduler();
   }
 };
-
 ```
+
+- Practice C++ & its code style
+- Practice OOP design pattern
+- Practice CMake
 - Hopefully, serves as a standard?
 
 
