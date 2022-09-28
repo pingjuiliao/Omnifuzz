@@ -13,6 +13,7 @@ const size_t kNumRequest = 5;
 std::string instance = "./fsrv_instance.exe";
 
 int main(int argc, char** argv) {
+  char hello[] = "hello";
   omnifuzz::DebugFeedbackMechanism* fdbk = new omnifuzz::DebugFeedbackMechanism;
   omnifuzz::ForkServerExecutor executor;
   if (std::filesystem::exists("./.cur_input")) {
@@ -30,7 +31,7 @@ int main(int argc, char** argv) {
   
   executor.Initialize(v_argv, fdbk);
   for (size_t i = 0; i < kNumRequest; ++i) {
-    executor.Execute();
+    executor.Execute(hello, strlen(hello));
     void* p = executor.DumpFeedbackData();
     std::cout << "[Result] " << reinterpret_cast<char *>(p) << std::endl \
               << "[Message] feedback gained, cycle Completed" << std::endl \

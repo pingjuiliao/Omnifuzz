@@ -20,13 +20,14 @@ class Fuzzer {
 
  protected:
   // Assemble fuzzer parts to determine fuzzing.
-  virtual void Configure(void);
+  virtual void Configure(void) = 0;
 
   // Fuzzer parts, most of them are must-have.
+  TestcaseFileManager* test_file_manager_;
   Instrumentator* instrumentator_;
   MutatorComposite* mutator_;
   Executor* executor_;
-  FeedbackMechanism *fdbk_mech_;
+  FeedbackMechanism* fdbk_mech_;
 };
 
 } // namespace omnifuzz

@@ -24,7 +24,7 @@ class ForkServerExecutor: public Executor {
   virtual bool Initialize(char**, FeedbackMechanism*) override;
   virtual bool Initialize(std::vector<std::string>,
                           FeedbackMechanism*) override;
-  virtual void Execute(void) override;
+  virtual void Execute(char*, size_t) override;
  private:
   Forkserver* fsrv_;
   ForkClient* fclnt_;

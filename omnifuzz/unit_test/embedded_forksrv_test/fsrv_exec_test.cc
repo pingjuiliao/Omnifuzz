@@ -1,5 +1,6 @@
 #include <string.h>
 
+#include <cstdlib>
 #include <filesystem>
 #include <iostream>
 #include <string>
@@ -12,7 +13,20 @@
 const size_t kNumRequest = 5;
 std::string instance = "./embedded.exe";
 
+const char* inputs[] = {
+  "hello", 
+  "pingjui",
+  "oregon state university", 
+  "I like cold brew",
+  "omnifuzz"
+};
+
+
 int main(int argc, char** argv) {
+  
+  char buf[0x200];
+  memset(buf, 0, sizeof(buf));
+  
   omnifuzz::DebugFeedbackMechanism* fdbk = new omnifuzz::DebugFeedbackMechanism;
   omnifuzz::ForkServerExecutor executor;
   if (std::filesystem::exists("./.cur_input")) {
@@ -29,7 +43,9 @@ int main(int argc, char** argv) {
   
   executor.Initialize(v_argv, fdbk);
   for (size_t i = 0; i < kNumRequest; ++i) {
-    executor.Execute();
+    memset(buf, 0, sizeof(buf));
+    strcpy(buf, inputs[i]);
+    executor.Execute(buf, strlen(buf));
     void* p = executor.DumpFeedbackData();
     std::cout << "[Result] " << reinterpret_cast<char *>(p) << std::endl \
               << "[Message] feedback gained, cycle Completed" << std::endl \
