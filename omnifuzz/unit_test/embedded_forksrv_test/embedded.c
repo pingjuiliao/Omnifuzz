@@ -10,9 +10,8 @@ main(int argc, char** argv) {
   if (r == 0) 
     exit(-1);
   buf[r] = '\0';
-  // FILE* fp = fopen("./tmp", "w+");
 
-  // fprintf(fp, "[Program]: %s\n", buf);
+  printf("[Program]: %s\n", buf);
   if (buf[0] == 'h')
     if (buf[1] == 'e')
       if (buf[2] == 'l')

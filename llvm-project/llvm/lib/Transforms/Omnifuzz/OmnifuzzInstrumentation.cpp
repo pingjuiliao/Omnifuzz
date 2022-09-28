@@ -112,20 +112,20 @@ void OmnifuzzPass::instrumentEmbeddedForkserver(BasicBlock* BB,
 
   // Basic blocks splitting
   BasicBlock* FailChkBB = BB;
-  BasicBlock* GetenvBB = BB->splitBasicBlock(BB->getTerminator(), "__omnifuzz_getenv_shm");
-  BasicBlock* ForksrvInitBB = GetenvBB->splitBasicBlock(GetenvBB->getTerminator(), 
+  BasicBlock* GetenvBB = BB->splitBasicBlock(BB->getFirstInsertionPt(), "__omnifuzz_getenv_shm");
+  BasicBlock* ForksrvInitBB = GetenvBB->splitBasicBlock(GetenvBB->getFirstInsertionPt(), 
                                                         "__omnifuzz_forksrv_init");
-  BasicBlock* ForksrvWaitBB = ForksrvInitBB->splitBasicBlock(ForksrvInitBB->getTerminator(), 
+  BasicBlock* ForksrvWaitBB = ForksrvInitBB->splitBasicBlock(ForksrvInitBB->getFirstInsertionPt(), 
                                                         "__omnifuzz_forksrv_wait");
-  BasicBlock* ForksrvExitBB = ForksrvWaitBB->splitBasicBlock(ForksrvWaitBB->getTerminator(), 
+  BasicBlock* ForksrvExitBB = ForksrvWaitBB->splitBasicBlock(ForksrvWaitBB->getFirstInsertionPt(), 
                                                         "__omnifuzz_forksrv_exit");
-  BasicBlock* ForksrvSplitBB = ForksrvExitBB->splitBasicBlock(ForksrvExitBB->getTerminator(), 
+  BasicBlock* ForksrvSplitBB = ForksrvExitBB->splitBasicBlock(ForksrvExitBB->getFirstInsertionPt(), 
                                                         "__omnifuzz_forksrv_split");
-  BasicBlock* ForksrvParentBB = ForksrvSplitBB->splitBasicBlock(ForksrvSplitBB->getTerminator(), 
+  BasicBlock* ForksrvParentBB = ForksrvSplitBB->splitBasicBlock(ForksrvSplitBB->getFirstInsertionPt(), 
                                                         "__omnifuzz_forksrv_parent");
-  BasicBlock* ForksrvResumeBB = ForksrvParentBB->splitBasicBlock(ForksrvParentBB->getTerminator(), 
+  BasicBlock* ForksrvResumeBB = ForksrvParentBB->splitBasicBlock(ForksrvParentBB->getFirstInsertionPt(), 
                                                         "__omnifuzz_forksrv_resume");
-  BasicBlock* AbortBB = ForksrvResumeBB->splitBasicBlock(ForksrvResumeBB->getTerminator(), 
+  BasicBlock* AbortBB = ForksrvResumeBB->splitBasicBlock(ForksrvResumeBB->getFirstInsertionPt(), 
                                                          "__omnifuzz_forksrv_wait");
   
   // If failure flag is on, return to normal execution
@@ -229,11 +229,11 @@ void OmnifuzzPass::instrumentBasicBlockAssembly(BasicBlock& BB) {
 
   // split basicblocks
   BasicBlock* CheckBB = &BB;
-  BasicBlock* SetupBB = CheckBB->splitBasicBlock(CheckBB->getTerminator(), 
+  BasicBlock* SetupBB = CheckBB->splitBasicBlock(CheckBB->getFirstInsertionPt(), 
                             "__omnifuzz_SetupBB");
-  BasicBlock* UpdateBB = SetupBB->splitBasicBlock(SetupBB->getTerminator(), 
+  BasicBlock* UpdateBB = SetupBB->splitBasicBlock(SetupBB->getFirstInsertionPt(), 
                             "__omnifuzz_UpdateBB");
-  BasicBlock* RetBB = UpdateBB->splitBasicBlock(UpdateBB->getTerminator(), 
+  BasicBlock* RetBB = UpdateBB->splitBasicBlock(UpdateBB->getFirstInsertionPt(), 
                             "__omnifuzz_RetBB");
   
   // Check if SHM pointer exists.
