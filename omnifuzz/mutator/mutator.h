@@ -32,7 +32,7 @@ class Mutator {
   virtual void AddMutator(Mutator*) {}
   
   // Mutation, true on Success.
-  virtual MutationResult Mutate(uint8_t*, size_t) = 0;
+  virtual MutationResult Mutate(uint8_t*, size_t&) = 0;
  protected:
   virtual uint32_t GetGranularitySize(MutationGranularity);
 };
@@ -42,7 +42,7 @@ class MutatorComposite : public Mutator {
   MutatorComposite();
   virtual ~MutatorComposite();
   virtual void AddMutator(Mutator*) override;
-  virtual MutationResult Mutate(uint8_t*, size_t) override;
+  virtual MutationResult Mutate(uint8_t*, size_t&) override;
  private:
   std::list<Mutator*> mutators_;
   std::list<Mutator*>::iterator iterator_;

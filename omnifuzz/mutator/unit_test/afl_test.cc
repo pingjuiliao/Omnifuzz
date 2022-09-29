@@ -7,11 +7,11 @@
 
 #include "../afl_mutator.h"
 // An odd number is more likely to break things.
-const size_t kBufSize = 11;
+size_t kBufSize = 11;
 const size_t kNumBuffer = 2;
 const uint8_t buf_memset[kNumBuffer] = {0x00, 0xff};
 int main(int argc, char** argv) {
-  uint8_t buf[kBufSize];
+  uint8_t *buf = (uint8_t *) malloc(kBufSize);
   omnifuzz::AflMutator mutator;
 
   for (int n = 0; n < kNumBuffer; ++n) {

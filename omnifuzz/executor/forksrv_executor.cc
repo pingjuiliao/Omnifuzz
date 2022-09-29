@@ -83,10 +83,13 @@ bool ForkServerExecutor::Initialize(std::vector<std::string> argv,
   return result;
 }
 
+bool ForkServerExecutor::CaptureCrash(void) {
+  return fclnt_->ReportFault() == Fault::kCrash;
+}
 
-void ForkServerExecutor::Execute(char* buf, size_t size) {
+void ForkServerExecutor::Execute(uint8_t* buf, size_t size) {
   lseek(fd_.out_file, 0, SEEK_SET);
-  write(fd_.out_file, buf, size);
+  write(fd_.out_file, (char *)buf, size);
   ftruncate(fd_.out_file, size);
   lseek(fd_.out_file, 0, SEEK_SET);
   fclnt_->SendRequest();

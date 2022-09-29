@@ -16,21 +16,24 @@
 
 #include "omnifuzz/executor/executor.h"
 #include "omnifuzz/executor/forkserver.h"
+#include "omnifuzz/executor/fault.h"
 
 namespace omnifuzz {
 
 class ForkClient final {
  public:
-  ForkClient(): fsrv_(nullptr) {}; 
+  ForkClient(): fsrv_(nullptr), curr_exit_status_(0) {}; 
   ~ForkClient();
   void Connect(Forkserver*);
   void SendRequest(void);
+  Fault ReportFault(void);
  private:
   pid_t pid_;
   int request_fd_;
   int response_fd_;
   Forkserver* fsrv_;
   CommonFD common_fd_;
+  int curr_exit_status_;
 };
 
 } // namespace omnifuzz

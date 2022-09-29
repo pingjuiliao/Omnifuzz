@@ -1,6 +1,7 @@
 #ifndef OMNIFUZZ_SCHEDULER_LIST_SCHEDULER_H
 #define OMNIFUZZ_SCHEDULER_LIST_SCHEDULER_H
 
+#include <cstdint>
 #include <list>
 
 #include "omnifuzz/scheduler/scheduler.h"
@@ -12,10 +13,11 @@ class ListScheduler : public Scheduler {
  public:
   ListScheduler();
   virtual ~ListScheduler();
-  virtual void Append(Testcase) override;
-  virtual Testcase* Top(void) override;
+  virtual void Enqueue(Testcase) override;
+  virtual Testcase* Dequeue(void) override;
  private:
   std::list<Testcase> list_;
+  uint64_t max_generation_;
 };
 
 } // namespace omnifuzz

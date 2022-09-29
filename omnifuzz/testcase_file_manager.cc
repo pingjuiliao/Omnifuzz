@@ -35,23 +35,23 @@ bool TestcaseFileManager::BuildDirectoryTree(std::string root_dir) {
 } 
 
 // Make a crash report
-void TestcaseFileManager::CreateCrashReport(char* buf, size_t size) {
+void TestcaseFileManager::CreateCrashReport(uint8_t* buf, size_t size) {
   static uint32_t crash_count = 0;
   std::ofstream ofs;
   std::string file_name = "/id_" + std::to_string(crash_count++);
   ofs.open(out_dir_->testcase_dir + file_name);
-  ofs.write(buf, size); 
+  ofs.write((char *)buf, size); 
   ofs.close();
 }
 
 // 
 void TestcaseFileManager::CreateTestcaseFile(Testcase &testcase, 
-                                             char* buf, size_t size) {
+                                             uint8_t* buf, size_t size) {
   std::ofstream ofs;
   std::string file_name = NameTestcase();
   testcase.file_name = file_name.c_str();
   ofs.open(file_name);
-  ofs.write(buf, size);
+  ofs.write((char *)buf, size);
   ofs.close();
 }
 
@@ -96,5 +96,17 @@ bool TestcaseFileManager::LoadSeedTestcaseFiles(Scheduler* scheduler,
   return true;
 }
 
+uint8_t* TestcaseFileManager::LoadToBuffer(Testcase* testcase) {
+  uint8_t* buffer = new uint8_t[testcase->size * 2];
+  std::ifstream ifs;
+  ifs.open(testcase->file_name);
+  memset(buffer, 0, sizeof(buffer));
+  ifs.read((char *) buffer, testcase->size);
+  ifs.close();
+}
+
+void TestcaseFileManager::Unload(uint8_t* buffer) {
+  delete[] buffer;
+}
 
 } // namespace omnifuzz

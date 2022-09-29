@@ -18,7 +18,7 @@ Executor::~Executor() {
 
 bool Executor::Initialize(char** argv, 
                           FeedbackMechanism* fdbk_mech) {
-  if (!fdbk_mech || !argv) {
+  if (!argv) {
     return false;
   }
   fdbk_mech_ = fdbk_mech;

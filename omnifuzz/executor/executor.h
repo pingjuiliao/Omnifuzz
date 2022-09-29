@@ -23,8 +23,9 @@ class Executor {
   // load up executable in constructor
   virtual bool Initialize(std::vector<std::string>, 
                           FeedbackMechanism*) = 0;
-  virtual void Execute(char*, size_t) = 0;
+  virtual void Execute(uint8_t*, size_t) = 0;
   virtual void AllocateFeedbackData(void);
+  virtual bool CaptureCrash(void) = 0;
   virtual void* DumpFeedbackData(void);
   const char* kShmEnv = "OMNIFUZZ_SHM_ENV";
  protected:

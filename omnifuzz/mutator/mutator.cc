@@ -47,9 +47,9 @@ void MutatorComposite::AddMutator(Mutator* mutator) {
 }
 
 
-MutationResult MutatorComposite::Mutate(uint8_t* data, size_t len) {
+MutationResult MutatorComposite::Mutate(uint8_t* data, size_t& size) {
 
-  if (!data || !len) {
+  if (!data || !size) {
     return MutationResult::kInvalidBuffer;
   }
 
@@ -60,7 +60,7 @@ MutationResult MutatorComposite::Mutate(uint8_t* data, size_t len) {
       iterator_ = mutators_.begin();
     }
 
-    MutationResult result = (*iterator_)->Mutate(data, len);
+    MutationResult result = (*iterator_)->Mutate(data, size);
     if (result == MutationResult::kSuccess) {
       break;
     } else if (result == MutationResult::kCycleDone) {

@@ -2,42 +2,50 @@
 
 namespace omnifuzz {
 
-uintptr_t *shm_feedback;
-void Fuzzer::CompileAndFuzzCycle(void) {
-  bool r = instrumentator_.Instrument();
-  while (r) {
-    Run();
+void Fuzzer::LoadSeed(std::string seed_dir) {
+  if (!configured_) {
+    std::cerr << "Ambiguous fuzzer" << std::endl;
+    return;
   }
+  testcase_file_manager_.LoadSeedTestcaseFiles(scheduler_, seed_dir);
 }
 
 void Fuzzer::Prepare(char** argv) {
-  executor_->Initialize(argv);
-  testcase_file_manager_->BuildDirectoryTree();
+  if (!configured_) {
+    std::cerr << "Ambiguous fuzzer" << std::endl;
+    return;
+  }
+  executor_->Initialize(argv, fdbk_mech_);
+  testcase_file_manager_.BuildDirectoryTree();
+  ready_ = true;
 }
 
 void Fuzzer::Run(void) {
-  Testcase* curr_testcase;
+  Testcase* testcase;
   void* shm_feedback;
 
-  while (1) {
-    curr_testcase = scheduler_.Dequeue();
-     
-    while (mutator_.Mutate(buf, testcase.size) != 
-           omnifuzz::MutationResult::kCycleDone) {
+  while (testcase = scheduler_->Dequeue()) {
+    
+    uint8_t* buf = testcase_file_manager_.LoadToBuffer(testcase);
+    size_t size = testcase->size;
+    while (mutator_->Mutate(buf, size) != 
+           MutationResult::kCycleDone) {
       
-      executor_.Execute(buf, testcase.size);
-      shm_feedback = executor_.DumpFeedback();
+      executor_->Execute(buf, size);
+      shm_feedback = executor_->DumpFeedbackData();
 
       if (executor_->CaptureCrash()) {
-        testcase_file_manager_.CreateCrashReport();
+        testcase_file_manager_.CreateCrashReport(buf, size);
       } 
       if (fdbk_mech_->DeemInteresting(shm_feedback)) {
-        Testcase new_testcase = new Testcase();
-        new_testcase.generation = curr_testcase->generation + 1;
-        testcase_file_manager_.CreateTestcaseFile(new_testcase);
-        scheduler_.Enqueue(new_testcase);
+        Testcase new_testcase;
+        new_testcase.size = size;
+        new_testcase.generation = testcase->generation + 1;
+        testcase_file_manager_.CreateTestcaseFile(new_testcase, buf, size);
+        scheduler_->Enqueue(new_testcase);
       }
     } 
+    testcase_file_manager_.Unload(buf);
   }
 }
 

@@ -12,13 +12,13 @@ BitFlipMutator::BitFlipMutator(MutationGranularity g) {
 
 BitFlipMutator::~BitFlipMutator() {}
 
-MutationResult BitFlipMutator::Mutate(uint8_t* data, size_t len) {
-  const size_t len_in_bits = len << 3;
+MutationResult BitFlipMutator::Mutate(uint8_t* data, size_t& size) {
+  const size_t size_in_bits = size << 3;
 
   // if the mutator has reach the very last step of its cycle
-  if (bit_index_start_ + num_bits_ > len_in_bits) {
+  if (bit_index_start_ + num_bits_ > size_in_bits) {
     for (int i = 0; i < num_bits_; ++i) {
-      BitFlip(data, len_in_bits-1-i);
+      BitFlip(data, size_in_bits-1-i);
     }
     bit_index_start_ = 0;
     return MutationResult::kCycleDone;

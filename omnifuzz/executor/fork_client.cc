@@ -54,11 +54,27 @@ void ForkClient::SendRequest(void) {
     return;
   }
   
-  read(response_fd_, &pid, 4);
+  if (read(response_fd_, &pid, 4) < 4) {
+    std::cerr << "[Client] unable to read the \"pid\" response" << std::endl;
+    return;
+  }
   std::cout << "[Client] Pid received: knowing " << pid << " is executing."
             << std::endl;
 
-  read(response_fd_, &status, 4);
+  if (read(response_fd_, &status, 4) < 4) {
+    std::cerr << "[Client] unable to read the \"status\" response" << std::endl;
+    return;
+  }
   std::cout << "[Client] Pid exited: exit code:" << status << std::endl;
 }
+
+Fault ForkClient::ReportFault(void) {
+  if (!curr_exit_status_) {
+    return Fault::kNone;
+  }
+  if (WIFSIGNALED(curr_exit_status_)) {
+    return Fault::kCrash;
+  }
+}
+
 } // namespace omnifuzz

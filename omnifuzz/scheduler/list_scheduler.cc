@@ -5,7 +5,6 @@ namespace omnifuzz {
 
 ListScheduler::ListScheduler() {
   max_generation_ = 0;
-
 }
 
 ListScheduler::~ListScheduler() {
@@ -22,11 +21,14 @@ void ListScheduler::Enqueue(Testcase testcase) {
 }
 
 // ListScheduler keep all the testcases
-Testcase* ListSchduler::Dequeue(void) {
-  Testcase* testcase = &(list_->back());
-  testcase_->is_fuzzed = true;
-  testcase_->favored = false;
-  return testcase;
+Testcase* ListScheduler::Dequeue(void) {
+  std::list<Testcase>::iterator it = list_.begin();
+  while (it != list_.end()) {
+    if (!it->fuzzed) {
+      return &(*it);
+    }
+  }
+  return nullptr;
 }
 
 } // namespace omnifuzz

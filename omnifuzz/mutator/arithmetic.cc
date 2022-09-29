@@ -13,27 +13,27 @@ ArithmeticMutator::ArithmeticMutator(MutationGranularity g) {
 
 ArithmeticMutator::~ArithmeticMutator() {}
 
-MutationResult ArithmeticMutator::Mutate(uint8_t* data, size_t len) {
+MutationResult ArithmeticMutator::Mutate(uint8_t* data, size_t& size) {
   MutationResult result;
 
   switch (num_bytes_) {
     case 1:
-      result = MutateAndIterate(data, len);
+      result = MutateAndIterate(data, size);
       break;
     case 2:
-      if (len < 2)
+      if (size < 2)
         break;
-      result = MutateAndIterate(reinterpret_cast<uint16_t*>(data), len);
+      result = MutateAndIterate(reinterpret_cast<uint16_t*>(data), size);
       break;
     case 4:
-      if (len < 4)
+      if (size < 4)
         break;
-      result = MutateAndIterate(reinterpret_cast<uint32_t*>(data), len);
+      result = MutateAndIterate(reinterpret_cast<uint32_t*>(data), size);
       break;
     case 8:
-      if (len < 8)
+      if (size < 8)
         break;
-      result = MutateAndIterate(reinterpret_cast<uint64_t*>(data), len);
+      result = MutateAndIterate(reinterpret_cast<uint64_t*>(data), size);
       break;
     default:
       return MutationResult::kAbort;
@@ -44,7 +44,7 @@ MutationResult ArithmeticMutator::Mutate(uint8_t* data, size_t len) {
 
 // TODO: Support big endian
 template <typename T>
-MutationResult ArithmeticMutator::MutateAndIterate(T* buf, size_t len) {
+MutationResult ArithmeticMutator::MutateAndIterate(T* buf, size_t size) {
   static T original;
   static T num = 1;
   static bool positive = true;
@@ -53,7 +53,7 @@ MutationResult ArithmeticMutator::MutateAndIterate(T* buf, size_t len) {
   // mutating new testcase
   if (!ptr_start_) {
     ptr_start_ = reinterpret_cast<uint8_t*>(buf);
-    ptr_end_ = ptr_start_ + len;
+    ptr_end_ = ptr_start_ + size;
     window = buf;
     original = *window;
   } else {

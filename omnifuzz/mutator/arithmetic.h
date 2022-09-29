@@ -11,7 +11,7 @@ class ArithmeticMutator : public Mutator {
  public:
   ArithmeticMutator(MutationGranularity);
   virtual ~ArithmeticMutator();
-  virtual MutationResult Mutate(uint8_t*, size_t) override;
+  virtual MutationResult Mutate(uint8_t*, size_t&) override;
  protected:
   template <typename T>
   MutationResult MutateAndIterate(T*, size_t);

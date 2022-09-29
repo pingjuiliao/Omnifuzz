@@ -6,6 +6,7 @@
 #include <vector>
 
 #include "omnifuzz/executor/executor.h"
+#include "omnifuzz/executor/fault.h"
 #include "omnifuzz/executor/file_descriptor.h"
 #include "omnifuzz/executor/forkserver.h"
 #include "omnifuzz/executor/fork_client.h"
@@ -24,11 +25,13 @@ class ForkServerExecutor: public Executor {
   virtual bool Initialize(char**, FeedbackMechanism*) override;
   virtual bool Initialize(std::vector<std::string>,
                           FeedbackMechanism*) override;
-  virtual void Execute(char*, size_t) override;
+  virtual bool CaptureCrash(void) override;
+  virtual void Execute(uint8_t*, size_t) override;
  private:
   Forkserver* fsrv_;
   ForkClient* fclnt_;
   CommonFD fd_;
+  int curr_exit_status_;
 };
 } // namespace omnifuzz
 #endif  // OMNIFUZZ_EXECUTOR_FORKSRV_EXECUTOR_H_H

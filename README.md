@@ -1,5 +1,7 @@
 # Omnifuzz
 Design fuzzers in object-oriented fashion
+This promotes code reuse in fuzzers.
+
 
 ## Ideas and Goals
 

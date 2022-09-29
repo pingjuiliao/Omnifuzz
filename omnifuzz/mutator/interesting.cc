@@ -48,11 +48,11 @@ InterestingInt8Mutator::~InterestingInt8Mutator() {
   interesting_values_.clear();
 }
 
-MutationResult InterestingInt8Mutator::Mutate(uint8_t* data, size_t len) {
+MutationResult InterestingInt8Mutator::Mutate(uint8_t* data, size_t& size) {
   
   if (!ptr_start_) {
     ptr_start_ = data;
-    ptr_end_ = data + len;
+    ptr_end_ = data + size;
     original_ = *ptr_start_;
   }
 
@@ -94,12 +94,12 @@ InterestingInt16Mutator::InterestingInt16Mutator() {
   iterator_ = interesting_values_.begin();
 }
 
-MutationResult InterestingInt16Mutator::Mutate(uint8_t* data, size_t len) {
+MutationResult InterestingInt16Mutator::Mutate(uint8_t* data, size_t& size) {
   
   uint16_t* window;
   if (!ptr_start_) {
     ptr_start_ = data;
-    ptr_end_ = data + len;
+    ptr_end_ = data + size;
     window = reinterpret_cast<uint16_t*>(ptr_start_);
     original_ = *window;
   } else {
@@ -144,11 +144,11 @@ InterestingInt32Mutator::InterestingInt32Mutator() {
   iterator_ = interesting_values_.begin();
 }
 
-MutationResult InterestingInt32Mutator::Mutate(uint8_t* data, size_t len) {
+MutationResult InterestingInt32Mutator::Mutate(uint8_t* data, size_t& size) {
   uint32_t* window;
   if (!ptr_start_) {
     ptr_start_ = data;
-    ptr_end_ = data + len;
+    ptr_end_ = data + size;
     window = reinterpret_cast<uint32_t*>(ptr_start_);
     original_ = *window;
   } else {
