@@ -45,7 +45,7 @@ int main(int argc, char** argv) {
   for (size_t i = 0; i < kNumRequest; ++i) {
     memset(buf, 0, sizeof(buf));
     strcpy(buf, inputs[i]);
-    executor.Execute(buf, strlen(buf));
+    executor.Execute((unsigned char *)buf, strlen(buf));
     void* p = executor.DumpFeedbackData();
     std::cout << "[Result] " << reinterpret_cast<char *>(p) << std::endl \
               << "[Message] feedback gained, cycle Completed" << std::endl \

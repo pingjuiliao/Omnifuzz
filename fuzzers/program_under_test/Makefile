@@ -1,6 +1,6 @@
-CC=../../build/llvm-project/llvm/bin/clang
-CXX=../../build/llvm-project/llvm/bin/clang++
-OPT=../../build/llvm-project/llvm/bin/opt
+CC=../../llvm-project/llvm/bin/clang
+CXX=../../llvm-project/llvm/bin/clang++
+OPT=../../llvm-project/llvm/bin/opt
 PASS=omnifuzz-afl
 
 
@@ -10,4 +10,4 @@ coldbrew: coldbrew.c
 	$(OPT) -o $@.bc -passes=$(PASS) $@.ll
 	$(CC) -o $@.exe $@.bc
 clean:
-	rm $(wildcard *.o) $(wildcard *.exe)
+	rm $(wildcard *.bc) $(wildcard *.exe) ${wildcard *.ll}

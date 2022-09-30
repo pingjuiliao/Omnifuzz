@@ -23,8 +23,9 @@ void ListScheduler::Enqueue(Testcase testcase) {
 // ListScheduler keep all the testcases
 Testcase* ListScheduler::Dequeue(void) {
   std::list<Testcase>::iterator it = list_.begin();
-  while (it != list_.end()) {
+  for (it = list_.begin(); it != list_.end(); ++it) {
     if (!it->fuzzed) {
+      std::cout << "[Scheduler]: scheduled one\n";
       return &(*it);
     }
   }

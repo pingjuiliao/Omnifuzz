@@ -7,7 +7,11 @@ void Fuzzer::LoadSeed(std::string seed_dir) {
     std::cerr << "Ambiguous fuzzer" << std::endl;
     return;
   }
-  testcase_file_manager_.LoadSeedTestcaseFiles(scheduler_, seed_dir);
+  testcase_file_manager_.BuildDirectoryTree();
+  input_ready_ = testcase_file_manager_.LoadSeedTestcaseFiles(scheduler_, seed_dir);
+  if (input_ready_) {
+    std::cout << "[Fuzzer]: Load testcase successfully" << std::endl;
+  }
 }
 
 void Fuzzer::Prepare(char** argv) {
@@ -15,22 +19,26 @@ void Fuzzer::Prepare(char** argv) {
     std::cerr << "Ambiguous fuzzer" << std::endl;
     return;
   }
-  executor_->Initialize(argv, fdbk_mech_);
-  testcase_file_manager_.BuildDirectoryTree();
-  ready_ = true;
+  executable_ready_ = executor_->Initialize(argv, fdbk_mech_);
+  if (executable_ready_) {
+    std::cout << "[Fuzzer]: Load executable successfully" << std::endl;
+  }
 }
 
 void Fuzzer::Run(void) {
   Testcase* testcase;
   void* shm_feedback;
+  std::cout << "[Start Running] !" << std::endl;
+  if (!executable_ready_ || !input_ready_) {
+    std::cerr << "[Error] executable or input not ready" << std::endl;
+    return;
+  }
 
   while (testcase = scheduler_->Dequeue()) {
-    
     uint8_t* buf = testcase_file_manager_.LoadToBuffer(testcase);
     size_t size = testcase->size;
     while (mutator_->Mutate(buf, size) != 
            MutationResult::kCycleDone) {
-      
       executor_->Execute(buf, size);
       shm_feedback = executor_->DumpFeedbackData();
 

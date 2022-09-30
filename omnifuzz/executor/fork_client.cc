@@ -75,6 +75,7 @@ Fault ForkClient::ReportFault(void) {
   if (WIFSIGNALED(curr_exit_status_)) {
     return Fault::kCrash;
   }
+  return Fault::kNone;
 }
 
 } // namespace omnifuzz

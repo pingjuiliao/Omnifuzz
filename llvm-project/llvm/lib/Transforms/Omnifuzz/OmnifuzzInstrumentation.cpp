@@ -50,11 +50,11 @@ bool OmnifuzzPass::initialize(Module &M) {
       false, GlobalValue::ExternalLinkage, ConstantPointerNull::get(PointerType::getInt8PtrTy(C)), "__omnifuzz_shm_ptr");
   
 
-  // Request
-  for (auto data: fdbk_mech_->exec_var_map_) {
+  // Execution Variable: some temporary variable that operates data
+  for (auto exec_var: fdbk_mech_->exec_var_map_) {
     Type* type;
     Constant* InitValue;
-    switch(data.second.GetType()) {
+    switch(exec_var.second.GetType()) {
       case omnifuzz::ExecutionVariable::Type::Int64:
         type = IntegerType::getInt64Ty(C);
         InitValue = ConstantInt::get(type, 0);
@@ -79,8 +79,21 @@ bool OmnifuzzPass::initialize(Module &M) {
     }
 
     GlobalVariable* GV = new GlobalVariable(M, type, false, GlobalValue::ExternalLinkage, 
-        InitValue, data.second.GetName());
-    errs() << "GV: "  << data.second.GetName() << " " << GV << "\n";
+        InitValue, exec_var.second.GetName());
+    errs() << "Exec Var: "  << exec_var.second.GetName() << " " << GV << "\n";
+  }
+  
+  // Register Feedback data (later be initialized on SHM) 
+  for (auto data: fdbk_mech_->fdbk_data_map_) {
+    if (data.second.GetType() != omnifuzz::ExecutionVariable::Pointer) {
+      errs() << "[Error] Cannot support non-pointer type of feedback data\n";
+      return false;
+    }
+    PointerType* PtrType = PointerType::get(Int8Ty, 0);
+    ConstantPointerNull* NullPtr = ConstantPointerNull::get(PtrType);
+    GlobalVariable* GV = new GlobalVariable(M, PtrType, false, 
+        GlobalValue::ExternalLinkage, NullPtr, data.second.GetName());
+    errs() << "Fdbk Data: " << data.second.GetName() << " " << GV << "\n";
   }
 
   return true;
@@ -148,6 +161,18 @@ void OmnifuzzPass::instrumentEmbeddedForkserver(BasicBlock* BB,
   Value* AtoiRetVal = ForksrvInitIRB.CreateCall(AtoiFunc, {GetenvRetVal});
   Value* ShmatRetVal = ForksrvInitIRB.CreateCall(ShmatFunc, {AtoiRetVal, NullPtr8, ForksrvInitIRB.getInt32(0)});
   ForksrvInitIRB.CreateStore(ShmatRetVal, ShmPtrGV);
+  size_t ShmOffset = 0;
+  for (auto data: fdbk_mech_->fdbk_data_map_) {
+    LoadInst* LoadShm = ForksrvInitIRB.CreateLoad(Ptr8Ty, ShmPtrGV);
+    Value* ShmAddrInteger = ForksrvInitIRB.CreatePtrToInt(
+        LoadShm, ForksrvInitIRB.getInt64Ty());
+    Value* AddedInteger = ForksrvInitIRB.CreateAdd(
+        ShmAddrInteger, ForksrvInitIRB.getInt64(ShmOffset)); 
+    Value* OffsettedPtr = ForksrvInitIRB.CreateIntToPtr(AddedInteger, Ptr8Ty);
+    Value* FdbkDataGV = M->getNamedGlobal(data.second.GetName());
+    ForksrvInitIRB.CreateStore(OffsettedPtr, FdbkDataGV);
+    ShmOffset += data.second.GetSize(); 
+  }
   Value* InitStr = ForksrvInitIRB.CreateGlobalStringPtr("init");
   Value* WriteInitCodeCall = ForksrvInitIRB.CreateCall(WriteFunc, {ForksrvInitIRB.getInt32(22), InitStr, ForksrvInitIRB.getInt32(4)});
   Value* WriteInitCodeRetVal = ForksrvInitIRB.CreateICmpUGE(WriteInitCodeCall, ForksrvInitIRB.getInt32(4));

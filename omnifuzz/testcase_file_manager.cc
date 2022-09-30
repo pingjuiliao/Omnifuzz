@@ -60,6 +60,7 @@ bool TestcaseFileManager::LoadSeedTestcaseFiles(Scheduler* scheduler,
                                                 std::string input_dir_path) {
    
   if (!scheduler) {
+    std::cerr << "[Error] does not have any scheduler" << std::endl;
     return false;
   }
   
@@ -69,6 +70,7 @@ bool TestcaseFileManager::LoadSeedTestcaseFiles(Scheduler* scheduler,
   }
 
   if (!out_dir_) {
+    std::cerr << "[Error] does not have any out put directory" << std::endl;
     return false;
   }
   
@@ -93,16 +95,27 @@ bool TestcaseFileManager::LoadSeedTestcaseFiles(Scheduler* scheduler,
     // we simply copy the seed testcases;
     std::filesystem::copy(file, out_fpath);
   }
+  std::cout << "[TestcaseFileMngr]: seeds loaded" << std::endl;
   return true;
 }
 
 uint8_t* TestcaseFileManager::LoadToBuffer(Testcase* testcase) {
+  if (testcase->size == 0) {
+    std::cerr << "[TFM] testcase has size 0" << std::endl;
+    return nullptr;
+  }
   uint8_t* buffer = new uint8_t[testcase->size * 2];
   std::ifstream ifs;
   ifs.open(testcase->file_name);
+  if (ifs.is_open()) {
+    std::cerr << "[TestcaseFileManager]: Cannot open file" 
+              << testcase->file_name << std::endl;
+    return nullptr;
+  }
   memset(buffer, 0, sizeof(buffer));
   ifs.read((char *) buffer, testcase->size);
   ifs.close();
+  return buffer;
 }
 
 void TestcaseFileManager::Unload(uint8_t* buffer) {

@@ -1,6 +1,7 @@
 #ifndef OMNIFUZZ_FUZZER_H
 #define OMNIFUZZ_FUZZER_H
 
+#include <iostream>
 #include <string>
 
 #include "omnifuzz/feedback/feedback_mechanism.h"
@@ -36,7 +37,8 @@ class Fuzzer {
   Executor* executor_;
   FeedbackMechanism* fdbk_mech_;
   bool configured_;
-  bool ready_;
+  bool input_ready_;
+  bool executable_ready_;
 };
 
 } // namespace omnifuzz

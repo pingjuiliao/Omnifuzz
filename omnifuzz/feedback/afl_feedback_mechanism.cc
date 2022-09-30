@@ -5,7 +5,7 @@ namespace omnifuzz {
 
 AflFeedbackMechanism::AflFeedbackMechanism() {
   virgin_map_ = new uint8_t[kCoverageBitMapEntry];
-  
+  RegisterFeedbackData(); 
   RegisterExecutionVariable();
 }
 
@@ -14,26 +14,28 @@ AflFeedbackMechanism::~AflFeedbackMechanism() {
 }
 
 size_t AflFeedbackMechanism::RegisterFeedbackData(void) {
-  return sizeof(uint8_t) * kCoverageBitMapEntry;
+  fdbk_data_map_["__afl_area_ptr"] = ExecutionVariable("__afl_area_ptr", ExecutionVariable::Type::Pointer, kCoverageBitMapEntry);
+  fdbk_data_map_["__afl_area_end"] = ExecutionVariable("__afl_area_end", ExecutionVariable::Type::Pointer, 0);
+  return fdbk_data_map_["__afl_area_ptr"].GetSize();
 }
 
 void AflFeedbackMechanism::RegisterExecutionVariable(void) {
   exec_var_map_["__afl_prev_loc"] = ExecutionVariable("__afl_prev_loc", ExecutionVariable::Type::Int32);
-  exec_var_map_["__afl_area_ptr"] = ExecutionVariable("__afl_area_ptr", 
-      ExecutionVariable::Type::Pointer);
 }
 
 void AflFeedbackMechanism::WriteOnBasicBlock(std::string& assembly) {
   std::stringstream ss;
   size_t compile_time_random = rand() % kCoverageBitMapEntry;
-  ss << "push %rcx\n"
-     << "push %rdx\n"
-     << "movq $$" << compile_time_random << ", %rcx\n"
-     << "xorq " << exec_var_map_["__afl_prev_loc"].GetName() << "(%rip), %rcx\n"
-     << "xorq %rcx, " << exec_var_map_["__afl_prev_loc"].GetName() << "(%rip)\n"
-     << "shrq $$1, " << exec_var_map_["__afl_prev_loc"].GetName() << "(%rip)\n"
-     << "popq %rdx\n"
-     << "popq %rcx\n";
+  ss << "push %rcx;\n"
+     << "push %rdx;\n"
+     << "movq " << fdbk_data_map_["__afl_area_ptr"].GetName() << "(%rip), %rdx\n"
+     << "movq $$" << compile_time_random << ", %rcx;\n"
+     << "xorq " << exec_var_map_["__afl_prev_loc"].GetName() << "(%rip), %rcx;\n"
+     << "xorq %rcx, " << exec_var_map_["__afl_prev_loc"].GetName() << "(%rip);\n"
+     << "shrq $$1, " << exec_var_map_["__afl_prev_loc"].GetName() << "(%rip);\n"
+     << "incb (%rdx, %rcx, 1);\n"
+     << "popq %rdx;\n"
+     << "popq %rcx;\n";
   assembly += ss.str();
 }
 

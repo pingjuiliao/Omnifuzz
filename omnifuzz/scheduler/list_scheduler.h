@@ -2,6 +2,7 @@
 #define OMNIFUZZ_SCHEDULER_LIST_SCHEDULER_H
 
 #include <cstdint>
+#include <iostream>
 #include <list>
 
 #include "omnifuzz/scheduler/scheduler.h"
