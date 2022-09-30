@@ -31,7 +31,7 @@ int main(int argc, char** argv) {
   
   executor.Initialize(v_argv, fdbk);
   for (size_t i = 0; i < kNumRequest; ++i) {
-    executor.Execute(hello, strlen(hello));
+    executor.Execute((unsigned char *)hello, strlen(hello));
     void* p = executor.DumpFeedbackData();
     std::cout << "[Result] " << reinterpret_cast<char *>(p) << std::endl \
               << "[Message] feedback gained, cycle Completed" << std::endl \
