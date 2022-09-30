@@ -25,7 +25,8 @@ Testcase* ListScheduler::Dequeue(void) {
   std::list<Testcase>::iterator it = list_.begin();
   for (it = list_.begin(); it != list_.end(); ++it) {
     if (!it->fuzzed) {
-      std::cout << "[Scheduler]: scheduled one\n";
+      it->fuzzed = true;
+      std::cout << "[Scheduler]: scheduled" << it->file_name << std::endl;
       return &(*it);
     }
   }
