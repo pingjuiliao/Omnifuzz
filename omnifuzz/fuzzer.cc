@@ -35,6 +35,10 @@ void Fuzzer::Run(void) {
   }
 
   while (testcase = scheduler_->Dequeue()) {
+    if (!testcase) {
+      continue;
+    }
+    
     uint8_t* buf = testcase_file_manager_.LoadToBuffer(testcase);
     size_t size = testcase->size;
     while (mutator_->Mutate(buf, size) != 

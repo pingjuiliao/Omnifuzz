@@ -49,7 +49,7 @@ void TestcaseFileManager::CreateTestcaseFile(Testcase &testcase,
                                              uint8_t* buf, size_t size) {
   std::ofstream ofs;
   std::string file_name = NameTestcase();
-  testcase.file_name = file_name.c_str();
+  testcase.file_name = strdup(file_name.c_str());
   ofs.open(file_name);
   ofs.write((char *)buf, size);
   ofs.close();
@@ -87,15 +87,18 @@ bool TestcaseFileManager::LoadSeedTestcaseFiles(Scheduler* scheduler,
 
     // Create a Testcase
     Testcase testcase;
-    testcase.file_name = out_fname.c_str();
+    testcase.file_name = strdup(out_fname.c_str());
     testcase.size = std::filesystem::file_size(file); 
+    testcase.fuzzed = 0;
     testcase.exec_us = 0;
     testcase.generation = 0;
     scheduler->Enqueue(testcase);
+    
     // we simply copy the seed testcases;
     std::filesystem::copy(file, out_fpath);
   }
   std::cout << "[TestcaseFileMngr]: seeds loaded" << std::endl;
+  
   return true;
 }
 
@@ -104,12 +107,19 @@ uint8_t* TestcaseFileManager::LoadToBuffer(Testcase* testcase) {
     std::cerr << "[TFM] testcase has size 0" << std::endl;
     return nullptr;
   }
+  std::string testcase_path = out_dir_->testcase_dir + testcase->file_name;
+  if (!std::filesystem::exists(testcase_path)) {
+    std::cerr << "[TestcaseFileManager] cannot find the testcase: "
+              << testcase_path << std::endl;
+    return nullptr;
+  }
+
   uint8_t* buffer = new uint8_t[testcase->size * 2];
   std::ifstream ifs;
-  ifs.open(testcase->file_name);
-  if (ifs.is_open()) {
+  ifs.open(testcase_path);
+  if (!ifs.is_open()) {
     std::cerr << "[TestcaseFileManager]: Cannot open file" 
-              << testcase->file_name << std::endl;
+              << testcase_path << std::endl;
     return nullptr;
   }
   memset(buffer, 0, sizeof(buffer));

@@ -16,6 +16,7 @@ ForkClient::~ForkClient() {}
 void ForkClient::Connect(Forkserver* fsrv) {
   if (!fsrv) {
     std::cerr << "[ERROR] Trying to connect nothing." << std::endl;
+    return;
   }
   fsrv_ = fsrv;
   if (!fsrv_->is_initialized_) {
@@ -39,12 +40,14 @@ void ForkClient::Connect(Forkserver* fsrv) {
               << std::endl << std::endl;
   #endif
   }
-
 }
 
 void ForkClient::SendRequest(void) {
-  if (!fsrv_) 
+
+  if (!fsrv_) {
+    std::cerr << "[Error] Cannot get forkserver" << std::endl;
     return;
+  }
   int code = 2020;
   int pid;
   int status;
@@ -61,11 +64,11 @@ void ForkClient::SendRequest(void) {
   std::cout << "[Client] Pid received: knowing " << pid << " is executing."
             << std::endl;
 
-  if (read(response_fd_, &status, 4) < 4) {
+  if (read(response_fd_, &curr_exit_status_, 4) < 4) {
     std::cerr << "[Client] unable to read the \"status\" response" << std::endl;
     return;
   }
-  std::cout << "[Client] Pid exited: exit code:" << status << std::endl;
+  std::cout << "[Client] Pid exited: exit code:" << curr_exit_status_ << std::endl;
 }
 
 Fault ForkClient::ReportFault(void) {

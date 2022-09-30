@@ -51,7 +51,7 @@ class Forkserver {
   const int kResponseFD = 22;
 
   // state
-  bool file_mode;
+  bool file_mode_;
 
   // For testing
  public:

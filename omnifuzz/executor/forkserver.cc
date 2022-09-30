@@ -11,6 +11,7 @@ void ManageResources(void) {
 namespace omnifuzz {
 
 Forkserver::Forkserver(char** argv, CommonFD fd): argv_(argv), common_fd_(fd) {
+  file_mode_ = false;
   is_initialized_ = Initialize();
   if (!is_initialized_) {
     std::cerr << "[FATAL] Cannot initialize the Forkserver";
@@ -52,7 +53,7 @@ bool Forkserver::Initialize() {
 
 bool Forkserver::RedirectServerFD(void) {
 
-  if (file_mode) {
+  if (file_mode_) {
     dup2(common_fd_.dev_null, 0); 
   } else {
     dup2(common_fd_.out_file, 0);

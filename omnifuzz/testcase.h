@@ -8,7 +8,7 @@ namespace omnifuzz {
 struct Testcase {
 
   // Testcase Information regardless what the fuzzer is.
-  const char* file_name;      // file name
+  char* file_name;      // file name
   uint32_t size;        // Input Length
   uint8_t trimmed;      // Was trimmed
   uint8_t fuzzed;       // Was Fuzzed
