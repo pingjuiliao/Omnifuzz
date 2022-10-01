@@ -3,6 +3,8 @@
 
 #include <cstdint>
 #include <cstdlib>
+#include <cstring>
+#include <iostream>
 #include <sstream>
 
 #include "omnifuzz/feedback/fuzz_score.h"
@@ -19,6 +21,7 @@ class AflFeedbackMechanism : public FeedbackMechanism {
   virtual void WriteOnBasicBlock(std::string&) override;
   
   virtual size_t RegisterFeedbackData(void) override;
+  virtual void ResetFeedbackDataState(void*) override;
 
   virtual FuzzScore DeemInteresting(void*) override;
  protected:

@@ -88,10 +88,16 @@ bool ForkServerExecutor::CaptureCrash(void) {
 }
 
 void ForkServerExecutor::Execute(uint8_t* buf, size_t size) {
+  // Write input
   lseek(fd_.out_file, 0, SEEK_SET);
   write(fd_.out_file, (char *)buf, size);
   ftruncate(fd_.out_file, size);
   lseek(fd_.out_file, 0, SEEK_SET);
+  
+  // Reset execution state
+  fdbk_mech_->ResetFeedbackDataState(feedback_data_ptr_);
+
+  // Inistantiate execution
   fclnt_->SendRequest();
 }
 

@@ -18,6 +18,7 @@ size_t DebugFeedbackMechanism::RegisterFeedbackData(void) {
 void DebugFeedbackMechanism::RegisterExecutionVariable(void) {
 
 }
+void DebugFeedbackMechanism::ResetFeedbackDataState(void* ptr) {}
 
 FuzzScore DebugFeedbackMechanism::DeemInteresting(void *p) {
   return FuzzScore::kRevisitCoverage;
@@ -32,6 +33,7 @@ void DebugFeedbackMechanism::WriteOnBasicBlock(std::string &s) {
      << "popq %rdx;\npopq %rcx\n";
   s = ss.str();
 }
+
 
 } // namespace omnifuzz
 

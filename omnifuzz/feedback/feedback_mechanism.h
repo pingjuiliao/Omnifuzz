@@ -45,6 +45,7 @@ class FeedbackMechanism {
   
   // In-execution functions: talks to the Excutor
   virtual size_t RegisterFeedbackData(void) = 0;
+  virtual void ResetFeedbackDataState(void*) = 0;
   std::unordered_map<std::string, ExecutionVariable> exec_var_map_;
   std::unordered_map<std::string, ExecutionVariable> fdbk_data_map_;
 

@@ -5,6 +5,7 @@ namespace omnifuzz {
 
 AflFeedbackMechanism::AflFeedbackMechanism() {
   virgin_map_ = new uint8_t[kCoverageBitMapEntry];
+  memset(virgin_map_, 255, kCoverageBitMapEntry);
   RegisterFeedbackData(); 
   RegisterExecutionVariable();
 }
@@ -17,6 +18,11 @@ size_t AflFeedbackMechanism::RegisterFeedbackData(void) {
   fdbk_data_map_["__afl_area_ptr"] = ExecutionVariable("__afl_area_ptr", ExecutionVariable::Type::Pointer, kCoverageBitMapEntry);
   fdbk_data_map_["__afl_area_end"] = ExecutionVariable("__afl_area_end", ExecutionVariable::Type::Pointer, 0);
   return fdbk_data_map_["__afl_area_ptr"].GetSize();
+}
+
+void AflFeedbackMechanism::ResetFeedbackDataState(void* ptr) {
+  void *afl_area_ptr = ptr;
+  memset(afl_area_ptr, 0, kCoverageBitMapEntry);
 }
 
 void AflFeedbackMechanism::RegisterExecutionVariable(void) {
@@ -71,7 +77,14 @@ FuzzScore AflFeedbackMechanism::DeemInteresting(void* data) {
     current ++;
     virgin ++;
   }
-
+  switch (score) {
+   case FuzzScore::kNotInteresting:
+    std::cout << "[fdbk] NOT\n";
+    break;
+   default:
+    std::cout << "[fdbk] Interesting\n";
+    break;
+  }
   return score;
 }
 
