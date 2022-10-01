@@ -17,6 +17,7 @@ ListScheduler::~ListScheduler() {
 }
 
 void ListScheduler::Enqueue(Testcase testcase) {
+  testcase.fuzzed = false;
   list_.push_back(testcase);
 }
 

@@ -50,8 +50,8 @@ void Fuzzer::Run(void) {
         testcase_file_manager_.CreateCrashReport(buf, size);
       } 
       if (fdbk_mech_->DeemInteresting(shm_feedback)) {
+        std::cout << "NEW TESTCASE!!!\n";
         Testcase new_testcase;
-        new_testcase.size = size;
         new_testcase.generation = testcase->generation + 1;
         testcase_file_manager_.CreateTestcaseFile(new_testcase, buf, size);
         scheduler_->Enqueue(new_testcase);

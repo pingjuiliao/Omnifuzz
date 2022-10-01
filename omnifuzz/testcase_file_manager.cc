@@ -29,7 +29,6 @@ bool TestcaseFileManager::BuildDirectoryTree(std::string root_dir) {
   std::filesystem::create_directory(out_dir_->root);
   std::filesystem::create_directory(out_dir_->testcase_dir);
   std::filesystem::create_directory(out_dir_->crash_dir);
-  // TODO more file should be created; 
 
   return true;
 } 
@@ -47,10 +46,18 @@ void TestcaseFileManager::CreateCrashReport(uint8_t* buf, size_t size) {
 // 
 void TestcaseFileManager::CreateTestcaseFile(Testcase &testcase, 
                                              uint8_t* buf, size_t size) {
+  // name the testcase
   std::ofstream ofs;
   std::string file_name = NameTestcase();
   testcase.file_name = strdup(file_name.c_str());
-  ofs.open(file_name);
+  testcase.size = size;
+  
+  std::string file_path = out_dir_->testcase_dir + file_name; 
+  if (std::filesystem::exists(file_path)) {
+    std::cerr << "Cannot add file to filepath\n";
+    return;
+  }
+  ofs.open(file_path);
   ofs.write((char *)buf, size);
   ofs.close();
 }
