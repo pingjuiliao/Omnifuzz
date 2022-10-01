@@ -43,6 +43,10 @@ void TestcaseFileManager::CreateCrashReport(uint8_t* buf, size_t size) {
   ofs.close();
 }
 
+std::filesystem::path NameTestcase() {
+    static uint32_t id = 0;
+    return "/tid_" + std::to_string(id++);
+}
 // 
 void TestcaseFileManager::CreateTestcaseFile(Testcase &testcase, 
                                              uint8_t* buf, size_t size) {
@@ -134,6 +138,8 @@ uint8_t* TestcaseFileManager::LoadToBuffer(Testcase* testcase) {
   ifs.close();
   return buffer;
 }
+
+
 
 void TestcaseFileManager::Unload(uint8_t* buffer) {
   delete[] buffer;

@@ -36,10 +36,7 @@ class TestcaseFileManager {
   // TODO: This should be more complicated than just an ID.
   //  filename is a good place to store information.
   //  also, it might want to takes more arguments in.
-  std::filesystem::path NameTestcase() {
-    static uint32_t id = 0;
-    return "/tid_" + std::to_string(id);
-  }
+  std::filesystem::path NameTestcase();
  private:
   // std::unordered_set<std::string> processed_testcases_;
   FuzzOutputDirectory* out_dir_;

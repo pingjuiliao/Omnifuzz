@@ -61,14 +61,18 @@ void ForkClient::SendRequest(void) {
     std::cerr << "[Client] unable to read the \"pid\" response" << std::endl;
     return;
   }
+#ifdef UNIT_TEST
   std::cout << "[Client] Pid received: knowing " << pid << " is executing."
             << std::endl;
+#endif
 
   if (read(response_fd_, &curr_exit_status_, 4) < 4) {
     std::cerr << "[Client] unable to read the \"status\" response" << std::endl;
     return;
   }
+#ifdef UNIT_TEST
   std::cout << "[Client] Pid exited: exit code:" << curr_exit_status_ << std::endl;
+#endif
 }
 
 Fault ForkClient::ReportFault(void) {
