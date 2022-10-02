@@ -60,7 +60,7 @@ bool Forkserver::RedirectServerFD(void) {
     close(common_fd_.out_file);
   }
 #ifndef UNIT_TEST
-  dup2(common_fd_.dev_null, 1);
+  // dup2(common_fd_.dev_null, 1);
   dup2(common_fd_.dev_null, 2);
 #endif
   

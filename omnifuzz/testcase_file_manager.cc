@@ -43,7 +43,7 @@ void TestcaseFileManager::CreateCrashReport(uint8_t* buf, size_t size) {
   ofs.close();
 }
 
-std::filesystem::path NameTestcase() {
+std::filesystem::path TestcaseFileManager::NameTestcase() {
     static uint32_t id = 0;
     return "/tid_" + std::to_string(id++);
 }

@@ -274,17 +274,28 @@ void OmnifuzzPass::instrumentBasicBlockAssembly(BasicBlock& BB) {
   // update BB
   IRBuilder<> UpdateIRB(UpdateBB->getTerminator());
   std::string AsmStr;
-#ifdef OMNIFUZZ_DEBUG
+#define AFL_DEBUG  
+#ifdef AFL_DEBUG
+  Module* M = BB.getModule();
+  IntegerType *Int64Ty = IntegerType::getInt64Ty(C);
   IntegerType *Int32Ty = IntegerType::getInt32Ty(C);
-  FunctionCallee PutsFunc = BB.getModule()->getOrInsertFunction("puts", FunctionType::get(Int32Ty, {Ptr8Ty}, false));
-  Value* Flag = UpdateIRB.CreateGlobalStringPtr("__omnifuzz_update");
-  UpdateIRB.CreateCall(PutsFunc, {Flag});
+  FunctionCallee PrintfFunc = BB.getModule()->getOrInsertFunction("printf", FunctionType::get(Int32Ty, {Ptr8Ty}, true));
+  Value* FormatBeforeUpdate = UpdateIRB.CreateGlobalStringPtr("__afl_prev_loc: %016x\t");
+  GlobalVariable* AflPrevLoc = M->getGlobalVariable("__afl_prev_loc");
+  LoadInst* LoadPrevLoc = UpdateIRB.CreateLoad(Int64Ty, AflPrevLoc);
+  UpdateIRB.CreateCall(PrintfFunc, {FormatBeforeUpdate, LoadPrevLoc});
 #endif
+
   fdbk_mech_->WriteOnBasicBlock(AsmStr);
   InlineAsm *BlockAsm = InlineAsm::get(
       FunctionType::get(UpdateIRB.getVoidTy(), {}, false), AsmStr, 
       "", false);
   UpdateIRB.CreateCall(BlockAsm, {});
+#ifdef AFL_DEBUG
+  Value* FormatAfterUpdate = UpdateIRB.CreateGlobalStringPtr(", after: %016x\n");
+  LoadInst* LoadPrevLocAfter = UpdateIRB.CreateLoad(Int64Ty, AflPrevLoc);
+  UpdateIRB.CreateCall(PrintfFunc, {FormatAfterUpdate, LoadPrevLocAfter});
+#endif
 }
 
 

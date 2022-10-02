@@ -6,6 +6,7 @@
 #include <cstring>
 #include <iostream>
 #include <sstream>
+#include <unordered_set>
 
 #include "omnifuzz/feedback/fuzz_score.h"
 #include "omnifuzz/feedback/feedback_mechanism.h"
@@ -29,6 +30,7 @@ class AflFeedbackMechanism : public FeedbackMechanism {
   Testcase* top_rated_;
   // maintain a virgin bitmap to see if there's new interesting bits comes in.
   uint8_t* virgin_map_; 
+  std::unordered_set<uint32_t> seen_cov_chksm_;
 };
 
 } // namespace omnifuzz
