@@ -274,7 +274,6 @@ void OmnifuzzPass::instrumentBasicBlockAssembly(BasicBlock& BB) {
   // update BB
   IRBuilder<> UpdateIRB(UpdateBB->getTerminator());
   std::string AsmStr;
-#define AFL_DEBUG  
 #ifdef AFL_DEBUG
   Module* M = BB.getModule();
   IntegerType *Int64Ty = IntegerType::getInt64Ty(C);

@@ -15,7 +15,7 @@ class ArithmeticMutator : public Mutator {
  protected:
   template <typename T>
   MutationResult MutateAndIterate(T*, size_t);
-  const size_t kArithmeticMax = 10;
+  const size_t kArithmeticMax = 35;
   uint8_t *ptr_start_;
   uint8_t *ptr_end_;
   size_t num_bytes_; 

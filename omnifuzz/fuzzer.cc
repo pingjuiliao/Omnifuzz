@@ -44,6 +44,7 @@ void Fuzzer::Run(void) {
     size_t size = testcase->size;
     while (mutator_->Mutate(buf, size) != 
            MutationResult::kCycleDone) {
+      
       executor_->Execute(buf, size);
       shm_feedback = executor_->DumpFeedbackData();
 
