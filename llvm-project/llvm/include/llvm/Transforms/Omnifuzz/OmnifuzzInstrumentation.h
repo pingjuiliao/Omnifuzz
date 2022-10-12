@@ -17,22 +17,31 @@ namespace llvm {
 class OmnifuzzPass : public PassInfoMixin<OmnifuzzPass> {
  public:
   OmnifuzzPass(std::unique_ptr<omnifuzz::FeedbackMechanism>);
+
+  // LLVM Module pass.
   PreservedAnalyses run(Module&, ModuleAnalysisManager&);
   
  private:
+  
+  // Create Data Member ForkserverInitFunction, which serves as  
+  // an embedded forkserver in the program under test.
   void createForkserverFunction(Module&);
-  bool initialize(Module&);
+  
+  // Declare variables for runtime operations.
+  bool performDeclaration(Module&);
+
+  // Per-basicblock instrumentation.
   void instrumentBasicBlockAssembly(BasicBlock& BB);
-  void instrumentEmbeddedForkserver(BasicBlock* BB,
-                                    BasicBlock* SuccessBB, 
-                                    BasicBlock* RetBB);
+  
+  // Omnifuzz's requests on instrumentation.
   std::unique_ptr<omnifuzz::FeedbackMechanism> fdbk_mech_;
 
-  GlobalVariable* InitGV;
-  GlobalVariable* FailGV; 
+  // Global Variables for operations
+  GlobalVariable* SetupFailGV; 
   GlobalVariable* ShmPtrGV;
+
+  // The Forkserver function programmed in this pass.
   Function* ForkserverInitFunction;
-  // Value* InitForksrvFunc;
 };
 
 } // namespace llvm
