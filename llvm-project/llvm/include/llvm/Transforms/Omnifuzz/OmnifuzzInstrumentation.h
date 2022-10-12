@@ -20,6 +20,7 @@ class OmnifuzzPass : public PassInfoMixin<OmnifuzzPass> {
   PreservedAnalyses run(Module&, ModuleAnalysisManager&);
   
  private:
+  void createForkserverFunction(Module&);
   bool initialize(Module&);
   void instrumentBasicBlockAssembly(BasicBlock& BB);
   void instrumentEmbeddedForkserver(BasicBlock* BB,
@@ -29,7 +30,8 @@ class OmnifuzzPass : public PassInfoMixin<OmnifuzzPass> {
 
   GlobalVariable* InitGV;
   GlobalVariable* FailGV; 
-  GlobalVariable* ShmPtrGV; 
+  GlobalVariable* ShmPtrGV;
+  Function* ForkserverInitFunction;
   // Value* InitForksrvFunc;
 };
 

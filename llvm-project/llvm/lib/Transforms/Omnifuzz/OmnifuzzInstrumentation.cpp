@@ -4,6 +4,153 @@ namespace llvm {
 
 OmnifuzzPass::OmnifuzzPass(std::unique_ptr<omnifuzz::FeedbackMechanism> feedback_mechanism) {
   fdbk_mech_ = std::move(feedback_mechanism);
+  ForkserverInitFunction = nullptr;
+}
+
+void OmnifuzzPass::createForkserverFunction(Module& M) {
+  
+  LLVMContext& C = M.getContext();
+  FunctionType* FnTy = FunctionType::get(Type::getVoidTy(C), 
+                                         {}, false);
+  IntegerType *Int32Ty = IntegerType::getInt32Ty(C);
+  PointerType *Ptr8Ty = PointerType::getInt8PtrTy(C);
+  ConstantPointerNull* NullPtr8 = ConstantPointerNull::get(Ptr8Ty);
+  FunctionCallee GetenvFunc = M.getOrInsertFunction("getenv", FunctionType::get(PointerType::getInt8PtrTy(C), {PointerType::getInt8PtrTy(C)}, false));
+  FunctionCallee AtoiFunc = M.getOrInsertFunction("atoi", FunctionType::get(Int32Ty, {PointerType::getInt8PtrTy(C)}, false));
+  FunctionCallee CloseFunc = M.getOrInsertFunction("close", FunctionType::get(Int32Ty, {Int32Ty}, false));
+  FunctionCallee ExitFunc = M.getOrInsertFunction("exit", FunctionType::get(Type::getVoidTy(C), {Int32Ty}, false));
+  FunctionCallee ForkFunc = M.getOrInsertFunction("fork", FunctionType::get(Int32Ty, {}, false));
+  FunctionCallee PrintfFunc = M.getOrInsertFunction("printf", FunctionType::get(Int32Ty, {Ptr8Ty}, true));
+  FunctionCallee ReadFunc = M.getOrInsertFunction("read", FunctionType::get(Int32Ty, {Int32Ty, Ptr8Ty, Int32Ty}, false));
+  FunctionCallee ShmatFunc = M.getOrInsertFunction("shmat", FunctionType::get(Ptr8Ty, {Int32Ty, Ptr8Ty, Int32Ty}, false));
+  FunctionCallee WaitpidFunc = M.getOrInsertFunction("waitpid", FunctionType::get(Int32Ty, {Int32Ty, PointerType::get(Int32Ty, 0), Int32Ty}, false));
+  FunctionCallee WriteFunc = M.getOrInsertFunction("write", FunctionType::get(Int32Ty, {Int32Ty, Ptr8Ty, Int32Ty}, false));
+#ifdef OMNIFUZZ_DEBUG
+  FunctionCallee GetpidFunc = M.getOrInsertFunction("getpid", FunctionType::get(Int32Ty, {}, false));
+#endif
+  FunctionCallee MyFnCallee = M.getOrInsertFunction(
+      "my_function", FnTy);
+  ForkserverInitFunction = cast<Function>(MyFnCallee.getCallee());
+  
+  // Function Property
+  // Fn->deleteBody();
+  // Fn->setAlignment(Align(4096));
+
+  BasicBlock* FailChkBB = BasicBlock::Create(C, "__omnifuzz_forksrv_failchk", ForkserverInitFunction);
+
+  // Basic blocks splitting
+  BasicBlock* GetenvBB = BasicBlock::Create(C, "__omnifuzz_forksrv_getenv", ForkserverInitFunction);
+  BasicBlock* ForksrvInitBB = BasicBlock::Create(C, "__omnifuzz_forksrv_init", ForkserverInitFunction);
+  BasicBlock* ForksrvWaitBB = BasicBlock::Create(C, "__omnifuzz_forksrv_wait", ForkserverInitFunction);
+  BasicBlock* ForksrvExitBB = BasicBlock::Create(C, "__omnifuzz_forksrv_exit", ForkserverInitFunction);
+  BasicBlock* ForksrvSplitBB = BasicBlock::Create(C, "__omnifuzz_forksrv_split", ForkserverInitFunction);
+  BasicBlock* ForksrvParentBB = BasicBlock::Create(C, "__omnifuzz_forksrv_parent", ForkserverInitFunction);
+  BasicBlock* ForksrvResumeBB = BasicBlock::Create(C, "__omnifuzz_forksrv_resume", ForkserverInitFunction);
+  BasicBlock* AbortBB = BasicBlock::Create(C, "__omnifuzz_forksrv_abort", ForkserverInitFunction);
+  BasicBlock* ReturnBB = BasicBlock::Create(C, "__omnifuzz_forksrv_return", ForkserverInitFunction);
+  
+  // If failure flag is on, return to normal execution
+  IRBuilder<> FailChkIRB(FailChkBB);
+  LoadInst* LdFailGV = FailChkIRB.CreateLoad(Int32Ty, FailGV);
+  Value* TestFailGV = FailChkIRB.CreateICmpNE(LdFailGV, FailChkIRB.getInt32(0));
+  FailChkIRB.CreateCondBr(TestFailGV, ReturnBB, GetenvBB);
+  
+  // The system factor to decide whether we are on forkserver: getenv("OMNIFUZZ_SHM_ENV");
+  IRBuilder<> GetenvIRB(GetenvBB);
+  Constant* ShmStr = GetenvIRB.CreateGlobalStringPtr("OMNIFUZZ_SHM_ENV");
+  CallInst* GetenvRetVal = GetenvIRB.CreateCall(GetenvFunc, {ShmStr});
+  Value* TestGetenvRetVal = GetenvIRB.CreateICmpNE(GetenvRetVal, ConstantPointerNull::get(PointerType::getInt8PtrTy(C)));
+  GetenvIRB.CreateCondBr(TestGetenvRetVal, ForksrvInitBB, AbortBB);
+  
+  // Init forkserver
+  IRBuilder<> ForksrvInitIRB(ForksrvInitBB);
+  Value* AtoiRetVal = ForksrvInitIRB.CreateCall(AtoiFunc, {GetenvRetVal});
+  Value* ShmatRetVal = ForksrvInitIRB.CreateCall(ShmatFunc, {AtoiRetVal, NullPtr8, ForksrvInitIRB.getInt32(0)});
+  ForksrvInitIRB.CreateStore(ShmatRetVal, ShmPtrGV);
+  size_t ShmOffset = 0;
+  for (auto data: fdbk_mech_->fdbk_data_map_) {
+    LoadInst* LoadShm = ForksrvInitIRB.CreateLoad(Ptr8Ty, ShmPtrGV);
+    Value* ShmAddrInteger = ForksrvInitIRB.CreatePtrToInt(
+        LoadShm, ForksrvInitIRB.getInt64Ty());
+    Value* AddedInteger = ForksrvInitIRB.CreateAdd(
+        ShmAddrInteger, ForksrvInitIRB.getInt64(ShmOffset)); 
+    Value* OffsettedPtr = ForksrvInitIRB.CreateIntToPtr(AddedInteger, Ptr8Ty);
+    Value* FdbkDataGV = M.getNamedGlobal(data.second.GetName());
+    ForksrvInitIRB.CreateStore(OffsettedPtr, FdbkDataGV);
+    ShmOffset += data.second.GetSize(); 
+  }
+  Value* InitStr = ForksrvInitIRB.CreateGlobalStringPtr("init");
+  Value* WriteInitCodeCall = ForksrvInitIRB.CreateCall(WriteFunc, {ForksrvInitIRB.getInt32(22), InitStr, ForksrvInitIRB.getInt32(4)});
+  Value* WriteInitCodeRetVal = ForksrvInitIRB.CreateICmpUGE(WriteInitCodeCall, ForksrvInitIRB.getInt32(4));
+  ForksrvInitIRB.CreateCondBr(WriteInitCodeRetVal, ForksrvWaitBB, AbortBB);
+  
+  // ForksrvWait: The start of the forkserver main loop
+  IRBuilder<> ForksrvWaitIRB(ForksrvWaitBB);
+#ifdef OMNIFUZZ_DEBUG
+  // check if the server loop works perfectly
+  Value* CallGetpid = ForksrvWaitIRB.CreateCall(GetpidFunc, {});
+  Value* FormatStr = ForksrvWaitIRB.CreateGlobalStringPtr("ServerPID: %d\n");
+  ForksrvWaitIRB.CreateCall(PrintfFunc, {FormatStr, CallGetpid});
+#endif
+  AllocaInst* PidAlloca = ForksrvWaitIRB.CreateAlloca(Int32Ty);
+  AllocaInst* RequestCodeAlloca = ForksrvWaitIRB.CreateAlloca(Int32Ty);
+  Value* InitGVBitCast = ForksrvWaitIRB.CreateBitCast(RequestCodeAlloca, Ptr8Ty);
+  ForksrvWaitIRB.CreateCall(ReadFunc, {ForksrvInitIRB.getInt32(21), InitGVBitCast, ForksrvInitIRB.getInt32(4)});
+  Value* ForkRetVal = ForksrvWaitIRB.CreateCall(ForkFunc, {});
+  ForksrvWaitIRB.CreateStore(ForkRetVal, PidAlloca); 
+  Value* ForkFailed = ForksrvWaitIRB.CreateICmpSLT(ForkRetVal, ForksrvWaitIRB.getInt32(0)); 
+  ForksrvWaitIRB.CreateCondBr(ForkFailed, ForksrvExitBB, ForksrvSplitBB);
+
+  // ForksrvExit: if (pid < 0)
+  IRBuilder<> ForksrvExitIRB(ForksrvExitBB);
+  Constant* ExitMessage = ForksrvExitIRB.CreateGlobalStringPtr("Failed on fork()\n");
+  ForksrvExitIRB.CreateCall(PrintfFunc, {ExitMessage});
+  ForksrvExitIRB.CreateCall(ExitFunc, {ForksrvExitIRB.getInt32(-1)}); 
+  ForksrvExitIRB.CreateUnreachable();
+
+  // ForksrvSplit: split child/parent
+  IRBuilder<> ForksrvSplitIRB(ForksrvSplitBB);
+  Value* ForkPidIsParent = ForksrvSplitIRB.CreateICmpNE(ForkRetVal, ForksrvSplitIRB.getInt32(0));
+  ForksrvSplitIRB.CreateCondBr(ForkPidIsParent, ForksrvParentBB, ForksrvResumeBB);
+
+  // ForksrvParent
+  IRBuilder<> ForksrvParentIRB(ForksrvParentBB);
+  Value* BitCastPid = ForksrvParentIRB.CreateBitCast(PidAlloca, Ptr8Ty);
+  ForksrvParentIRB.CreateCall(WriteFunc, {ForksrvParentIRB.getInt32(22), 
+                                          BitCastPid, 
+                                          ForksrvParentIRB.getInt32(4)});
+  AllocaInst* ChildStatus = ForksrvParentIRB.CreateAlloca(Int32Ty);
+  ForksrvParentIRB.CreateCall(WaitpidFunc, {ForkRetVal, ChildStatus, ForksrvParentIRB.getInt32(0)});
+  Value* BitCastStatus = ForksrvParentIRB.CreateBitCast(ChildStatus, Ptr8Ty);
+  ForksrvParentIRB.CreateCall(WriteFunc, {ForksrvParentIRB.getInt32(22), BitCastStatus,ForksrvParentIRB.getInt32(4)});
+  ForksrvParentIRB.CreateBr(ForksrvWaitBB);
+  
+  // ForksrvResume (ForksrvChild)
+  IRBuilder<> ForksrvResumeIRB(ForksrvResumeBB);
+#ifdef OMNIFUZZ_DEBUG
+  Value* Flag = ForksrvResumeIRB.CreateGlobalStringPtr("__omnifuzz_forksrv_resume"); 
+  ForksrvResumeIRB.CreateCall(PrintfFunc, {Flag});
+#endif
+  ForksrvResumeIRB.CreateCall(CloseFunc, {ForksrvResumeIRB.getInt32(21)});
+  ForksrvResumeIRB.CreateCall(CloseFunc, {ForksrvResumeIRB.getInt32(22)});
+  std::string AsmStr;
+  fdbk_mech_->WriteOnBasicBlock(AsmStr);
+  InlineAsm *BlockAsm = InlineAsm::get(
+      FunctionType::get(ForksrvResumeIRB.getVoidTy(), {}, false), AsmStr, 
+      "", false);
+  ForksrvResumeIRB.CreateCall(BlockAsm, {});
+  ForksrvResumeIRB.CreateBr(ReturnBB);
+
+  // Abort: turn failure flag on, return to normal execution. 
+  IRBuilder<> AbortIRB(AbortBB);
+  LoadInst* LdFailGV2 = AbortIRB.CreateLoad(Int32Ty, FailGV);
+  Value* AddedFail = AbortIRB.CreateAdd(LdFailGV2, AbortIRB.getInt32(0x1));
+  AbortIRB.CreateStore(AddedFail, FailGV);
+  AbortIRB.CreateBr(ReturnBB);
+  
+  // Must-have this block, otherwise, llvm will fail
+  IRBuilder<> ReturnIRB(ReturnBB);
+  ReturnIRB.CreateRetVoid();
 }
 
 
@@ -18,9 +165,13 @@ PreservedAnalyses OmnifuzzPass::run(Module& M, ModuleAnalysisManager& AM) {
   if (!inited) {
     inited = initialize(M);
   } 
+
+  if (!ForkserverInitFunction) {
+    createForkserverFunction(M);
+  }
   
   for (auto &F: M) {
-    if (F.getName() == "omnifuzz_init_forksrv") {
+    if (F.getName() == ForkserverInitFunction->getName()) {
       continue;
     }
     for (auto &BB: F) {
@@ -122,7 +273,7 @@ void OmnifuzzPass::instrumentEmbeddedForkserver(BasicBlock* BB,
 #ifdef OMNIFUZZ_DEBUG
   FunctionCallee GetpidFunc = M->getOrInsertFunction("getpid", FunctionType::get(Int32Ty, {}, false));
 #endif
-
+  
   // Basic blocks splitting
   BasicBlock* FailChkBB = BB;
   BasicBlock* GetenvBB = BB->splitBasicBlock(BB->getFirstInsertionPt(), "__omnifuzz_getenv_shm");
@@ -269,7 +420,11 @@ void OmnifuzzPass::instrumentBasicBlockAssembly(BasicBlock& BB) {
   CheckBB->getTerminator()->eraseFromParent();
 
   // SetupBB
-  instrumentEmbeddedForkserver(SetupBB, UpdateBB, RetBB);
+  // instrumentEmbeddedForkserver(SetupBB, UpdateBB, RetBB);
+  IRBuilder<> SetupIRB(SetupBB->getTerminator());
+  SetupIRB.CreateCall(ForkserverInitFunction, {});
+  SetupIRB.CreateBr(RetBB);
+  SetupBB->getTerminator()->eraseFromParent();
 
   // update BB
   IRBuilder<> UpdateIRB(UpdateBB->getTerminator());
