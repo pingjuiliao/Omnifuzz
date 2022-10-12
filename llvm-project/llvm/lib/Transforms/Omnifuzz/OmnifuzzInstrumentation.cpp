@@ -7,6 +7,35 @@ OmnifuzzPass::OmnifuzzPass(std::unique_ptr<omnifuzz::FeedbackMechanism> feedback
   ForkserverInitFunction = nullptr;
 }
 
+PreservedAnalyses OmnifuzzPass::run(Module& M, ModuleAnalysisManager& AM) {
+  
+  static bool inited = false;
+  
+  // No instrumentation if there's no feedback mechanism
+  if (!fdbk_mech_) {
+    return PreservedAnalyses::all();
+  }
+
+  // Prepare forkserver, SHM, and others
+  if (!inited) {
+    inited = performDeclaration(M);
+    createForkserverFunction(M);
+  } 
+  
+  for (auto &F: M) {
+    if (F.getName() == ForkserverInitFunction->getName()) {
+      continue;
+    }
+    for (auto &BB: F) {
+      if (BB.getName().startswith("__omnifuzz")) {
+        continue;
+      }
+      instrumentBasicBlockAssembly(BB);
+    }
+  }
+  return PreservedAnalyses::all();
+}
+
 void OmnifuzzPass::createForkserverFunction(Module& M) {
   
   LLVMContext& C = M.getContext();
@@ -156,35 +185,6 @@ void OmnifuzzPass::createForkserverFunction(Module& M) {
   ReturnIRB.CreateRetVoid();
 }
 
-
-PreservedAnalyses OmnifuzzPass::run(Module& M, ModuleAnalysisManager& AM) {
-  
-  static bool inited = false;
-  
-  // No instrumentation if there's no feedback mechanism
-  if (!fdbk_mech_) {
-    return PreservedAnalyses::all();
-  }
-
-  // Prepare forkserver, SHM, and others
-  if (!inited) {
-    inited = performDeclaration(M);
-    createForkserverFunction(M);
-  } 
-  
-  for (auto &F: M) {
-    if (F.getName() == ForkserverInitFunction->getName()) {
-      continue;
-    }
-    for (auto &BB: F) {
-      if (BB.getName().startswith("__omnifuzz")) {
-        continue;
-      }
-      instrumentBasicBlockAssembly(BB);
-    }
-  }
-  return PreservedAnalyses::all();
-}
 
 
 bool OmnifuzzPass::performDeclaration(Module &M) {
