@@ -1,5 +1,5 @@
 
-#include "omnifuzz/feedback/afl_feedback_mechanism.h" 
+#include "omnifuzz/feedback/afl_mechanism.h" 
 
 namespace {
 

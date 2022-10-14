@@ -1,5 +1,5 @@
-#ifndef FEEDBACK_H
-#define FEEDBACK_H
+#ifndef OMNIFUZZ_FEEDBACK_MECHANISM_H
+#define OMNIFUZZ_FEEDBACK_MECHANISM_H
 
 #include <string>
 #include <unordered_map>
@@ -71,4 +71,4 @@ class FeedbackMechanismComposite : public FeedbackMechanism {
 
 }
 
-#endif  // FEEDBACK_H
+#endif  // OMNIFUZZ_FEEDBACK_MECHANISM_H

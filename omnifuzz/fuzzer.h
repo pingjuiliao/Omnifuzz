@@ -4,7 +4,7 @@
 #include <iostream>
 #include <string>
 
-#include "omnifuzz/feedback/feedback_mechanism.h"
+#include "omnifuzz/feedback/mechanism.h"
 #include "omnifuzz/mutator/mutator.h"
 #include "omnifuzz/preprocessor/instrumentator.h"
 #include "omnifuzz/executor/executor.h"

@@ -4,7 +4,7 @@
 #include <string>
 #include <sstream>
 
-#include "omnifuzz/feedback/feedback_mechanism.h"
+#include "omnifuzz/feedback/mechanism.h"
 #include "omnifuzz/feedback/fuzz_score.h"
 
 namespace omnifuzz {

@@ -15,7 +15,7 @@
 #include <iostream>
 
 #include "omnifuzz/executor/file_descriptor.h"
-#include "omnifuzz/feedback/feedback_mechanism.h"
+#include "omnifuzz/feedback/mechanism.h"
 
 namespace omnifuzz {
 

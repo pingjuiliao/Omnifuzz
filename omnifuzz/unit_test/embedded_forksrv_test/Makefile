@@ -26,7 +26,7 @@ forkserver: $(ROOT)/omnifuzz/executor/forkserver.cc
 	$(CXX) $(CXXFLAGS) -DUNIT_TEST -o $@.o -c $<
 executor: $(ROOT)/omnifuzz/executor/executor.cc
 	$(CXX) $(CXXFLAGS) -DUNIT_TEST -o $@.o -c $<
-debug_feedback: $(ROOT)/omnifuzz/feedback/debug_feedback_mechanism.cc
+debug_feedback: $(ROOT)/omnifuzz/feedback/debug_mechanism.cc
 	$(CXX) $(CXXFLAGS) -DUNIT_TEST -o $@.o -c $<
 clean:
 	rm $(wildcard *.o) $(wildcard *.exe)

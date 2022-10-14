@@ -1,5 +1,5 @@
 
-#include "omnifuzz/feedback/feedback_mechanism.h"
+#include "omnifuzz/feedback/mechanism.h"
 
 namespace omnifuzz {
 

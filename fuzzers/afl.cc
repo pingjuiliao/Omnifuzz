@@ -6,7 +6,7 @@
 #include "omnifuzz/executor/forksrv_executor.h"
 #include "omnifuzz/scheduler/list_scheduler.h"
 #include "omnifuzz/mutator/afl_mutator.h"
-#include "omnifuzz/feedback/afl_feedback_mechanism.h"
+#include "omnifuzz/feedback/afl_mechanism.h"
 
 class AflFuzz : public omnifuzz::Fuzzer {
  public:

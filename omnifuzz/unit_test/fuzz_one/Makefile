@@ -39,7 +39,7 @@ forkserver: $(ROOT)/omnifuzz/executor/forkserver.cc
 	$(CXX) $(CXXFLAGS) -DUNIT_TEST -o $@.o -c $<
 executor: $(ROOT)/omnifuzz/executor/executor.cc
 	$(CXX) $(CXXFLAGS) -DUNIT_TEST -o $@.o -c $<
-afl_feedback: $(ROOT)/omnifuzz/feedback/afl_feedback_mechanism.cc
+afl_feedback: $(ROOT)/omnifuzz/feedback/afl_mechanism.cc
 	$(CXX) $(CXXFLAGS) -DUNIT_TEST -o $@.o -c $<
 clean:
 	rm $(wildcard *.o) $(wildcard *.exe) $(wildcard *.bc) $(wildcard *.ll) 

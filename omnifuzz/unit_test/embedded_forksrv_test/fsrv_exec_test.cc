@@ -6,9 +6,9 @@
 #include <string>
 #include <vector>
 #include "omnifuzz/executor/forksrv_executor.h"
-#include "omnifuzz/feedback/feedback_mechanism.h"
+#include "omnifuzz/feedback/mechanism.h"
 #include "omnifuzz/feedback/fuzz_score.h"
-#include "omnifuzz/feedback/debug_feedback_mechanism.h"
+#include "omnifuzz/feedback/debug_mechanism.h"
 
 const size_t kNumRequest = 5;
 std::string instance = "./embedded.exe";

@@ -7,7 +7,7 @@ target_link_libraries(afl
          omnifuzz::forksrv_executor
          omnifuzz::list_scheduler
          omnifuzz::afl_mutator
-         omnifuzz::afl_feedback_mechanism
+         omnifuzz::afl_mechanism
 )
 target_include_directories(afl
   PUBLIC ${OMNIFUZZ_INCLUDE_DIR})

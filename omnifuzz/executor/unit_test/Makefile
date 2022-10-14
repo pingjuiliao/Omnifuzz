@@ -11,7 +11,7 @@ fsrv_exec_test: fsrv_exec_test.cc forksrv_executor fork_client forkserver execut
 fsrv_instance: fsrv_instance.cc forkserver 
 	$(CXX) $(CXXFLAGS) -o $@.o -c $<
 	$(CXX) $@.o forkserver.o -o $@.exe
-debug_feedback: ../../feedback/debug_feedback_mechanism.cc
+debug_feedback: ../../feedback/debug_mechanism.cc
 	$(CXX) $(CXXFLAGS) -DUNIT_TEST -o $@.o -c $<
 forksrv_executor: ../forksrv_executor.cc
 	$(CXX) $(CXXFLAGS) -DUNIT_TEST -o $@.o -c $<

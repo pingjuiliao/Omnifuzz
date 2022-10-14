@@ -1,5 +1,5 @@
-#ifndef LLVM_TRANSFORMS_OMNIFUZZ_FEEDBACK_AFL_FEEDBACK_H
-#define LLVM_TRANSFORMS_OMNIFUZZ_FEEDBACK_AFL_FEEDBACK_H
+#ifndef OMNIFUZZ_FEEDBACK_AFL_MECHANISM_H
+#define OMNIFUZZ_FEEDBACK_AFL_MECHANISM_H
 
 #include <cstdint>
 #include <cstdlib>
@@ -9,7 +9,7 @@
 #include <unordered_set>
 
 #include "omnifuzz/feedback/fuzz_score.h"
-#include "omnifuzz/feedback/feedback_mechanism.h"
+#include "omnifuzz/feedback/mechanism.h"
 #include "omnifuzz/testcase.h"
 
 namespace omnifuzz {
@@ -35,4 +35,4 @@ class AflFeedbackMechanism : public FeedbackMechanism {
 
 } // namespace omnifuzz
 
-#endif  // LLVM_TRANSFORMS_OMNIFUZZ_FEEDBACK_AFL_FEEDBACK_H
+#endif  // OMNIFUZZ_FEEDBACK_AFL_MECHANISM_H
