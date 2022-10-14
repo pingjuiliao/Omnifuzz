@@ -10,7 +10,7 @@
 #include "llvm/IR/PassManager.h"
 #include "llvm/IR/Type.h"
 #include "llvm/Support/raw_ostream.h"
-#include "omnifuzz/feedback/feedback_mechanism.h"
+#include "omnifuzz/feedback/mechanism.h"
 
 namespace llvm {
 
