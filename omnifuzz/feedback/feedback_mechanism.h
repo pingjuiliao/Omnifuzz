@@ -3,6 +3,7 @@
 
 #include <string>
 #include <unordered_map>
+#include <vector>
 
 #include "omnifuzz/feedback/fuzz_score.h"
 
@@ -39,6 +40,8 @@ class FeedbackMechanism {
   
   virtual ~FeedbackMechanism() = default;
 
+  virtual void AddMechanism(FeedbackMechanism*) {};
+
   // Pre-execution functions: talks to the Instrumentator
   virtual void RegisterExecutionVariable(void) = 0;
   virtual void WriteOnBasicBlock(std::string&) = 0;
@@ -54,6 +57,17 @@ class FeedbackMechanism {
   // virtual bool InterpretFeedback(void) = 0;
 };
 
+class FeedbackMechanismComposite : public FeedbackMechanism {
+ public:
+  virtual ~FeedbackMechanismComposite();
+  virtual void AddMechanism(FeedbackMechanism*) override;
+  virtual void RegisterExecutionVariable(void) override;
+  virtual size_t RegisterFeedbackData(void) override;
+  virtual void ResetFeedbackDataState(void*) override;
+  virtual void WriteOnBasicBlock(std::string&) override;
+ private:
+  std::vector<FeedbackMechanism*> mechanisms_;
+};
 
 }
 

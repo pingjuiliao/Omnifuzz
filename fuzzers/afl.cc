@@ -30,6 +30,13 @@ int main(int argc, char** argv) {
     std::cerr << "[Error] Cannot find executable" << std::endl;
     return -1;
   }
+  if (std::filesystem::exists(".cur_input")) {
+    std::filesystem::remove(".cur_input");
+  }
+  if (std::filesystem::exists("./omnifuzz_out")) {
+    std::filesystem::remove_all("./omnifuzz_out");
+  }
+
   char* ARGV[] = {executable, NULL};
   AflFuzz afl;
   afl.LoadSeed("./program_under_test/omnifuzz_in");

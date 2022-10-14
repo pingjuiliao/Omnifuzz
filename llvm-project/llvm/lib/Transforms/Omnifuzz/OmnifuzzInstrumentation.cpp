@@ -165,12 +165,13 @@ void OmnifuzzPass::createForkserverFunction(Module& M) {
 #endif
   ForksrvResumeIRB.CreateCall(CloseFunc, {ForksrvResumeIRB.getInt32(21)});
   ForksrvResumeIRB.CreateCall(CloseFunc, {ForksrvResumeIRB.getInt32(22)});
-  std::string AsmStr;
+  /*std::string AsmStr;
   fdbk_mech_->WriteOnBasicBlock(AsmStr);
   InlineAsm *BlockAsm = InlineAsm::get(
       FunctionType::get(ForksrvResumeIRB.getVoidTy(), {}, false), AsmStr, 
       "", false);
   ForksrvResumeIRB.CreateCall(BlockAsm, {});
+  */
   ForksrvResumeIRB.CreateBr(ReturnBB);
 
   // Abort: turn failure flag on, return to normal execution. 
@@ -272,10 +273,11 @@ void OmnifuzzPass::instrumentBasicBlockAssembly(BasicBlock& BB) {
   CheckBB->getTerminator()->eraseFromParent();
 
   // SetupBB
-  // instrumentEmbeddedForkserver(SetupBB, UpdateBB, RetBB);
   IRBuilder<> SetupIRB(SetupBB->getTerminator());
   SetupIRB.CreateCall(ForkserverInitFunction, {});
-  SetupIRB.CreateBr(RetBB);
+  LoadInst* LdFailGV = SetupIRB.CreateLoad(SetupIRB.getInt32Ty(), SetupFailGV);
+  Value* TestFailGV = SetupIRB.CreateICmpEQ(LdFailGV, SetupIRB.getInt32(0));
+  SetupIRB.CreateCondBr(TestFailGV, UpdateBB, RetBB);
   SetupBB->getTerminator()->eraseFromParent();
 
   // update BB
