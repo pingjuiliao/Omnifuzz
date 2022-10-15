@@ -55,6 +55,7 @@ class FeedbackMechanism {
   // Post-execution functions: talks to the 
   virtual FuzzScore DeemInteresting(void* data) = 0;
   // virtual bool InterpretFeedback(void) = 0;
+  std::unordered_map<std::string, std::pair<void*, size_t>> interpretation_;
 };
 
 class FeedbackMechanismComposite : public FeedbackMechanism {
