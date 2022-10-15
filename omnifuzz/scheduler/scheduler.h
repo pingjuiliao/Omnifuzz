@@ -11,6 +11,7 @@ namespace omnifuzz {
 class Scheduler {
  public:
   virtual ~Scheduler() = default;
+  virtual void CullAndReschedule(void) = 0;
   virtual void Enqueue(Testcase) = 0;
   virtual Testcase* Dequeue(void) = 0;
 };

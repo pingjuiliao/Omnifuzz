@@ -1,5 +1,5 @@
-#ifndef OMNIFUZZ_FEEDBACK_DEBUG_FEEDBACK_MECHANISM_H
-#define OMNIFUZZ_FEEDBACK_DEBUG_FEEDBACK_MECHANISM_H
+#ifndef OMNIFUZZ_FEEDBACK_DEBUG_MECHANISM_H
+#define OMNIFUZZ_FEEDBACK_DEBUG_MECHANISM_H
 
 #include <string>
 #include <sstream>
@@ -22,4 +22,4 @@ class DebugFeedbackMechanism : public FeedbackMechanism {
 
 } // namespace omnifuzz
 
-#endif  // OMNIFUZZ_FEEDBACK_DEBUG_FEEDBACK_MECHANISM_H
+#endif  // OMNIFUZZ_FEEDBACK_DEBUG_MECHANISM_H
