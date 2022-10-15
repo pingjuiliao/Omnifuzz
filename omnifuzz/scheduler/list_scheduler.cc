@@ -16,10 +16,6 @@ ListScheduler::~ListScheduler() {
   list_.clear();
 }
 
-void ListScheduler::CullAndReschedule(void) {
-  // do nothing
-}
-
 void ListScheduler::Enqueue(Testcase testcase) {
   testcase.fuzzed = false;
   list_.push_back(testcase);

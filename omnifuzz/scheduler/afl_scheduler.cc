@@ -11,11 +11,6 @@ AFLScheduler::~AFLScheduler() {
 
 }
 
-
-void AFLScheduler::CullAndReschedule(void) {
-
-}
-
 void AFLScheduler::Enqueue(Testcase testcase) {
 
 }

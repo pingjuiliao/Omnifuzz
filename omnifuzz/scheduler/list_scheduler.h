@@ -14,7 +14,6 @@ class ListScheduler : public Scheduler {
  public:
   ListScheduler();
   virtual ~ListScheduler();
-  virtual void CullAndReschedule(void) override;
   virtual void Enqueue(Testcase) override;
   virtual Testcase* Dequeue(void) override;
  private:
