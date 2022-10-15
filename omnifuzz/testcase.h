@@ -11,7 +11,7 @@ struct Testcase {
   char* file_name;      // file name
   uint32_t size;        // Input Length
   uint8_t trimmed;      // Was trimmed
-  uint8_t fuzzed;       // Was Fuzzed
+  uint8_t was_fuzzed;       // Was Fuzzed
   uint8_t dummy_a;      // Still thinking 
   uint8_t dummy_b;      // Still thinking
   uint64_t generation;  // Depth in generic algorithm

@@ -2,6 +2,7 @@
 #define OMNIFUZZ_SCHEDULER_AFL_SCHEDULER_H
 
 #include "omnifuzz/testcase.h"
+#include "omnifuzz/feedback/mechanism.h"
 
 namespace omnifuzz {
 
@@ -17,15 +18,20 @@ struct AFLQueue {
 
 class AFLScheduler : public Schduler {
  public:
-  AFLScheduler();
+  AFLScheduler(FeedbackMechanism*);
   virtual ~AFLScheduler();
   virtual void Enqueue(Testcase) override;
   virtual Testcase* Dequeue(void) override;
- private:
-  AFLQueue* queue;
-  AFLQueue* queue_cur;
-  AFLQueue* queue_top;
-  AFLQueue* q_prev100;
+ protected:
+  void UpdateBitmapScore(AFLQueue *q);
+  void CullQueue(void);
+  AFLQueue* queue_;
+  AFLQueue* queue_cur_;
+  AFLQueue* queue_top_;
+  AFLQueue* q_prev100_;
+  uint32_t pending_favored_;
+  uint32_t queue_favored_;
+  bool score_changed_;
 };
 
 } // namespace omnifuzz

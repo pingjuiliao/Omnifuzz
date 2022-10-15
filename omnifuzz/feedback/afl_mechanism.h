@@ -25,11 +25,17 @@ class AflFeedbackMechanism : public FeedbackMechanism {
   virtual void ResetFeedbackDataState(void*) override;
 
   virtual FuzzScore DeemInteresting(void*) override;
+  
+  // TODO: generalize this.
+  //  challenge, each feedback may return differnt things...
+  // Interpretation
+  std::vector<uint32_t> InterpretFeedbackDataForScheduler(void);
+  
  protected:
   const size_t kCoverageBitMapEntry = 64 * 1024;
-  Testcase* top_rated_;
   // maintain a virgin bitmap to see if there's new interesting bits comes in.
-  uint8_t* virgin_map_; 
+  uint8_t* curr_bitmap_;
+  uint8_t* virgin_map_;
   std::unordered_set<uint32_t> seen_cov_chksm_;
 };
 

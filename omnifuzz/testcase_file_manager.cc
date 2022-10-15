@@ -100,7 +100,7 @@ bool TestcaseFileManager::LoadSeedTestcaseFiles(Scheduler* scheduler,
     Testcase testcase;
     testcase.file_name = strdup(out_fname.c_str());
     testcase.size = std::filesystem::file_size(file); 
-    testcase.fuzzed = 0;
+    testcase.was_fuzzed = 0;
     testcase.exec_us = 0;
     testcase.generation = 0;
     scheduler->Enqueue(testcase);

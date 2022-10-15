@@ -157,4 +157,18 @@ FuzzScore AflFeedbackMechanism::DeemInteresting(void* data) {
   return score;*/
 }
 
+std::vector<uint32_t> AflFeedbackMechanism::InterpretFeedbackDataForScheduler(void) {
+  std::vector<uint32_t> top_rated_indices;
+  if (!curr_bitmap_) {
+    return top_rated_indices;
+  }
+  for (uint32_t i = 0; i < kCoverageBitMapEntry; ++i) {
+    if (curr_bitmap_[i]) {
+      top_rated_indices.push_back(i);
+    }
+  }
+  return top_rated_indices;
+}
+
+
 } // namespace omnifuzz
