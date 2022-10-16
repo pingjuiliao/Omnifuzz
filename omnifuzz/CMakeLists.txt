@@ -17,6 +17,17 @@ target_include_directories(omnifuzz_testcase_file_manager
   PUBLIC ${OMNIFUZZ_INCLUDE_DIR}
 )
 
+# timer
+add_library(omnifuzz_timer ${OMNIFUZZ_LIB_TYPE}
+  timer.cc
+  timer.h
+)
+add_library(omnifuzz::timer ALIAS
+  omnifuzz_timer
+)
+target_include_directories(omnifuzz_timer
+  PUBLIC ${OMNIFUZZ_INCLUDE_DIR})
+
 # fuzzer
 add_library(omnifuzz_fuzzer ${OMNIFUZZ_LIB_TYPE}
   fuzzer.cc
@@ -31,6 +42,7 @@ target_link_libraries(omnifuzz_fuzzer
   PUBLIC omnifuzz::testcase_file_manager
          omnifuzz::executor
          omnifuzz::mutator
+         omnifuzz::timer
 )
 target_include_directories(omnifuzz_fuzzer
   PUBLIC ${OMNIFUZZ_INCLUDE_DIR}

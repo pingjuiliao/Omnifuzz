@@ -9,6 +9,7 @@
 #include "omnifuzz/preprocessor/instrumentator.h"
 #include "omnifuzz/executor/executor.h"
 #include "omnifuzz/testcase_file_manager.h"
+#include "omnifuzz/timer.h"
 
 namespace omnifuzz {
 
@@ -36,6 +37,7 @@ class Fuzzer {
   Mutator* mutator_;
   Executor* executor_;
   FeedbackMechanism* fdbk_mech_;
+  // Timer timer_;
   bool configured_;
   bool input_ready_;
   bool executable_ready_;

@@ -64,6 +64,11 @@ void TestcaseFileManager::CreateTestcaseFile(Testcase &testcase,
   ofs.open(file_path);
   ofs.write((char *)buf, size);
   ofs.close();
+  
+  std::cout << "[TestcaseFileMngr]: testcase added to the filesystem" \
+            << "\n\t\t\tfile_name: " << testcase.file_name \
+            << "\n\t\t\t  size   : " << testcase.size \
+            << "\n\t\t\t exec_us : " << testcase.exec_us << std::endl;
 }
 
 // 
