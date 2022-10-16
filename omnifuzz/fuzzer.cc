@@ -45,9 +45,9 @@ void Fuzzer::Run(void) {
     while (mutator_->Mutate(buf, size) != 
            MutationResult::kCycleDone) {
       
-      // timer_.Start(); 
+      timer_.Start(); 
       executor_->Execute(buf, size);
-      // auto exec_us = timer_.Stop();
+      auto exec_us = timer_.Stop();
       shm_feedback = executor_->DumpFeedbackData();
 
       if (executor_->CaptureCrash()) {
@@ -56,7 +56,7 @@ void Fuzzer::Run(void) {
       if (fdbk_mech_->DeemInteresting(shm_feedback)) {
         Testcase new_testcase;
         new_testcase.generation = testcase->generation + 1;
-        // new_testcase.exec_us = exec_us;
+        new_testcase.exec_us = exec_us;
         testcase_file_manager_.CreateTestcaseFile(new_testcase, buf, size);
         scheduler_->Enqueue(new_testcase);
       }

@@ -4,19 +4,12 @@
 namespace omnifuzz {
 
 Timer::Timer() {
-  std::cout << "construction\n";
-  GetTimerImpl();
+  timer_impl_ = new ChronoSteadyTimerImpl; 
 }
 
 Timer::~Timer() {
   if (timer_impl_) {
     delete timer_impl_;
-  }
-}
-
-void Timer::GetTimerImpl(void) {
-  if (!timer_impl_) {
-    timer_impl_ = new ChronoSteadyTimerImpl;
   }
 }
 
@@ -31,6 +24,7 @@ uint64_t Timer::Stop(void) {
 ChronoSteadyTimerImpl::ChronoSteadyTimerImpl() {
 }
 
+ChronoSteadyTimerImpl::~ChronoSteadyTimerImpl() {}
 
 void ChronoSteadyTimerImpl::DevStart(void) {
   start_ = std::chrono::steady_clock::now();

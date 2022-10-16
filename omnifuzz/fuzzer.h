@@ -37,7 +37,7 @@ class Fuzzer {
   Mutator* mutator_;
   Executor* executor_;
   FeedbackMechanism* fdbk_mech_;
-  // Timer timer_;
+  Timer timer_;
   bool configured_;
   bool input_ready_;
   bool executable_ready_;
