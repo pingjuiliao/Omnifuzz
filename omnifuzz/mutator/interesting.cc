@@ -45,6 +45,9 @@ InterestingInt8Mutator::InterestingInt8Mutator() {
 }
 
 InterestingInt8Mutator::~InterestingInt8Mutator() {
+  for (auto interest_val: interesting_values_) {
+    delete interest_val;
+  }
   interesting_values_.clear();
 }
 
@@ -61,7 +64,9 @@ MutationResult InterestingInt8Mutator::Mutate(uint8_t* data, size_t& size) {
     ptr_start_++;
 
     // initialize for the new index 
-    original_ = *ptr_start_;
+    if (ptr_start_ < ptr_end_) {
+      original_ = *ptr_start_;
+    }
     iterator_ = interesting_values_.begin();
   }
 
@@ -113,7 +118,9 @@ MutationResult InterestingInt16Mutator::Mutate(uint8_t* data, size_t& size) {
     window = reinterpret_cast<uint16_t*>(ptr_start_);
 
     // initialize for the new index 
-    original_ = *window;
+    if (ptr_start_ + kNumBytes <= ptr_end_) {
+      original_ = *window;
+    }
     iterator_ = interesting_values_.begin();
   }
 
@@ -162,7 +169,9 @@ MutationResult InterestingInt32Mutator::Mutate(uint8_t* data, size_t& size) {
     window = reinterpret_cast<uint32_t*>(ptr_start_);
 
     // initialize for the new index 
-    original_ = *window;
+    if (ptr_start_ + kNumBytes <= ptr_end_) {
+      original_ = *window;
+    }
     iterator_ = interesting_values_.begin();
   }
 

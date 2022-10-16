@@ -19,7 +19,7 @@ class AllInterestMutator: public omnifuzz::MutatorComposite {
 
 
 
-const size_t kBufSize = 8;
+size_t kBufSize = 8;
 int main(int argc, char** argv) {
   uint8_t buf[kBufSize];
   AllInterestMutator mutator;
@@ -33,7 +33,7 @@ int main(int argc, char** argv) {
       cerr << "[ABORT] on round " << i << endl;
     }
     for (size_t i = 0; i < kBufSize; ++i) {
-      printf("%02x ", buf[i]);
+      printf("%02hhx ", buf[i]);
     }
     printf("\n"); 
     i ++;

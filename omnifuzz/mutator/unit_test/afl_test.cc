@@ -24,7 +24,7 @@ int main(int argc, char** argv) {
     while (r != omnifuzz::MutationResult::kCycleDone) {
       r = mutator.Mutate(buf, kBufSize);
       for (size_t i = 0; i < kBufSize; ++i) {
-        printf("%02x ", buf[i]);
+        printf("%02hhx ", buf[i]);
       }
       printf(" | ");
       for (size_t i = 0; i < kBufSize; ++i) {
