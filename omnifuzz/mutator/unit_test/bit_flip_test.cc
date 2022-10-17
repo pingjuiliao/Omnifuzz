@@ -5,10 +5,21 @@
 #include <cstdint>
 
 
-#include "../mutator.h"
-#include "../bit_flip.h"
+#include "omnifuzz/mutator/mutator.h"
+#include "omnifuzz/mutator/bit_flip.h"
 
-const size_t kBufSize = 4;
+size_t kBufSize = 4;
+
+
+void print_word_as_bits(uint32_t val) {
+  printf(" ||");
+  for (int i = 0; i < 4; i++) {
+    for (int j = 7; j >= 0; j--) {
+      printf("%1d", ((val >> 8 * i) & (1 << j))? 1: 0);
+    }
+  }
+}
+
 
 int main(int argc, char** argv) {
   uint8_t buf[kBufSize];
@@ -24,7 +35,9 @@ int main(int argc, char** argv) {
       }    
     } 
     uint32_t *p = (uint32_t *)buf;
-    printf(" || %032b || %032b\n", *p, k);
+    print_word_as_bits(*p);
+    print_word_as_bits(k);
+    printf("\n");
     k <<= 1;
   }
 

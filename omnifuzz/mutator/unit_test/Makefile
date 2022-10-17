@@ -14,7 +14,7 @@ composite_test: composite_test.cc bit_flip mutator
 	$(CXX) $(CXXFLAGS) -c $< -o $@.o
 	$(CXX) $(CXXFLAGS) $@.o bit_flip.o mutator.o -o $@.exe
 bit_flip_test: bit_flip_test.cc bit_flip mutator
-	$(CXX) $(CXXFLAGS) -c $< -o $@.o
+	$(CXX) -I../../../ -fsanitize=address -static-libasan -c $< -o $@.o
 	$(CXX) $(CXXFLAGS) $@.o bit_flip.o mutator.o -o $@.exe
 afl_mutator: ../afl_mutator.cc
 	$(CXX) $(CXXFLAGS) -c $< -o $@.o

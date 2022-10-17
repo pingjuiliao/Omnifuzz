@@ -67,7 +67,9 @@ MutationResult ArithmeticMutator::MutateAndIterate(T* buf, size_t size) {
     window = reinterpret_cast<T*>(ptr_start_);
     
     // initialize for the new index
-    original = *window;
+    if (((uint8_t *) window) + sizeof(T) <= ptr_end_) {
+      original = *window;
+    }
     num = 1;
     positive = true;
   }

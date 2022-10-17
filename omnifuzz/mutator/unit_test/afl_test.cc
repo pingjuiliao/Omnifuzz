@@ -4,8 +4,8 @@
 #include <iostream>
 #include <cstdint>
 
+#include "omnifuzz/mutator/afl_mutator.h"
 
-#include "../afl_mutator.h"
 // An odd number is more likely to break things.
 size_t kBufSize = 11;
 const size_t kNumBuffer = 2;
@@ -15,6 +15,7 @@ int main(int argc, char** argv) {
   omnifuzz::AflMutator mutator;
 
   for (int n = 0; n < kNumBuffer; ++n) {
+    memset(buf, 0, sizeof(buf));
     puts("###########################");
     printf("BUFFER %s\n", (char *) buf);
     puts("###########################");
@@ -35,5 +36,6 @@ int main(int argc, char** argv) {
       printf("\n");
     }
   }
+  free(buf);
   return 0;
 }
