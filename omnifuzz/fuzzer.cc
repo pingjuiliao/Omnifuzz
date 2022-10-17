@@ -45,9 +45,11 @@ void Fuzzer::Run(void) {
     while (mutator_->Mutate(buf, size) != 
            MutationResult::kCycleDone) {
       
+      // Run the Program Under Test
       timer_.Start(); 
       executor_->Execute(buf, size);
       auto exec_us = timer_.Stop();
+      
       shm_feedback = executor_->DumpFeedbackData();
 
       if (executor_->CaptureCrash() &&

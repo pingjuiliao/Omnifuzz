@@ -112,16 +112,7 @@ void AflFeedbackMechanism::WriteOnBasicBlock(std::string& assembly) {
 
 FuzzScore AflFeedbackMechanism::DeemInteresting(void* data) {
   
-  uint32_t checksum = crc32(static_cast<uint8_t*>(data), kCoverageBitMapEntry);
-  
-  if (seen_cov_chksm_.find(checksum) == seen_cov_chksm_.end()) {
-    std::cout << "[Feedback]: New checksum" << checksum << std::endl;
-    seen_cov_chksm_.insert(checksum);
-    return FuzzScore::kNewVisitCoverage;
-  }
-
-  return FuzzScore::kNotInteresting;
-  /*
+  // uint32_t checksum = crc32(static_cast<uint8_t*>(data), kCoverageBitMapEntry);
   uint64_t* current = reinterpret_cast<uint64_t*>(data);
   uint64_t* virgin = reinterpret_cast<uint64_t*>(virgin_map_);
   uint32_t i = (kCoverageBitMapEntry >> 3);
@@ -153,8 +144,8 @@ FuzzScore AflFeedbackMechanism::DeemInteresting(void* data) {
     current ++;
     virgin ++;
   }
-  
-  return score;*/
+
+  return score;
 }
 
 
