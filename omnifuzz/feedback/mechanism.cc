@@ -30,13 +30,10 @@ void FeedbackMechanismComposite::ResetFeedbackDataState(void* ptr) {
   }
 }
 
-
 void FeedbackMechanismComposite::WriteOnBasicBlock(std::string& assembly) {
   for (auto fdbk_mech: mechanisms_) {
     fdbk_mech->WriteOnBasicBlock(assembly);
   }
 }
-
-
 
 }

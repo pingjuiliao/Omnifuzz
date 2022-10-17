@@ -38,7 +38,7 @@ void TestcaseFileManager::CreateCrashReport(uint8_t* buf, size_t size) {
   static uint32_t crash_count = 0;
   std::ofstream ofs;
   std::string file_name = "/id_" + std::to_string(crash_count++);
-  ofs.open(out_dir_->testcase_dir + file_name);
+  ofs.open(out_dir_->crash_dir + file_name);
   ofs.write((char *)buf, size); 
   ofs.close();
 }

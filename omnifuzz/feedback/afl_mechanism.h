@@ -25,7 +25,7 @@ class AflFeedbackMechanism : public FeedbackMechanism {
   virtual void ResetFeedbackDataState(void*) override;
 
   virtual FuzzScore DeemInteresting(void*) override;
-  
+  virtual bool DeemUniqueCrash(void*) override; 
   // TODO: generalize this.
   //  challenge, each feedback may return differnt things...
   // Interpretation

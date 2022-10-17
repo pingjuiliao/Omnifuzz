@@ -157,6 +157,12 @@ FuzzScore AflFeedbackMechanism::DeemInteresting(void* data) {
   return score;*/
 }
 
+
+bool AflFeedbackMechanism::DeemUniqueCrash(void* data) {
+  return DeemInteresting(data) > 0;
+}
+
+
 std::vector<uint32_t> AflFeedbackMechanism::InterpretFeedbackDataForScheduler(void) {
   std::vector<uint32_t> top_rated_indices;
   if (!curr_bitmap_) {

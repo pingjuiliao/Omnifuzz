@@ -22,7 +22,7 @@ main(int argc, char** argv) {
             if (buf[5] == 'r')
               if (buf[6] == 'e')
                 if (buf[7] == 'w')
-                  puts("hello world");
+                  __builtin_trap();
 
   return 0;
 }

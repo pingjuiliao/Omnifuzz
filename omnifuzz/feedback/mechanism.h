@@ -53,7 +53,8 @@ class FeedbackMechanism {
   std::unordered_map<std::string, ExecutionVariable> fdbk_data_map_;
 
   // Post-execution functions: talks to the 
-  virtual FuzzScore DeemInteresting(void* data) = 0;
+  virtual FuzzScore DeemInteresting(void*) = 0;
+  virtual bool DeemUniqueCrash(void*) = 0;
   // virtual size_t InterpretFeedback(void) = 0;
 };
 

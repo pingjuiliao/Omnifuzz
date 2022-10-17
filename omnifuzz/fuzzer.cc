@@ -50,7 +50,8 @@ void Fuzzer::Run(void) {
       auto exec_us = timer_.Stop();
       shm_feedback = executor_->DumpFeedbackData();
 
-      if (executor_->CaptureCrash()) {
+      if (executor_->CaptureCrash() &&
+          fdbk_mech_->DeemUniqueCrash(shm_feedback)) {
         testcase_file_manager_.CreateCrashReport(buf, size);
       } 
       if (fdbk_mech_->DeemInteresting(shm_feedback)) {

@@ -20,10 +20,6 @@ void DebugFeedbackMechanism::RegisterExecutionVariable(void) {
 }
 void DebugFeedbackMechanism::ResetFeedbackDataState(void* ptr) {}
 
-FuzzScore DebugFeedbackMechanism::DeemInteresting(void *p) {
-  return FuzzScore::kRevisitCoverage;
-}
-
 void DebugFeedbackMechanism::WriteOnBasicBlock(std::string &s) {
   std::stringstream ss;
   ss << "pushq %rcx;\npushq %rdx;\n" 
@@ -34,6 +30,13 @@ void DebugFeedbackMechanism::WriteOnBasicBlock(std::string &s) {
   s = ss.str();
 }
 
+FuzzScore DebugFeedbackMechanism::DeemInteresting(void *data) {
+  return FuzzScore::kRevisitCoverage;
+}
+
+bool DebugFeedbackMechanism::DeemUniqueCrash(void* data) {
+  return true;
+}
 
 } // namespace omnifuzz
 

@@ -16,8 +16,9 @@ class DebugFeedbackMechanism : public FeedbackMechanism {
   virtual size_t RegisterFeedbackData(void) override;
   virtual void ResetFeedbackDataState(void*) override;
   virtual void RegisterExecutionVariable(void) override;
-  virtual FuzzScore DeemInteresting(void* p) override;
-  virtual void WriteOnBasicBlock(std::string &s) override;
+  virtual void WriteOnBasicBlock(std::string&) override;
+  virtual FuzzScore DeemInteresting(void*) override;
+  virtual bool DeemUniqueCrash(void*) override;
 };
 
 } // namespace omnifuzz
