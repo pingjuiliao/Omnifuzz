@@ -29,6 +29,12 @@ class AFLScheduler : public Schduler {
   AFLQueue* queue_cur_;
   AFLQueue* queue_top_;
   AFLQueue* q_prev100_;
+
+  // path winner
+  // i.e. AFLQueue* top_rated_[BITMAP_SIZE];
+  AFLQueue* top_rated_;
+  
+  // global property
   uint32_t pending_favored_;
   uint32_t queue_favored_;
   bool score_changed_;
