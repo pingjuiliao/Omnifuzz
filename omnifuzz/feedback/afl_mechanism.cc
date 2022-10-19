@@ -173,10 +173,9 @@ void AflFeedbackMechanism::InterpretFeedback(void* data,
   }
   
   // Allow other fuzzing components to access 
-  auto state_map = *fuzz_state;
   uint32_t offset = fdbk_data_map_["__afl_area_ptr"].GetOffset();
   void* afl_bitmap = static_cast<void*>((uint8_t*) data + offset);
-  state_map["afl_bitmap"] = std::make_pair(afl_bitmap, kCoverageBitMapEntry);
+  (*fuzz_state)["afl_bitmap"] = std::make_pair(afl_bitmap, kCoverageBitMapEntry);
 }
 
 } // namespace omnifuzz

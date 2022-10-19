@@ -34,6 +34,7 @@ class AFLScheduler : public Scheduler {
   void UpdateBitmapScore(AFLQueue *q, 
       std::unordered_map<std::string, std::pair<void*, size_t>>*);
   void CullQueue(void);
+  uint64_t FitnessScore(AFLQueue*);
   AFLQueue* queue_;
   AFLQueue* queue_cur_;
   AFLQueue* queue_top_;
@@ -42,6 +43,7 @@ class AFLScheduler : public Scheduler {
   // path winner: not initialized until get the size
   // i.e. AFLQueue* top_rated_[BITMAP_SIZE];
   AFLQueue** top_rated_;
+  uint8_t* afl_bitmap_ptr_;
   size_t bitmap_size_;
   
   // global property

@@ -10,10 +10,10 @@ struct Testcase {
   // Testcase Information regardless what the fuzzer is.
   char* file_name;      // file name
   uint32_t size;        // Input Length
-  uint8_t trimmed;      // Was trimmed
-  uint8_t was_fuzzed;       // Was Fuzzed
-  uint8_t dummy_a;      // Still thinking 
-  uint8_t dummy_b;      // Still thinking
+  uint8_t trimmed;      // Was trimmed (Unused)
+  uint8_t was_fuzzed;   // Was Fuzzed
+  uint8_t dummy_a;      // Unused
+  uint8_t dummy_b;      // Unused 
   uint64_t generation;  // Depth in generic algorithm
   uint64_t exec_us;     // Execution time (us)
                         

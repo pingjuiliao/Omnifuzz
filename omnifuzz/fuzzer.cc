@@ -60,9 +60,11 @@ void Fuzzer::Run(void) {
         Testcase new_testcase;
         new_testcase.generation = testcase->generation + 1;
         new_testcase.exec_us = exec_us;
+        new_testcase.was_fuzzed = 0;
         testcase_file_manager_.CreateTestcaseFile(new_testcase, buf, size);
-        scheduler_->Enqueue(new_testcase, &curr_fuzz_state_);
+        // Update fuzz configuration
         fdbk_mech_->InterpretFeedback(shm_feedback, &curr_fuzz_state_);
+        scheduler_->Enqueue(new_testcase, &curr_fuzz_state_);
       }
     } 
     testcase_file_manager_.Unload(buf);

@@ -27,7 +27,7 @@ AFLScheduler::~AFLScheduler() {
   }
   queue_ = queue_cur_ = queue_top_ = q_prev100_ = nullptr;
 
-  // delete top_rated_
+  // Deallocate top_rated_
   delete[] top_rated_;
   top_rated_ = nullptr;
 }
@@ -63,72 +63,80 @@ void AFLScheduler::Enqueue(Testcase testcase,
 
 Testcase* AFLScheduler::Dequeue(void) {
   
-  CullQueue();
-
+  // if we have new winner, mark them as favorate  
+  if (score_changed_) {
+    CullQueue();
+    score_changed_ = false;
+  }
+  
+  // Select next entry in the queue
   if (!queue_cur_) {
     queue_cur_ = queue_;
   } else {
     queue_cur_ = queue_cur_->next;
   }
 
-
+  // Favorate Mode: we have a winner for a certain path, search for it
   if (pending_favored_) {
-    while (!queue_cur_->favored) {
+    while (!queue_cur_->favored || queue_cur_->testcase.was_fuzzed) {
       queue_cur_ = queue_cur_->next;
+      if (!queue_cur_) {
+        queue_cur_ = queue_;
+      }
     }
     pending_favored_--;
   }
 
-  // For debug purpose, concetually, pending favored must find a 
-  //  favored entry
-  if (!queue_cur_) { 
-    return nullptr;
+  if (!queue_cur_) {
+    queue_cur_ = queue_; 
   }
-
 
   std::cout << "[Scheduler]: scheduled" << queue_cur_->testcase.file_name \
             << std::endl;
+  std::cout << "[Scheduler]: favored? " << (queue_cur_->favored != 0) << std::endl;
+  queue_cur_->testcase.was_fuzzed = 1;
   return &queue_cur_->testcase;
 }
 
 
 // Same algorithm as afl-fuzz.c: update_bitmap_score(struct queue_entry *q)
+// Select the winner for the given path, and prioritize them if they are 
+//  not fuzzed.
 void AFLScheduler::UpdateBitmapScore(AFLQueue *q, 
     std::unordered_map<std::string, std::pair<void*, size_t>> *fuzz_state) {
   
-  // The feedback mechanism interpret the coverage bitmap as the 
-  // indices that the bits are on.
-  // (This may be change since I am trying to generalize the interpretation.)
-  
-  auto afl_bitmap_metadata = (*fuzz_state)["afl_bitmap"];
-  uint8_t* afl_bitmap_ptr = static_cast<uint8_t*>(afl_bitmap_metadata.first);
-  size_t afl_bitmap_size = afl_bitmap_metadata.second;
-
-  
+  // top_rated_ should be setup once 
   if (!top_rated_) {
-    top_rated_ = new AFLQueue*[afl_bitmap_size];
-    memset(top_rated_, 0, sizeof(AFLQueue*) * afl_bitmap_size);
-    bitmap_size_ = afl_bitmap_size;
+    auto bitmap_metadata = (*fuzz_state)["afl_bitmap"];
+    afl_bitmap_ptr_ = static_cast<uint8_t*>(bitmap_metadata.first);
+    bitmap_size_ = bitmap_metadata.second;
+    std::cout << "[Scheduler] top_rated has been set with size: " \
+              << bitmap_size_ << std::endl;
+    top_rated_ = new AFLQueue*[bitmap_size_];
+    memset(top_rated_, 0, sizeof(AFLQueue*) * bitmap_size_);
   }
 
-  uint64_t fav_factor = q->testcase.exec_us * q->testcase.size;
-  for (int i = 0; i < afl_bitmap_size; ++i) {
-    if (top_rated_[i]) {
-      AFLQueue* curr_top = top_rated_[i];
-      if (fav_factor > curr_top->testcase.exec_us * curr_top->testcase.size) {
-        continue;
-      } 
-      /* 
-      if (!--top_rated_[i]->tc_ref) {
+  uint64_t fav_factor = FitnessScore(q);
+
+  for (int i = 0; i < bitmap_size_; ++i) {
+    if (afl_bitmap_ptr_[i]) {
+      if (top_rated_[i]) {
+        // Winner: old candidate
+        if (fav_factor > FitnessScore(top_rated_[i])) {
+          continue;
+        } 
+
+        // Winner: new candidate, so delete the old one
+        /* 
+        if (!--top_rated_[i]->tc_ref) {
         
-      }*/
+        }*/
+      }
+    
+      /* Insert as the new Winner */
+      top_rated_[i] = q;
+      score_changed_ = true;
     }
-    
-    /* Insert as the new Winner */
-    top_rated_[i] = q;
-    // q->tc_ref++;
-    
-    score_changed_ = true;
   }
 }
 
@@ -136,10 +144,15 @@ void AFLScheduler::UpdateBitmapScore(AFLQueue *q,
 void AFLScheduler::CullQueue(void) {
   
   // Initialize
-  score_changed_ = false;
   queue_favored_ = 0;
   pending_favored_ = 0;
   
+  /* TODO: I believe the algorithm of pending_favored is not complete.
+   * it keeps the counts of the favorates but cancel them in CullQueue().
+   * Ideally, the cancellation should not be done. Instead, the number can be
+   * used to determine how many entries should be fuzzed for the following 
+   * rounds/cycles.*/
+
   // Mark all as unfavored
   AFLQueue* q = queue_;
   while (q) {
@@ -153,7 +166,7 @@ void AFLScheduler::CullQueue(void) {
 
   // Select top_rated as favored. 
   for (int i = 0; i < bitmap_size_; ++i) {
-    if (top_rated_[i] /* && (temp_v[i >> 3] * (1 << (i & 7)))*/ ) {
+    if (top_rated_[i] /* && (temp_v[i >> 3] * (1 << (i & 7)))*/) {
       top_rated_[i]->favored = 1;
       queue_favored_ ++;
       if (!top_rated_[i]->testcase.was_fuzzed) {
@@ -162,7 +175,13 @@ void AFLScheduler::CullQueue(void) {
     }
   }
   
-  // TODO: mark as redundant
+  // TODO: mark redundant testcases
 }
+
+uint64_t AFLScheduler::FitnessScore(AFLQueue* q) {
+  return q->testcase.size * q->testcase.exec_us;
+}
+
+
 
 } // namespace omnifuzz
