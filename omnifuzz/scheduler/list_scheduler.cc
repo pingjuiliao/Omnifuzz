@@ -16,7 +16,8 @@ ListScheduler::~ListScheduler() {
   list_.clear();
 }
 
-void ListScheduler::Enqueue(Testcase testcase) {
+void ListScheduler::Enqueue(Testcase testcase, 
+    std::unordered_map<std::string, std::pair<void*, size_t>> *fuzz_state) {
   testcase.was_fuzzed = false;
   list_.push_back(testcase);
 }
@@ -34,7 +35,4 @@ Testcase* ListScheduler::Dequeue(void) {
   return nullptr;
 }
 
-void ListScheduler::Reschedule(std::unordered_map<std::string, std::pair<void*, size_t>> &fuzz_state) {
-  
-}
 } // namespace omnifuzz

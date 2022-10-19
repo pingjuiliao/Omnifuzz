@@ -12,10 +12,10 @@ namespace omnifuzz {
 class Scheduler {
  public:
   virtual ~Scheduler() = default;
-  virtual void Enqueue(Testcase) = 0;
+  virtual void Enqueue(Testcase, 
+      std::unordered_map<std::string, std::pair<void*, size_t>>*
+      = nullptr) = 0;
   virtual Testcase* Dequeue(void) = 0;
-  virtual void Reschedule(
-      std::unordered_map<std::string, std::pair<void*, size_t>>&) = 0;
 };
 
 } // namespace omnifuzz

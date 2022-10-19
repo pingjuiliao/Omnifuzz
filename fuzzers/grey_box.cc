@@ -4,7 +4,7 @@
 
 #include "omnifuzz/fuzzer.h"
 #include "omnifuzz/executor/forksrv_executor.h"
-#include "omnifuzz/scheduler/afl_scheduler.h"
+#include "omnifuzz/scheduler/list_scheduler.h"
 #include "omnifuzz/mutator/afl_mutator.h"
 #include "omnifuzz/feedback/afl_mechanism.h"
 
@@ -17,7 +17,7 @@ class AflFuzz : public omnifuzz::Fuzzer {
  protected:
   void Configure(void) override {
     executor_ = new omnifuzz::ForkServerExecutor();
-    scheduler_ = new omnifuzz::AFLScheduler();
+    scheduler_ = new omnifuzz::ListScheduler();
     mutator_ = new omnifuzz::AflMutator();
     fdbk_mech_ = new omnifuzz::AflFeedbackMechanism();
     configured_ = true;

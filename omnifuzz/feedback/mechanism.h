@@ -61,7 +61,7 @@ class FeedbackMechanism {
   virtual FuzzScore DeemInteresting(void*) = 0;
   virtual bool DeemUniqueCrash(void*) = 0;
   virtual void InterpretFeedback(void*,
-      std::unordered_map<std::string, std::pair<void*, size_t>>&) = 0;
+      std::unordered_map<std::string, std::pair<void*, size_t>>*) = 0;
 };
 
 class FeedbackMechanismComposite : public FeedbackMechanism {

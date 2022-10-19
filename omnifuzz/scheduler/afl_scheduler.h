@@ -1,8 +1,14 @@
 #ifndef OMNIFUZZ_SCHEDULER_AFL_SCHEDULER_H
 #define OMNIFUZZ_SCHEDULER_AFL_SCHEDULER_H
 
+#include <cstring>
+#include <iostream>
+#include <string>
+#include <unordered_map>
+#include <utility>
+
+#include "omnifuzz/scheduler/scheduler.h"
 #include "omnifuzz/testcase.h"
-#include "omnifuzz/feedback/mechanism.h"
 
 namespace omnifuzz {
 
@@ -16,30 +22,32 @@ struct AFLQueue {
   AFLQueue* next_100; // the difference between std::list,...
 };
 
-class AFLScheduler : public Schduler {
+class AFLScheduler : public Scheduler {
  public:
   AFLScheduler();
   virtual ~AFLScheduler();
-  virtual void Enqueue(Testcase) override; 
+  virtual void Enqueue(Testcase, 
+      std::unordered_map<std::string, std::pair<void*, size_t>>* 
+      = nullptr) override; 
   virtual Testcase* Dequeue(void) override;
-  virtual void Reschedule(std::unordered_map<std::string, std::pair<void*, size_t>>&) override;
  protected:
-  void UpdateBitmapScore(AFLQueue *q);
+  void UpdateBitmapScore(AFLQueue *q, 
+      std::unordered_map<std::string, std::pair<void*, size_t>>*);
   void CullQueue(void);
   AFLQueue* queue_;
   AFLQueue* queue_cur_;
   AFLQueue* queue_top_;
   AFLQueue* q_prev100_;
 
-  // path winner
+  // path winner: not initialized until get the size
   // i.e. AFLQueue* top_rated_[BITMAP_SIZE];
-  AFLQueue* top_rated_;
+  AFLQueue** top_rated_;
+  size_t bitmap_size_;
   
   // global property
   uint32_t pending_favored_;
   uint32_t queue_favored_;
   bool score_changed_;
-  bool pending_reschedule_;
 };
 
 } // namespace omnifuzz

@@ -4,18 +4,39 @@
 namespace omnifuzz {
 
 AFLScheduler::AFLScheduler() {
+  // Management of AFLQueue*
+  queue_ = queue_cur_ = queue_top_ = q_prev100_ = nullptr;
+
+  // The selection algorithm in AFL
+  top_rated_ = nullptr;
+  bitmap_size_ = 0;
+
+  // global state of this scheduler
+  queue_favored_ = 0;
   pending_favored_ = 0;
   score_changed_ = false;
-  pending_reschedule_ = false;
 }
 
 AFLScheduler::~AFLScheduler() {
+  // Deallocate Queue
+  AFLQueue* q = queue_;
+  while (q) {
+    AFLQueue* tmp = q->next;
+    delete q;
+    q = tmp;
+  }
+  queue_ = queue_cur_ = queue_top_ = q_prev100_ = nullptr;
 
+  // delete top_rated_
+  delete[] top_rated_;
+  top_rated_ = nullptr;
 }
 
-void AFLScheduler::Enqueue(Testcase testcase) {
+void AFLScheduler::Enqueue(Testcase testcase, 
+    std::unordered_map<std::string, std::pair<void*, size_t>> *fuzz_state) {
   
   AFLQueue* q = new AFLQueue;
+  memset(q, 0, sizeof(AFLQueue));
   q->testcase = testcase;
 
   if (queue_top_) {
@@ -34,14 +55,16 @@ void AFLScheduler::Enqueue(Testcase testcase) {
     q_prev100_->next_100 = q;
     q_prev100_ = q;
   }*/
-
-  pending_reschedule_ = true;
+  if (!fuzz_state) {
+    return;
+  }
+  UpdateBitmapScore(q, fuzz_state);
 }
 
 Testcase* AFLScheduler::Dequeue(void) {
   
   CullQueue();
-  
+
   if (!queue_cur_) {
     queue_cur_ = queue_;
   } else {
@@ -49,35 +72,49 @@ Testcase* AFLScheduler::Dequeue(void) {
   }
 
 
-  if (!pending_favored_) {
-    return queue_cur_;
+  if (pending_favored_) {
+    while (!queue_cur_->favored) {
+      queue_cur_ = queue_cur_->next;
+    }
+    pending_favored_--;
   }
 
-  while (!queue_cur_->favored) {
-    queue_cur_ = queue_cur_->next;
+  // For debug purpose, concetually, pending favored must find a 
+  //  favored entry
+  if (!queue_cur_) { 
+    return nullptr;
   }
-  pending_favored_--;
-  
+
+
+  std::cout << "[Scheduler]: scheduled" << queue_cur_->testcase.file_name \
+            << std::endl;
   return &queue_cur_->testcase;
 }
 
 
 // Same algorithm as afl-fuzz.c: update_bitmap_score(struct queue_entry *q)
 void AFLScheduler::UpdateBitmapScore(AFLQueue *q, 
-    std::unordered_map<std::string, std::pair<void*, size_t>> &fuzz_state) {
+    std::unordered_map<std::string, std::pair<void*, size_t>> *fuzz_state) {
   
   // The feedback mechanism interpret the coverage bitmap as the 
   // indices that the bits are on.
   // (This may be change since I am trying to generalize the interpretation.)
-  //
-  void* afl_bitmap_metadata = fuzz_state["afl_bitmap"];
-  void* afl_bitmap_ptr = static_cast<uint8_t>(afl_bitmap_metadata.first);
+  
+  auto afl_bitmap_metadata = (*fuzz_state)["afl_bitmap"];
+  uint8_t* afl_bitmap_ptr = static_cast<uint8_t*>(afl_bitmap_metadata.first);
   size_t afl_bitmap_size = afl_bitmap_metadata.second;
+
+  
+  if (!top_rated_) {
+    top_rated_ = new AFLQueue*[afl_bitmap_size];
+    memset(top_rated_, 0, sizeof(AFLQueue*) * afl_bitmap_size);
+    bitmap_size_ = afl_bitmap_size;
+  }
 
   uint64_t fav_factor = q->testcase.exec_us * q->testcase.size;
   for (int i = 0; i < afl_bitmap_size; ++i) {
-    if (top_rated_[index]) {
-      AFLQueue* curr_top = top_rated_[index];
+    if (top_rated_[i]) {
+      AFLQueue* curr_top = top_rated_[i];
       if (fav_factor > curr_top->testcase.exec_us * curr_top->testcase.size) {
         continue;
       } 
@@ -88,7 +125,7 @@ void AFLScheduler::UpdateBitmapScore(AFLQueue *q,
     }
     
     /* Insert as the new Winner */
-    top_rated_[index] = q;
+    top_rated_[i] = q;
     // q->tc_ref++;
     
     score_changed_ = true;
@@ -110,25 +147,22 @@ void AFLScheduler::CullQueue(void) {
     q = q->next;
   }
   
+  if (!top_rated_) {
+    return;
+  }
+
   // Select top_rated as favored. 
-  for (int i = 0; i < fdbk_mech_->kCoverageBitMapEntry; ++i) {
+  for (int i = 0; i < bitmap_size_; ++i) {
     if (top_rated_[i] /* && (temp_v[i >> 3] * (1 << (i & 7)))*/ ) {
       top_rated_[i]->favored = 1;
       queue_favored_ ++;
-      if (!top_rated_[i]->testcase.was_fuzzed)
-        pending_favored++;
+      if (!top_rated_[i]->testcase.was_fuzzed) {
+        pending_favored_++;     
+      }
     }
   }
   
   // TODO: mark as redundant
-}
-
-void AFLScheduler::Reschedule(std::unordered_map<std::string, std::pair<void*, size_t>> &fuzz_state) {
-  if (!pending_reschedule_) {
-    return;
-  }
-  pending_reschedule_ = false;
-  UpdateBitmapScore(pending_reschedule, fuzz_state);
 }
 
 } // namespace omnifuzz

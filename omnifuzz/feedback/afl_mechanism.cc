@@ -87,7 +87,7 @@ size_t AflFeedbackMechanism::RegisterFeedbackData(void) {
 
   fdbk_data_map_["__afl_area_end"] = ExecutionVariable("__afl_area_end", ExecutionVariable::Type::Pointer, kCoverageBitMapEntry, 0);
   total_size += fdbk_data_map_["__afl_area_end"].GetSize();
-
+  
   return total_size;
 }
 
@@ -165,17 +165,18 @@ bool AflFeedbackMechanism::DeemUniqueCrash(void* data) {
 }
 
 void AflFeedbackMechanism::InterpretFeedback(void* data, 
-    std::unordered_map<std::string, std::pair<void*, size_t>> &fuzz_state) {
+    std::unordered_map<std::string, std::pair<void*, size_t>> *fuzz_state) {
   
   // afl_bitmap is a constant offset to the shm area
-  if (fuzz_state.find("afl_bitmap") != fuzz_state.end()) {
+  if (!fuzz_state) {
     return;
   }
-
+  
   // Allow other fuzzing components to access 
+  auto state_map = *fuzz_state;
   uint32_t offset = fdbk_data_map_["__afl_area_ptr"].GetOffset();
   void* afl_bitmap = static_cast<void*>((uint8_t*) data + offset);
-  fuzz_state["afl_bitmap"] = std::make_pair(afl_bitmap, kCoverageBitMapEntry);
+  state_map["afl_bitmap"] = std::make_pair(afl_bitmap, kCoverageBitMapEntry);
 }
 
 } // namespace omnifuzz
