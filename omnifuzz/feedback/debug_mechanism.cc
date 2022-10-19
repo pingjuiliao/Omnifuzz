@@ -18,7 +18,7 @@ size_t DebugFeedbackMechanism::RegisterFeedbackData(void) {
 void DebugFeedbackMechanism::RegisterExecutionVariable(void) {
 
 }
-void DebugFeedbackMechanism::ResetFeedbackDataState(void* ptr) {}
+void DebugFeedbackMechanism::ResetFeedbackDataState(void* data) {}
 
 void DebugFeedbackMechanism::WriteOnBasicBlock(std::string &s) {
   std::stringstream ss;

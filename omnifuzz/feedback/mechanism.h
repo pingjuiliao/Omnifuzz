@@ -23,14 +23,18 @@ class ExecutionVariable final {
   ExecutionVariable(std::string name, ExecutionVariable::Type type) : name_(name), type_(type) {}
   ExecutionVariable(std::string name, 
                     ExecutionVariable::Type type,
-                    size_t size) : name_(name), type_(type), size_(size) {}
+                    uint32_t offset, 
+                    size_t size) : name_(name), type_(type), 
+                    offset_(offset), size_(size) {}
   ~ExecutionVariable() {}
   ExecutionVariable::Type GetType(void) const { return type_; }
   size_t GetSize(void) const { return size_; }
+  uint32_t GetOffset(void) const { return offset_; }
   std::string GetName(void) const { return name_; }
  private:
   std::string name_;
   ExecutionVariable::Type type_;
+  uint32_t offset_;
   size_t size_;
 };
 

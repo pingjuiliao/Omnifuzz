@@ -99,17 +99,20 @@ void OmnifuzzPass::createForkserverFunction(Module& M) {
   Value* AtoiRetVal = ForksrvInitIRB.CreateCall(AtoiFunc, {GetenvRetVal});
   Value* ShmatRetVal = ForksrvInitIRB.CreateCall(ShmatFunc, {AtoiRetVal, NullPtr8, ForksrvInitIRB.getInt32(0)});
   ForksrvInitIRB.CreateStore(ShmatRetVal, ShmPtrGV);
-  size_t ShmOffset = 0;
   for (auto data: fdbk_mech_->fdbk_data_map_) {
     LoadInst* LoadShm = ForksrvInitIRB.CreateLoad(Ptr8Ty, ShmPtrGV);
     Value* ShmAddrInteger = ForksrvInitIRB.CreatePtrToInt(
         LoadShm, ForksrvInitIRB.getInt64Ty());
+    Constant* DataOffset = ForksrvInitIRB.getInt32(data.second.GetOffset());
+    Value* ZeroExt64Offset = ForksrvInitIRB.CreateZExt(DataOffset, 
+          ForksrvInitIRB.getInt64Ty());
     Value* AddedInteger = ForksrvInitIRB.CreateAdd(
-        ShmAddrInteger, ForksrvInitIRB.getInt64(ShmOffset)); 
+        ShmAddrInteger, ZeroExt64Offset); 
     Value* OffsettedPtr = ForksrvInitIRB.CreateIntToPtr(AddedInteger, Ptr8Ty);
     Value* FdbkDataGV = M.getNamedGlobal(data.second.GetName());
     ForksrvInitIRB.CreateStore(OffsettedPtr, FdbkDataGV);
-    ShmOffset += data.second.GetSize(); 
+    errs() << "[" << data.second.GetName() << "] was setted at " \
+           << data.second.GetOffset() << ".\n";
   }
   Value* InitStr = ForksrvInitIRB.CreateGlobalStringPtr("init");
   Value* WriteInitCodeCall = ForksrvInitIRB.CreateCall(WriteFunc, {ForksrvInitIRB.getInt32(22), InitStr, ForksrvInitIRB.getInt32(4)});

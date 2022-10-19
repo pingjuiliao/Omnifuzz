@@ -22,10 +22,10 @@ size_t FeedbackMechanismComposite::RegisterFeedbackData(void) {
   return total_size;
 }
 
-void FeedbackMechanismComposite::ResetFeedbackDataState(void* ptr) {
+void FeedbackMechanismComposite::ResetFeedbackDataState(void* data) {
   // BUGGY
   for (auto fdbk_mech: mechanisms_) {
-    fdbk_mech->ResetFeedbackDataState(ptr);
+    fdbk_mech->ResetFeedbackDataState(data);
     fdbk_data_map_.merge(fdbk_mech->fdbk_data_map_);
   }
 }

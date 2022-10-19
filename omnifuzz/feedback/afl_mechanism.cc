@@ -80,14 +80,19 @@ AflFeedbackMechanism::~AflFeedbackMechanism() {
 }
 
 size_t AflFeedbackMechanism::RegisterFeedbackData(void) {
-  fdbk_data_map_["__afl_area_ptr"] = ExecutionVariable("__afl_area_ptr", ExecutionVariable::Type::Pointer, kCoverageBitMapEntry);
-  fdbk_data_map_["__afl_area_end"] = ExecutionVariable("__afl_area_end", ExecutionVariable::Type::Pointer, 0);
-  return fdbk_data_map_["__afl_area_ptr"].GetSize();
+  size_t total_size = 0;
+  fdbk_data_map_["__afl_area_ptr"] = ExecutionVariable("__afl_area_ptr", ExecutionVariable::Type::Pointer, 0, kCoverageBitMapEntry);
+  total_size += fdbk_data_map_["__afl_area_ptr"].GetSize();
+
+  fdbk_data_map_["__afl_area_end"] = ExecutionVariable("__afl_area_end", ExecutionVariable::Type::Pointer, kCoverageBitMapEntry, 0);
+  total_size += fdbk_data_map_["__afl_area_end"].GetSize();
+
+  return total_size;
 }
 
-void AflFeedbackMechanism::ResetFeedbackDataState(void* ptr) {
-  void *afl_area_ptr = ptr;
-  memset(afl_area_ptr, 0, kCoverageBitMapEntry);
+void AflFeedbackMechanism::ResetFeedbackDataState(void* data) {
+  uint8_t* afl_bitmap = (uint8_t *) data + fdbk_data_map_["__afl_area_ptr"].GetOffset();
+  memset(afl_bitmap, 0, kCoverageBitMapEntry);
 }
 
 void AflFeedbackMechanism::RegisterExecutionVariable(void) {
@@ -111,9 +116,10 @@ void AflFeedbackMechanism::WriteOnBasicBlock(std::string& assembly) {
 }
 
 FuzzScore AflFeedbackMechanism::DeemInteresting(void* data) {
-  
+
+  uint8_t* afl_bitmap = (uint8_t *) data + fdbk_data_map_["__afl_area_ptr"].GetOffset();  
   // uint32_t checksum = crc32(static_cast<uint8_t*>(data), kCoverageBitMapEntry);
-  uint64_t* current = reinterpret_cast<uint64_t*>(data);
+  uint64_t* current = reinterpret_cast<uint64_t*>(afl_bitmap);
   uint64_t* virgin = reinterpret_cast<uint64_t*>(virgin_map_);
   uint32_t i = (kCoverageBitMapEntry >> 3);
   
