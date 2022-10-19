@@ -6,7 +6,6 @@
 #include <cstring>
 #include <iostream>
 #include <sstream>
-#include <unordered_set>
 
 #include "omnifuzz/feedback/fuzz_score.h"
 #include "omnifuzz/feedback/mechanism.h"
@@ -35,8 +34,9 @@ class AflFeedbackMechanism : public FeedbackMechanism {
   const size_t kCoverageBitMapEntry = 64 * 1024;
   // maintain a virgin bitmap to see if there's new interesting bits comes in.
   uint8_t* curr_bitmap_;
-  uint8_t* virgin_map_;
-  std::unordered_set<uint32_t> seen_cov_chksm_;
+  uint8_t* virgin_path_map_;
+  uint8_t* virgin_crash_map_;
+  FuzzScore HasNewBits(void*, uint8_t*);
 };
 
 } // namespace omnifuzz

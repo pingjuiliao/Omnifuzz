@@ -68,15 +68,16 @@ uint32_t crc32(const uint8_t *buf, size_t size) {
 namespace omnifuzz {
 
 AflFeedbackMechanism::AflFeedbackMechanism() {
-  virgin_map_ = new uint8_t[kCoverageBitMapEntry];
-  memset(virgin_map_, 255, kCoverageBitMapEntry);
-  seen_cov_chksm_.clear();
+  virgin_path_map_ = new uint8_t[kCoverageBitMapEntry];
+  virgin_crash_map_ = new uint8_t[kCoverageBitMapEntry];
+  memset(virgin_path_map_, 255, kCoverageBitMapEntry);
+  memset(virgin_crash_map_, 255, kCoverageBitMapEntry);
   RegisterFeedbackData(); 
   RegisterExecutionVariable();
 }
 
 AflFeedbackMechanism::~AflFeedbackMechanism() {
-  delete[] virgin_map_;
+  delete[] virgin_path_map_;
 }
 
 size_t AflFeedbackMechanism::RegisterFeedbackData(void) {
@@ -116,11 +117,15 @@ void AflFeedbackMechanism::WriteOnBasicBlock(std::string& assembly) {
 }
 
 FuzzScore AflFeedbackMechanism::DeemInteresting(void* data) {
+  return HasNewBits(data, virgin_path_map_);
+}
+
+FuzzScore AflFeedbackMechanism::HasNewBits(void* data, uint8_t* virgin_map) {
 
   uint8_t* afl_bitmap = (uint8_t *) data + fdbk_data_map_["__afl_area_ptr"].GetOffset();  
   // uint32_t checksum = crc32(static_cast<uint8_t*>(data), kCoverageBitMapEntry);
   uint64_t* current = reinterpret_cast<uint64_t*>(afl_bitmap);
-  uint64_t* virgin = reinterpret_cast<uint64_t*>(virgin_map_);
+  uint64_t* virgin = reinterpret_cast<uint64_t*>(virgin_map);
   uint32_t i = (kCoverageBitMapEntry >> 3);
   
   FuzzScore score = FuzzScore::kNotInteresting;
@@ -156,7 +161,7 @@ FuzzScore AflFeedbackMechanism::DeemInteresting(void* data) {
 
 
 bool AflFeedbackMechanism::DeemUniqueCrash(void* data) {
-  return DeemInteresting(data) > 0;
+  return HasNewBits(data, virgin_crash_map_) > 0;
 }
 
 
