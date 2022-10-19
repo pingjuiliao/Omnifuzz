@@ -18,10 +18,11 @@ struct AFLQueue {
 
 class AFLScheduler : public Schduler {
  public:
-  AFLScheduler(FeedbackMechanism*);
+  AFLScheduler();
   virtual ~AFLScheduler();
-  virtual void Enqueue(Testcase) override;
+  virtual void Enqueue(Testcase) override; 
   virtual Testcase* Dequeue(void) override;
+  virtual void Reschedule(std::unordered_map<std::string, std::pair<void*, size_t>>&) override;
  protected:
   void UpdateBitmapScore(AFLQueue *q);
   void CullQueue(void);
@@ -38,6 +39,7 @@ class AFLScheduler : public Schduler {
   uint32_t pending_favored_;
   uint32_t queue_favored_;
   bool score_changed_;
+  bool pending_reschedule_;
 };
 
 } // namespace omnifuzz

@@ -2,7 +2,8 @@
 #define OMNIFUZZ_SCHEDULER_SCHEDULER_H
 
 #include <cstdint>
-
+#include <unordered_map>
+#include <utility>
 #include "omnifuzz/testcase.h"
 
 /* scheduler should aware of the feedback of exection */
@@ -13,6 +14,8 @@ class Scheduler {
   virtual ~Scheduler() = default;
   virtual void Enqueue(Testcase) = 0;
   virtual Testcase* Dequeue(void) = 0;
+  virtual void Reschedule(
+      std::unordered_map<std::string, std::pair<void*, size_t>>&) = 0;
 };
 
 } // namespace omnifuzz

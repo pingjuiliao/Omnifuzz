@@ -19,6 +19,8 @@ class DebugFeedbackMechanism : public FeedbackMechanism {
   virtual void WriteOnBasicBlock(std::string&) override;
   virtual FuzzScore DeemInteresting(void*) override;
   virtual bool DeemUniqueCrash(void*) override;
+  virtual void InterpretFeedback(void*, 
+      std::unordered_map<std::string, std::pair<void*, size_t>>&) override;
 };
 
 } // namespace omnifuzz

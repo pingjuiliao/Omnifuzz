@@ -25,11 +25,9 @@ class AflFeedbackMechanism : public FeedbackMechanism {
 
   virtual FuzzScore DeemInteresting(void*) override;
   virtual bool DeemUniqueCrash(void*) override; 
-  // TODO: generalize this.
-  //  challenge, each feedback may return differnt things...
-  // Interpretation
-  std::vector<uint32_t> InterpretFeedbackDataForScheduler(void);
-  
+  virtual void InterpretFeedback(void*,
+      std::unordered_map<std::string, std::pair<void*,size_t>>&) override; 
+
  protected:
   const size_t kCoverageBitMapEntry = 64 * 1024;
   // maintain a virgin bitmap to see if there's new interesting bits comes in.

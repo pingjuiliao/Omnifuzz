@@ -3,13 +3,10 @@
 
 namespace omnifuzz {
 
-AFLScheduler::AFLScheduler(AflFeedbackMechanism* fdbk_mech_) {
-  if (!fdbk_mech_) {
-    throw "AFLScheduler depends on AFLScheduler";
-  }
+AFLScheduler::AFLScheduler() {
   pending_favored_ = 0;
   score_changed_ = false;
-  
+  pending_reschedule_ = false;
 }
 
 AFLScheduler::~AFLScheduler() {
@@ -38,7 +35,7 @@ void AFLScheduler::Enqueue(Testcase testcase) {
     q_prev100_ = q;
   }*/
 
-  UpdateBitmapScore(q);
+  pending_reschedule_ = true;
 }
 
 Testcase* AFLScheduler::Dequeue(void) {
@@ -66,16 +63,19 @@ Testcase* AFLScheduler::Dequeue(void) {
 
 
 // Same algorithm as afl-fuzz.c: update_bitmap_score(struct queue_entry *q)
-void AFLScheduler::UpdateBitmapScore(AFLQueue *q) {
+void AFLScheduler::UpdateBitmapScore(AFLQueue *q, 
+    std::unordered_map<std::string, std::pair<void*, size_t>> &fuzz_state) {
   
   // The feedback mechanism interpret the coverage bitmap as the 
   // indices that the bits are on.
   // (This may be change since I am trying to generalize the interpretation.)
-  std::vector<uint32_t> indices = fdbk_mech_->InterpretFeedbackDataForScheduler();
+  //
+  void* afl_bitmap_metadata = fuzz_state["afl_bitmap"];
+  void* afl_bitmap_ptr = static_cast<uint8_t>(afl_bitmap_metadata.first);
+  size_t afl_bitmap_size = afl_bitmap_metadata.second;
 
   uint64_t fav_factor = q->testcase.exec_us * q->testcase.size;
-
-  for (auto index: indices) {
+  for (int i = 0; i < afl_bitmap_size; ++i) {
     if (top_rated_[index]) {
       AFLQueue* curr_top = top_rated_[index];
       if (fav_factor > curr_top->testcase.exec_us * curr_top->testcase.size) {
@@ -123,5 +123,12 @@ void AFLScheduler::CullQueue(void) {
   // TODO: mark as redundant
 }
 
+void AFLScheduler::Reschedule(std::unordered_map<std::string, std::pair<void*, size_t>> &fuzz_state) {
+  if (!pending_reschedule_) {
+    return;
+  }
+  pending_reschedule_ = false;
+  UpdateBitmapScore(pending_reschedule, fuzz_state);
+}
 
 } // namespace omnifuzz

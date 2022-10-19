@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <string>
+#include <unordered_map>
 
 #include "omnifuzz/feedback/mechanism.h"
 #include "omnifuzz/mutator/mutator.h"
@@ -25,6 +26,9 @@ class Fuzzer {
 
   // Load seed inputs
   virtual void LoadSeed(std::string);
+  
+  // Current
+  std::unordered_map<std::string, std::pair<void*,size_t>> curr_fuzz_state_;
 
  protected:
   // Assemble fuzzer parts to determine fuzzing.

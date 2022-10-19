@@ -164,19 +164,18 @@ bool AflFeedbackMechanism::DeemUniqueCrash(void* data) {
   return HasNewBits(data, virgin_crash_map_) > 0;
 }
 
+void AflFeedbackMechanism::InterpretFeedback(void* data, 
+    std::unordered_map<std::string, std::pair<void*, size_t>> &fuzz_state) {
+  
+  // afl_bitmap is a constant offset to the shm area
+  if (fuzz_state.find("afl_bitmap") != fuzz_state.end()) {
+    return;
+  }
 
-std::vector<uint32_t> AflFeedbackMechanism::InterpretFeedbackDataForScheduler(void) {
-  std::vector<uint32_t> top_rated_indices;
-  if (!curr_bitmap_) {
-    return top_rated_indices;
-  }
-  for (uint32_t i = 0; i < kCoverageBitMapEntry; ++i) {
-    if (curr_bitmap_[i]) {
-      top_rated_indices.push_back(i);
-    }
-  }
-  return top_rated_indices;
+  // Allow other fuzzing components to access 
+  uint32_t offset = fdbk_data_map_["__afl_area_ptr"].GetOffset();
+  void* afl_bitmap = static_cast<void*>((uint8_t*) data + offset);
+  fuzz_state["afl_bitmap"] = std::make_pair(afl_bitmap, kCoverageBitMapEntry);
 }
-
 
 } // namespace omnifuzz

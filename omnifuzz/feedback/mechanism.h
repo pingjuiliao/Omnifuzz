@@ -3,6 +3,7 @@
 
 #include <string>
 #include <unordered_map>
+#include <utility>
 #include <vector>
 
 #include "omnifuzz/feedback/fuzz_score.h"
@@ -56,10 +57,11 @@ class FeedbackMechanism {
   std::unordered_map<std::string, ExecutionVariable> exec_var_map_;
   std::unordered_map<std::string, ExecutionVariable> fdbk_data_map_;
 
-  // Post-execution functions: talks to the 
+  // Post-execution functions: talks to the Fuzzer 
   virtual FuzzScore DeemInteresting(void*) = 0;
   virtual bool DeemUniqueCrash(void*) = 0;
-  // virtual size_t InterpretFeedback(void) = 0;
+  virtual void InterpretFeedback(void*,
+      std::unordered_map<std::string, std::pair<void*, size_t>>&) = 0;
 };
 
 class FeedbackMechanismComposite : public FeedbackMechanism {

@@ -16,6 +16,8 @@ class ListScheduler : public Scheduler {
   virtual ~ListScheduler();
   virtual void Enqueue(Testcase) override;
   virtual Testcase* Dequeue(void) override;
+  virtual void Reschedule(
+      std::unordered_map<std::string, std::pair<void*, size_t>>&) override;
  private:
   std::list<Testcase> list_;
   uint64_t max_generation_;

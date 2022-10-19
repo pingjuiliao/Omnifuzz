@@ -62,9 +62,16 @@ void Fuzzer::Run(void) {
         new_testcase.exec_us = exec_us;
         testcase_file_manager_.CreateTestcaseFile(new_testcase, buf, size);
         scheduler_->Enqueue(new_testcase);
+        scheduler_->Reschedule(curr_fuzz_state_);
+        fdbk_mech_->InterpretFeedback(shm_feedback, curr_fuzz_state_);
       }
     } 
     testcase_file_manager_.Unload(buf);
+    std::cout << "[Fuzzer States]:" << std::endl;
+    for (auto a: curr_fuzz_state_) {
+      std::cout << a.first << std::endl;
+    }
+    std::cout << "[Fuzzer state ends]" << std::endl;
   }
 }
 
