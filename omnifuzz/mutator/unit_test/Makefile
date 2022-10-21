@@ -16,6 +16,9 @@ composite_test: composite_test.cc bit_flip mutator
 bit_flip_test: bit_flip_test.cc bit_flip mutator
 	$(CXX) -I../../../ -fsanitize=address -static-libasan -c $< -o $@.o
 	$(CXX) $(CXXFLAGS) $@.o bit_flip.o mutator.o -o $@.exe
+dictionary_test: dictionary_test.cc dictionary mutator
+	$(CXX) $(CXXFLAGS) -c $< -o $@.o
+	$(CXX) $(CXXFLAGS) $@.o dictionary.o mutator.o -o $@.exe
 afl_mutator: ../afl_mutator.cc
 	$(CXX) $(CXXFLAGS) -c $< -o $@.o
 interesting: ../interesting.cc
@@ -23,6 +26,8 @@ interesting: ../interesting.cc
 arithmetic: ../arithmetic.cc
 	$(CXX) $(CXXFLAGS) -c $< -o $@.o 
 bit_flip: ../bit_flip.cc
+	$(CXX) $(CXXFLAGS) -c $< -o $@.o
+dictionary: ../dictionary.cc
 	$(CXX) $(CXXFLAGS) -c $< -o $@.o
 mutator: ../mutator.cc
 	$(CXX) $(CXXFLAGS) -c $< -o $@.o
