@@ -35,7 +35,6 @@ void Fuzzer::Run(void) {
   }
 
   while (testcase = scheduler_->Dequeue()) {
-    std::cout << "[FuzzOne]\n";
     if (!testcase) {
       continue;
     }

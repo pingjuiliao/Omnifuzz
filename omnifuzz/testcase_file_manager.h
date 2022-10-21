@@ -19,6 +19,8 @@ struct FuzzOutputDirectory {
   std::string crash_dir;
 };
 
+// TestcaseFileManager talks to the filesystem
+// composite this for any fuzz component that talks to the filesystem
 class TestcaseFileManager {
  public:
   TestcaseFileManager();
@@ -29,10 +31,20 @@ class TestcaseFileManager {
   bool BuildDirectoryTree(std::string);
   void CreateCrashReport(uint8_t*, size_t);
   void CreateTestcaseFile(Testcase&, uint8_t*, size_t);
+
+  // Load Seed testcases
   bool LoadSeedTestcaseFiles(Scheduler*, std::string);
 
+  // Buffer management: An alternative is to move these function to 
+  // omnifuzz::Mutator static
   uint8_t* LoadToBuffer(Testcase*);
   void Unload(uint8_t*);
+
+  // Reload all the testcases that has been discovered.
+  // This should be rare operation, example usages are:
+  //  - SpliceMutator.
+  // std::vector<Testcase*> ReloadTestcaseFiles();
+
   // TODO: This should be more complicated than just an ID.
   //  filename is a good place to store information.
   //  also, it might want to takes more arguments in.

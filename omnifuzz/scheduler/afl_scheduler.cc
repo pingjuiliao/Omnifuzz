@@ -91,9 +91,10 @@ Testcase* AFLScheduler::Dequeue(void) {
     queue_cur_ = queue_; 
   }
 
-  std::cout << "[Scheduler]: scheduled" << queue_cur_->testcase.file_name \
+  std::cout << "\n[Scheduler]: scheduled" << queue_cur_->testcase.file_name \
             << std::endl;
-  std::cout << "[Scheduler]: favored? " << (queue_cur_->favored != 0) << std::endl;
+  std::cout << "             favored? " << ((queue_cur_->favored)? "true": "false") << std::endl;
+  std::cout << "          was_fuzzed? " << ((queue_cur_->testcase.was_fuzzed)? "true": "false") << std::endl;
   queue_cur_->testcase.was_fuzzed = 1;
   return &queue_cur_->testcase;
 }
