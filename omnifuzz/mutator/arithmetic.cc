@@ -92,4 +92,47 @@ MutationResult ArithmeticMutator::MutateAndIterate(T* buf, size_t size) {
   return MutationResult::kSuccess;
 }
 
+MutationResult ArithmeticMutator::RandomMutate(uint8_t* data, size_t& size) {
+  static bool recover_mode = false;
+  static uint32_t position = 0;
+  static bool positive = false;
+
+  MutationResult result = MutationResult::kCycleDone;
+  if (!recover_mode) {
+    position = rand() % (size - num_bytes_ + 1);
+    positive = (rand() % 2 == 0);
+    result = MutationResult::kSuccess;
+  }
+  positive = !positive;
+  recover_mode = !recover_mode;
+
+  switch (num_bytes_) {
+    case 1:
+      MutateOne(reinterpret_cast<uint8_t*>(&data[position]), positive);
+      break;
+    case 2:
+      MutateOne(reinterpret_cast<uint16_t*>(&data[position]), positive);
+      break;
+    case 4:
+      MutateOne(reinterpret_cast<uint32_t*>(&data[position]), positive);
+      break;
+    case 8:
+      MutateOne(reinterpret_cast<uint64_t*>(&data[position]), positive);
+      break;
+    default:
+      break;
+  }
+  return result;
+}
+
+template <typename T>
+void ArithmeticMutator::MutateOne(T* data, bool is_positive) {
+  T operand = kArithmeticMax; 
+  if (is_positive) {
+    *data = *data + operand;
+  } else {
+    *data = *data - operand;
+  }
+}
+
 } // namespace omnifuzz

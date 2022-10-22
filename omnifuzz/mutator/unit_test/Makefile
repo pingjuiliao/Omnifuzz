@@ -19,6 +19,11 @@ bit_flip_test: bit_flip_test.cc bit_flip mutator
 dictionary_test: dictionary_test.cc dictionary mutator
 	$(CXX) $(CXXFLAGS) -c $< -o $@.o
 	$(CXX) $(CXXFLAGS) $@.o dictionary.o mutator.o -o $@.exe
+havoc_test: havoc_test.cc havoc_mutator bit_flip arithmetic
+	$(CXX) $(CXXFLAGS) -c $< -o $@.o
+	$(CXX) $(CXXFLAGS) $@.o havoc_mutator.o mutator.o bit_flip.o arithmetic.o -o $@.exe
+havoc_mutator: ../havoc_mutator.cc
+	$(CXX) $(CXXFLAGS) -c $< -o $@.o
 afl_mutator: ../afl_mutator.cc
 	$(CXX) $(CXXFLAGS) -c $< -o $@.o
 interesting: ../interesting.cc

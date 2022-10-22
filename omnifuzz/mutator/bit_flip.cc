@@ -40,6 +40,25 @@ MutationResult BitFlipMutator::Mutate(uint8_t* data, size_t& size) {
   return MutationResult::kSuccess;
 }
 
+MutationResult BitFlipMutator::RandomMutate(uint8_t* data, size_t& size) {
+  static bool recover_mode = false;
+  static uint32_t bit_position = 0;
+
+  MutationResult result = MutationResult::kCycleDone; 
+
+  if (!recover_mode) {
+    bit_position = rand() % ((size << 3) - num_bits_ + 1);
+    result = MutationResult::kSuccess;
+  }
+  recover_mode = !recover_mode;
+
+  // Perform the bitflip to mutate/recover the buffer
+  for (auto i = bit_position; i < bit_position + num_bits_; ++i) {
+    BitFlip(data, i);
+  }
+  return result;
+}
+
 inline void BitFlipMutator::BitFlip(uint8_t* buf, size_t index) {
   buf[index >> 3] ^= (128 >> (index & 7));
 }

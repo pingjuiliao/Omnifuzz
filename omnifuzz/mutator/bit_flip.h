@@ -14,6 +14,7 @@ class BitFlipMutator : public Mutator {
   BitFlipMutator(MutationGranularity);
   virtual ~BitFlipMutator();
   virtual MutationResult Mutate(uint8_t*, size_t&) override;
+  virtual MutationResult RandomMutate(uint8_t*, size_t&) override;
  protected:
   inline void BitFlip(uint8_t*, size_t);
  private:

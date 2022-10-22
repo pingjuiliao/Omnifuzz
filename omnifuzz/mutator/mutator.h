@@ -31,8 +31,12 @@ class Mutator {
   
   virtual void AddMutator(Mutator*) {}
   
-  // Mutation, true on Success.
+  // Iterative Mutation
   virtual MutationResult Mutate(uint8_t*, size_t&) = 0;
+  
+  // Randomized Mutation, we let the random mutator make the random 
+  // choise since each mutator knows its search space.
+  virtual MutationResult RandomMutate(uint8_t*, size_t&) = 0;
  protected:
   virtual uint32_t GetGranularitySize(MutationGranularity);
 };
@@ -43,7 +47,7 @@ class MutatorComposite : public Mutator {
   virtual ~MutatorComposite();
   virtual void AddMutator(Mutator*) override;
   virtual MutationResult Mutate(uint8_t*, size_t&) override;
- private:
+ protected:
   std::list<Mutator*> mutators_;
   std::list<Mutator*>::iterator iterator_;
 };
