@@ -16,9 +16,6 @@ int main(int argc, char** argv) {
 
   for (int n = 0; n < kNumBuffer; ++n) {
     memset(buf, 0, sizeof(buf));
-    puts("###########################");
-    printf("BUFFER %s\n", (char *) buf);
-    puts("###########################");
     
     memset(buf, buf_memset[n], kBufSize);
     omnifuzz::MutationResult r = omnifuzz::MutationResult::kNumResults; 

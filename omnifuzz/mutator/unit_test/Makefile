@@ -1,6 +1,9 @@
 CXX=g++
 CXXFLAGS= -I../../../ -std=c++17 -g -fsanitize=address -static-libasan
-all: deterministic_test
+all: deterministic_test afl_test
+afl_test: afl_test.cc interesting arithmetic bit_flip mutator afl_mutator
+	$(CXX) $(CXXFLAGS) -c $< -o $@.o
+	$(CXX) $(CXXFLAGS) $@.o afl_mutator.o interesting.o mutator.o bit_flip.o arithmetic.o -o $@.exe
 deterministic_test: deterministic_test.cc interesting arithmetic bit_flip mutator deterministic_mutator
 	$(CXX) $(CXXFLAGS) -c $< -o $@.o
 	$(CXX) $(CXXFLAGS) $@.o deterministic_mutator.o interesting.o mutator.o bit_flip.o arithmetic.o -o $@.exe
@@ -22,6 +25,8 @@ dictionary_test: dictionary_test.cc dictionary mutator
 havoc_test: havoc_test.cc havoc_mutator bit_flip arithmetic interesting
 	$(CXX) $(CXXFLAGS) -c $< -o $@.o
 	$(CXX) $(CXXFLAGS) $@.o havoc_mutator.o mutator.o bit_flip.o arithmetic.o interesting.o -o $@.exe
+afl_mutator: ../afl_mutator.cc
+	$(CXX) $(CXXFLAGS) -c $< -o $@.o
 havoc_mutator: ../havoc_mutator.cc
 	$(CXX) $(CXXFLAGS) -c $< -o $@.o
 deterministic_mutator: ../deterministic_mutator.cc

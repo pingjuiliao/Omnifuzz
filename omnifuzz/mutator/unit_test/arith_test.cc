@@ -14,6 +14,7 @@ class AllArithMutator: public omnifuzz::MutatorComposite {
      AddMutator(new omnifuzz::ArithmeticMutator(omnifuzz::MutationGranularity::kByte));
      AddMutator(new omnifuzz::ArithmeticMutator(omnifuzz::MutationGranularity::kWord));
      // AddMutator(new omnifuzz::ArithmeticMutator(omnifuzz::MutationGranularity::kDword));
+     iterator_ = mutators_.end();
    }
 };
 

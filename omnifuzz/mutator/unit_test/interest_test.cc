@@ -14,6 +14,7 @@ class AllInterestMutator: public omnifuzz::MutatorComposite {
      AddMutator(new omnifuzz::InterestingInt8Mutator());
      AddMutator(new omnifuzz::InterestingInt16Mutator());
      AddMutator(new omnifuzz::InterestingInt32Mutator());
+     iterator_ = mutators_.end();
    }
 };
 

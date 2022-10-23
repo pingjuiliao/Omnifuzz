@@ -20,6 +20,8 @@ DeterministicMutator::DeterministicMutator() {
   AddMutator(new InterestingInt8Mutator());
   AddMutator(new InterestingInt16Mutator());
   AddMutator(new InterestingInt32Mutator());
+
+  iterator_ = mutators_.end();
 }
 
 } // namespace omnifuzz

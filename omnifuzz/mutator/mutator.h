@@ -2,7 +2,7 @@
 #define OMNIFUZZ_MUTATOR_MUTATOR_H
 
 #include <iostream>
-#include <list>
+#include <vector>
 
 #include "omnifuzz/fuzzer_state.h"
 #include "omnifuzz/testcase.h"
@@ -56,8 +56,8 @@ class MutatorComposite : public Mutator {
                                 FuzzerState* = nullptr) override;
   virtual MutationResult RandomMutate(uint8_t*, size_t&) override;
  protected:
-  std::list<Mutator*> mutators_;
-  std::list<Mutator*>::iterator iterator_;
+  std::vector<Mutator*> mutators_;
+  std::vector<Mutator*>::iterator iterator_;
 };
 
 

@@ -12,10 +12,12 @@ namespace omnifuzz {
 class AFLMutator: public MutatorComposite {
  public:
   AFLMutator();
-  // virtual AFLMutator::Mutate(uint8_t*, size_t&) override;
+  virtual MutationResult Mutate(uint8_t*, size_t&,
+                             Testcase* = nullptr,
+                             FuzzerState* = nullptr) override;
+  virtual MutationResult RandomMutate(uint8_t*, size_t&) override;
  protected:
-  const int kHavocStageMax = 1024;
-  HavocMutator* havoc_mutator_;
+  const int kRandomStageMax = 10;
 };
 
 } // namespace omnifuzz

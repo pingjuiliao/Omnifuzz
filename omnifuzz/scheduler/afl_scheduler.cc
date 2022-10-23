@@ -94,7 +94,6 @@ Testcase* AFLScheduler::Dequeue(void) {
             << std::endl;
   std::cout << "             favored? " << ((queue_cur_->favored)? "true": "false") << std::endl;
   std::cout << "          was_fuzzed? " << ((queue_cur_->testcase.was_fuzzed)? "true": "false") << std::endl;
-  queue_cur_->testcase.was_fuzzed = 1;
   return &queue_cur_->testcase;
 }
 
