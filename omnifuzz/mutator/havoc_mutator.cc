@@ -22,7 +22,9 @@ HavocMutator::~HavocMutator() {
   
 }
 
-MutationResult HavocMutator::Mutate(uint8_t* data, size_t& size) {
+MutationResult HavocMutator::Mutate(uint8_t* data, size_t& size, 
+                                    Testcase* testcase,
+                                    FuzzerState* fuzz_state) {
   if (!data || !size) {
     return MutationResult::kInvalidBuffer;
   }

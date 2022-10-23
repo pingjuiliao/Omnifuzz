@@ -54,6 +54,21 @@ add_library(omnifuzz::havoc_mutator ALIAS
 target_include_directories(omnifuzz_havoc_mutator
   PUBLIC ${OMNIFUZZ_INCLUDE_DIR})
 
+# deterministic_mutator
+add_library(omnifuzz_deterministic_mutator ${OMNIFUZZ_LIB_TYPE}
+  deterministic_mutator.cc
+  deterministic_mutator.h
+)
+add_library(omnifuzz::deterministic_mutator ALIAS
+  omnifuzz_deterministic_mutator)
+target_link_libraries(omnifuzz_deterministic_mutator
+  PUBLIC omnifuzz::mutator
+         omnifuzz::arithmetic
+         omnifuzz::bit_flip
+         omnifuzz::interesting
+)
+target_include_directories(omnifuzz_deterministic_mutator
+  PUBLIC ${OMNIFUZZ_INCLUDE_DIR})
 
 # afl_mutator
 add_library(omnifuzz_afl_mutator ${OMNIFUZZ_LIB_TYPE}
@@ -73,3 +88,6 @@ target_link_libraries(omnifuzz_afl_mutator
 )
 target_include_directories(omnifuzz_afl_mutator
   PUBLIC ${OMNIFUZZ_INCLUDE_DIR})
+
+
+

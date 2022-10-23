@@ -7,7 +7,7 @@ target_link_libraries(grey_box
   PUBLIC omnifuzz::fuzzer
          omnifuzz::forksrv_executor
          omnifuzz::list_scheduler
-         omnifuzz::afl_mutator
+         omnifuzz::deterministic_mutator
          omnifuzz::afl_mechanism
 )
 target_include_directories(grey_box

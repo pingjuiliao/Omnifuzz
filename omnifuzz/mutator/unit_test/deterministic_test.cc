@@ -4,7 +4,7 @@
 #include <iostream>
 #include <cstdint>
 
-#include "omnifuzz/mutator/afl_mutator.h"
+#include "omnifuzz/mutator/deterministic_mutator.h"
 
 // An odd number is more likely to break things.
 size_t kBufSize = 11;
@@ -12,7 +12,7 @@ const size_t kNumBuffer = 2;
 const uint8_t buf_memset[kNumBuffer] = {0x00, 0xff};
 int main(int argc, char** argv) {
   uint8_t *buf = (uint8_t *) malloc(kBufSize);
-  omnifuzz::AFLMutator mutator;
+  omnifuzz::DeterministicMutator mutator;
 
   for (int n = 0; n < kNumBuffer; ++n) {
     memset(buf, 0, sizeof(buf));

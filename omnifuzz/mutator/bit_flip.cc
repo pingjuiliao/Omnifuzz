@@ -12,7 +12,9 @@ BitFlipMutator::BitFlipMutator(MutationGranularity g) {
 
 BitFlipMutator::~BitFlipMutator() {}
 
-MutationResult BitFlipMutator::Mutate(uint8_t* data, size_t& size) {
+MutationResult BitFlipMutator::Mutate(uint8_t* data, size_t& size, 
+                                      Testcase* testcase,
+                                      FuzzerState* fuzz_state) {
   const size_t size_in_bits = size << 3;
 
   // if the mutator has reach the very last step of its cycle

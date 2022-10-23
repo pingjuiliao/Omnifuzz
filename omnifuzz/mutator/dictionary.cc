@@ -41,7 +41,9 @@ DictionaryMutator::~DictionaryMutator() {
   seqs_.clear();
 }
 
-MutationResult DictionaryMutator::Mutate(uint8_t* data, size_t& size) {
+MutationResult DictionaryMutator::Mutate(uint8_t* data, size_t& size, 
+                                         Testcase* testcase,
+                                         FuzzerState* fuzz_state) {
   
   if (!original_) {
     index_start_ = 0;

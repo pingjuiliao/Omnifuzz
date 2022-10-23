@@ -47,7 +47,9 @@ void MutatorComposite::AddMutator(Mutator* mutator) {
 }
 
 
-MutationResult MutatorComposite::Mutate(uint8_t* data, size_t& size) {
+MutationResult MutatorComposite::Mutate(uint8_t* data, size_t& size, 
+                                        Testcase* testcase, 
+                                        FuzzerState* fuzz_state) {
 
   if (!data || !size) {
     return MutationResult::kInvalidBuffer;

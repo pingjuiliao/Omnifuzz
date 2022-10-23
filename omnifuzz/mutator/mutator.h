@@ -4,6 +4,9 @@
 #include <iostream>
 #include <list>
 
+#include "omnifuzz/fuzzer_state.h"
+#include "omnifuzz/testcase.h"
+
 namespace omnifuzz {
 
 enum class MutationGranularity {
@@ -32,7 +35,9 @@ class Mutator {
   virtual void AddMutator(Mutator*) {}
   
   // Iterative Mutation
-  virtual MutationResult Mutate(uint8_t*, size_t&) = 0;
+  virtual MutationResult Mutate(uint8_t*, size_t&, 
+                                Testcase* = nullptr, 
+                                FuzzerState* = nullptr) = 0;
   
   // Randomized Mutation, we let the random mutator make the random 
   // choise since each mutator knows its search space.
@@ -46,7 +51,9 @@ class MutatorComposite : public Mutator {
   MutatorComposite();
   virtual ~MutatorComposite();
   virtual void AddMutator(Mutator*) override;
-  virtual MutationResult Mutate(uint8_t*, size_t&) override;
+  virtual MutationResult Mutate(uint8_t*, size_t&,
+                                Testcase* = nullptr,
+                                FuzzerState* = nullptr) override;
   virtual MutationResult RandomMutate(uint8_t*, size_t&) override;
  protected:
   std::list<Mutator*> mutators_;

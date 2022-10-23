@@ -16,7 +16,9 @@ class DictionaryMutator : public Mutator {
   DictionaryMutator(std::vector<DataSequence*>);
   DictionaryMutator(std::vector<std::string>);
   virtual ~DictionaryMutator();
-  virtual MutationResult Mutate(uint8_t*, size_t&) override;
+  virtual MutationResult Mutate(uint8_t*, size_t&, 
+                                Testcase* = nullptr, 
+                                FuzzerState* = nullptr) override;
  protected:
   std::vector<DataSequence*> seqs_;
   std::vector<DataSequence*>::iterator iterator_;

@@ -10,7 +10,7 @@ namespace omnifuzz {
 // Flyweight
 // TODO: avoid duplicate
 // TODO: Support big endian
-class InterestingInt {
+class InterestingInt { 
  public:
   InterestingInt(int64_t n): number_(n) {}
   virtual ~InterestingInt() = default;
@@ -25,7 +25,9 @@ class InterestingInt8Mutator: public Mutator {
  public:
   InterestingInt8Mutator();
   virtual ~InterestingInt8Mutator();
-  virtual MutationResult Mutate(uint8_t*, size_t&) override;
+  virtual MutationResult Mutate(uint8_t*, size_t&,
+                                Testcase* = nullptr,
+                                FuzzerState* = nullptr) override;
   virtual MutationResult RandomMutate(uint8_t*, size_t&) override;
  protected:
   std::vector<InterestingInt*> interesting_values_;
@@ -39,7 +41,9 @@ class InterestingInt8Mutator: public Mutator {
 class InterestingInt16Mutator: public InterestingInt8Mutator {
  public:
   InterestingInt16Mutator();
-  virtual MutationResult Mutate(uint8_t*, size_t&) override;
+  virtual MutationResult Mutate(uint8_t*, size_t&,
+                                Testcase* = nullptr,
+                                FuzzerState* = nullptr) override;
   virtual MutationResult RandomMutate(uint8_t*, size_t&) override;
  private:
   const size_t kNumBytes = 2;
@@ -50,7 +54,9 @@ class InterestingInt16Mutator: public InterestingInt8Mutator {
 class InterestingInt32Mutator: public InterestingInt16Mutator {
  public:
   InterestingInt32Mutator();
-  virtual MutationResult Mutate(uint8_t*, size_t& ) override;
+  virtual MutationResult Mutate(uint8_t*, size_t&,
+                                Testcase* = nullptr,
+                                FuzzerState* = nullptr) override;
   virtual MutationResult RandomMutate(uint8_t*, size_t&) override;
  private:
   const size_t kNumBytes = 4;

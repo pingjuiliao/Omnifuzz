@@ -12,7 +12,9 @@ class HavocMutator : public MutatorComposite {
  public:
   HavocMutator();
   virtual ~HavocMutator();
-  virtual MutationResult Mutate(uint8_t*, size_t&) override;
+  virtual MutationResult Mutate(uint8_t*, size_t&,
+                                Testcase* = nullptr,
+                                FuzzerState* = nullptr) override;
   virtual MutationResult RandomMutate(uint8_t*, size_t&) override;
 };
 

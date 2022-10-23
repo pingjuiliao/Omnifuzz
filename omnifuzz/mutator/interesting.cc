@@ -51,7 +51,9 @@ InterestingInt8Mutator::~InterestingInt8Mutator() {
   interesting_values_.clear();
 }
 
-MutationResult InterestingInt8Mutator::Mutate(uint8_t* data, size_t& size) {
+MutationResult InterestingInt8Mutator::Mutate(uint8_t* data, size_t& size,
+                                              Testcase* testcase,
+                                              FuzzerState* fuzz_state) {
   
   if (!ptr_start_) {
     ptr_start_ = data;
@@ -117,7 +119,9 @@ InterestingInt16Mutator::InterestingInt16Mutator() {
   iterator_ = interesting_values_.begin();
 }
 
-MutationResult InterestingInt16Mutator::Mutate(uint8_t* data, size_t& size) {
+MutationResult InterestingInt16Mutator::Mutate(uint8_t* data, size_t& size,
+                                               Testcase* testcase,
+                                               FuzzerState* fuzz_state) {
   
   uint16_t* window;
   if (!ptr_start_) {
@@ -187,7 +191,9 @@ InterestingInt32Mutator::InterestingInt32Mutator() {
   iterator_ = interesting_values_.begin();
 }
 
-MutationResult InterestingInt32Mutator::Mutate(uint8_t* data, size_t& size) {
+MutationResult InterestingInt32Mutator::Mutate(uint8_t* data, size_t& size, 
+                                               Testcase* testcase,
+                                               FuzzerState* fuzz_state) {
   uint32_t* window;
   if (!ptr_start_) {
     ptr_start_ = data;

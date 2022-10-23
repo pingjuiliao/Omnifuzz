@@ -13,7 +13,9 @@ ArithmeticMutator::ArithmeticMutator(MutationGranularity g) {
 
 ArithmeticMutator::~ArithmeticMutator() {}
 
-MutationResult ArithmeticMutator::Mutate(uint8_t* data, size_t& size) {
+MutationResult ArithmeticMutator::Mutate(uint8_t* data, size_t& size, 
+                                         Testcase* testcase, 
+                                         FuzzerState* fuzz_state) {
   MutationResult result;
 
   switch (num_bytes_) {
