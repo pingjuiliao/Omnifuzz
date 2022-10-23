@@ -19,7 +19,7 @@ class BasicGreyBoxFuzzer : public omnifuzz::Fuzzer {
     executor_ = new omnifuzz::ForkServerExecutor();
     scheduler_ = new omnifuzz::ListScheduler();
     mutator_ = new omnifuzz::DeterministicMutator();
-    fdbk_mech_ = new omnifuzz::AflFeedbackMechanism();
+    fdbk_mech_ = new omnifuzz::AFLFeedbackMechanism();
     configured_ = true;
   }
 };

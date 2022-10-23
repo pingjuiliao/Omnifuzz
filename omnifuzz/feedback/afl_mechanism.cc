@@ -65,7 +65,7 @@ uint32_t crc32(const uint8_t *buf, size_t size) {
 
 namespace omnifuzz {
 
-AflFeedbackMechanism::AflFeedbackMechanism() {
+AFLFeedbackMechanism::AFLFeedbackMechanism() {
   virgin_path_map_ = new uint8_t[kCoverageBitMapEntry];
   virgin_crash_map_ = new uint8_t[kCoverageBitMapEntry];
   memset(virgin_path_map_, 255, kCoverageBitMapEntry);
@@ -74,11 +74,11 @@ AflFeedbackMechanism::AflFeedbackMechanism() {
   RegisterExecutionVariable();
 }
 
-AflFeedbackMechanism::~AflFeedbackMechanism() {
+AFLFeedbackMechanism::~AFLFeedbackMechanism() {
   delete[] virgin_path_map_;
 }
 
-size_t AflFeedbackMechanism::RegisterFeedbackData(void) {
+size_t AFLFeedbackMechanism::RegisterFeedbackData(void) {
   size_t total_size = 0;
   fdbk_data_map_["__afl_area_ptr"] = ExecutionVariable("__afl_area_ptr", ExecutionVariable::Type::Pointer, 0, kCoverageBitMapEntry);
   total_size += fdbk_data_map_["__afl_area_ptr"].GetSize();
@@ -89,16 +89,16 @@ size_t AflFeedbackMechanism::RegisterFeedbackData(void) {
   return total_size;
 }
 
-void AflFeedbackMechanism::ResetFeedbackDataState(void* data) {
+void AFLFeedbackMechanism::ResetFeedbackDataState(void* data) {
   uint8_t* afl_bitmap = (uint8_t *) data + fdbk_data_map_["__afl_area_ptr"].GetOffset();
   memset(afl_bitmap, 0, kCoverageBitMapEntry);
 }
 
-void AflFeedbackMechanism::RegisterExecutionVariable(void) {
+void AFLFeedbackMechanism::RegisterExecutionVariable(void) {
   exec_var_map_["__afl_prev_loc"] = ExecutionVariable("__afl_prev_loc", ExecutionVariable::Type::Int64);
 }
 
-void AflFeedbackMechanism::WriteOnBasicBlock(std::string& assembly) {
+void AFLFeedbackMechanism::WriteOnBasicBlock(std::string& assembly) {
   std::stringstream ss;
   size_t compile_time_random = rand() % kCoverageBitMapEntry;
   ss << "push %rcx;\n"
@@ -114,11 +114,11 @@ void AflFeedbackMechanism::WriteOnBasicBlock(std::string& assembly) {
   assembly += ss.str();
 }
 
-FuzzScore AflFeedbackMechanism::DeemInteresting(void* data) {
+FuzzScore AFLFeedbackMechanism::DeemInteresting(void* data) {
   return HasNewBits(data, virgin_path_map_);
 }
 
-FuzzScore AflFeedbackMechanism::HasNewBits(void* data, uint8_t* virgin_map) {
+FuzzScore AFLFeedbackMechanism::HasNewBits(void* data, uint8_t* virgin_map) {
 
   uint8_t* afl_bitmap = (uint8_t *) data + fdbk_data_map_["__afl_area_ptr"].GetOffset();  
   // uint32_t checksum = crc32(static_cast<uint8_t*>(data), kCoverageBitMapEntry);
@@ -158,11 +158,11 @@ FuzzScore AflFeedbackMechanism::HasNewBits(void* data, uint8_t* virgin_map) {
 }
 
 
-bool AflFeedbackMechanism::DeemUniqueCrash(void* data) {
+bool AFLFeedbackMechanism::DeemUniqueCrash(void* data) {
   return HasNewBits(data, virgin_crash_map_) > 0;
 }
 
-void AflFeedbackMechanism::InterpretFeedback(void* data, 
+void AFLFeedbackMechanism::InterpretFeedback(void* data, 
     FuzzerState *fuzz_state) {
   
   // afl_bitmap is a constant offset to the shm area

@@ -29,10 +29,10 @@ int main(int argc, char** argv) {
   char* ARGV[] = {executable, NULL};
 
   // Configure  
-  Mutator* mutator_ = new AflMutator();
+  Mutator* mutator_ = new AFLMutator();
   Scheduler* scheduler_ = new ListScheduler();
   Executor* executor_ = new ForkServerExecutor();
-  FeedbackMechanism* fdbk_mech_ = new AflFeedbackMechanism();
+  FeedbackMechanism* fdbk_mech_ = new AFLFeedbackMechanism();
   TestcaseFileManager testcase_file_manager_;
 
   // LoadSeed

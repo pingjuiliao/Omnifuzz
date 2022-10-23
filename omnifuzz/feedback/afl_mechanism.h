@@ -14,10 +14,10 @@
 
 namespace omnifuzz {
 
-class AflFeedbackMechanism : public FeedbackMechanism {
+class AFLFeedbackMechanism : public FeedbackMechanism {
  public:
-  AflFeedbackMechanism();
-  virtual ~AflFeedbackMechanism();
+  AFLFeedbackMechanism();
+  virtual ~AFLFeedbackMechanism();
   virtual void RegisterExecutionVariable(void) override;
   virtual void WriteOnBasicBlock(std::string&) override;
   

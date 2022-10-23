@@ -19,7 +19,7 @@ class AflFuzz : public omnifuzz::Fuzzer {
     executor_ = new omnifuzz::ForkServerExecutor();
     scheduler_ = new omnifuzz::AFLScheduler();
     mutator_ = new omnifuzz::AFLMutator();
-    fdbk_mech_ = new omnifuzz::AflFeedbackMechanism();
+    fdbk_mech_ = new omnifuzz::AFLFeedbackMechanism();
     configured_ = true;
   }
 };
