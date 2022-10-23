@@ -41,7 +41,7 @@ void Fuzzer::Run(void) {
     
     uint8_t* buf = testcase_file_manager_.LoadToBuffer(testcase);
     size_t size = testcase->size;
-    while (mutator_->Mutate(buf, size) != 
+    while (mutator_->Mutate(buf, size, testcase, &curr_fuzzer_state_) != 
            MutationResult::kCycleDone) {
       
       // Run the Program Under Test
