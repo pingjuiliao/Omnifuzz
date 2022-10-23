@@ -19,6 +19,7 @@ class DictionaryMutator : public Mutator {
   virtual MutationResult Mutate(uint8_t*, size_t&, 
                                 Testcase* = nullptr, 
                                 FuzzerState* = nullptr) override;
+  virtual MutationResult RandomMutate(uint8_t*, size_t&) override; 
  protected:
   std::vector<DataSequence*> seqs_;
   std::vector<DataSequence*>::iterator iterator_;

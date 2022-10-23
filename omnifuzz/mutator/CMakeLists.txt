@@ -84,7 +84,6 @@ target_link_libraries(omnifuzz_afl_mutator
          omnifuzz::bit_flip
          omnifuzz::arithmetic
          omnifuzz::interesting
-         omnifuzz::havoc_mutator
 )
 target_include_directories(omnifuzz_afl_mutator
   PUBLIC ${OMNIFUZZ_INCLUDE_DIR})

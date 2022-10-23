@@ -73,4 +73,8 @@ MutationResult DictionaryMutator::Mutate(uint8_t* data, size_t& size,
   return MutationResult::kSuccess;
 }
 
+MutationResult DictionaryMutator::RandomMutate(uint8_t* data, size_t& size) {
+  return MutationResult::kAbort;
+}
+
 } // namespace omnifuzz

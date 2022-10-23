@@ -15,6 +15,8 @@ HavocMutator::HavocMutator() {
   AddMutator(new InterestingInt8Mutator());
   AddMutator(new InterestingInt16Mutator());
   AddMutator(new InterestingInt32Mutator());
+
+  iterator_ = mutators_.end();
   srand(time(NULL));
 }
 
