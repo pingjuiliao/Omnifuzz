@@ -77,4 +77,8 @@ MutationResult MutatorComposite::Mutate(uint8_t* data, size_t& size) {
   return MutationResult::kSuccess; 
 }
 
+MutationResult MutatorComposite::RandomMutate(uint8_t* data, size_t &size) {
+  return MutationResult::kAbort;
+}
+
 } // namespace omnifuzz

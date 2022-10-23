@@ -5,13 +5,17 @@
 #include "omnifuzz/mutator/bit_flip.h"
 #include "omnifuzz/mutator/arithmetic.h"
 #include "omnifuzz/mutator/interesting.h"
-
+#include "omnifuzz/mutator/havoc_mutator.h"
 
 namespace omnifuzz {
 
-class AflMutator: public MutatorComposite {
+class AFLMutator: public MutatorComposite {
  public:
-  AflMutator();
+  AFLMutator();
+  // virtual AFLMutator::Mutate(uint8_t*, size_t&) override;
+ protected:
+  const int kHavocStageMax = 1024;
+  HavocMutator* havoc_mutator_;
 };
 
 } // namespace omnifuzz

@@ -47,6 +47,7 @@ class MutatorComposite : public Mutator {
   virtual ~MutatorComposite();
   virtual void AddMutator(Mutator*) override;
   virtual MutationResult Mutate(uint8_t*, size_t&) override;
+  virtual MutationResult RandomMutate(uint8_t*, size_t&) override;
  protected:
   std::list<Mutator*> mutators_;
   std::list<Mutator*>::iterator iterator_;

@@ -3,7 +3,7 @@
 
 namespace omnifuzz {
   
-AflMutator::AflMutator() {
+AFLMutator::AFLMutator() {
   // bit flips
   AddMutator(new BitFlipMutator(MutationGranularity::kBit));
   AddMutator(new BitFlipMutator(MutationGranularity::kBits2));

@@ -18,7 +18,7 @@ class AflFuzz : public omnifuzz::Fuzzer {
   void Configure(void) override {
     executor_ = new omnifuzz::ForkServerExecutor();
     scheduler_ = new omnifuzz::ListScheduler();
-    mutator_ = new omnifuzz::AflMutator();
+    mutator_ = new omnifuzz::AFLMutator();
     fdbk_mech_ = new omnifuzz::AflFeedbackMechanism();
     configured_ = true;
   }

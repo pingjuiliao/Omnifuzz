@@ -4,8 +4,8 @@
 #include <iostream>
 #include <cstdint>
 
-#include "../mutator.h"
-#include "../interesting.h"
+#include "omnifuzz/mutator/mutator.h"
+#include "omnifuzz/mutator/interesting.h"
 using namespace std;
 
 class AllInterestMutator: public omnifuzz::MutatorComposite {
@@ -16,8 +16,6 @@ class AllInterestMutator: public omnifuzz::MutatorComposite {
      AddMutator(new omnifuzz::InterestingInt32Mutator());
    }
 };
-
-
 
 size_t kBufSize = 8;
 int main(int argc, char** argv) {

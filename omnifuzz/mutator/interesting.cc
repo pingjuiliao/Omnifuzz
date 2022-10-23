@@ -83,6 +83,24 @@ MutationResult InterestingInt8Mutator::Mutate(uint8_t* data, size_t& size) {
   return MutationResult::kSuccess;
 }
 
+MutationResult InterestingInt8Mutator::RandomMutate(uint8_t* data, size_t& size) {
+  static bool recover_mode = false;
+  static uint32_t position = 0;
+  static uint8_t original = 0;
+  if (recover_mode) {
+    data[position] = original;
+    recover_mode = false;
+    return MutationResult::kCycleDone;
+  } 
+  position = rand() % size;
+  uint32_t rand_int_index = rand() % interesting_values_.size();
+  original = data[position];
+  data[position] = interesting_values_[rand_int_index]->GetLittleEndian<uint8_t>();
+  recover_mode = true;
+  return MutationResult::kSuccess;
+}
+
+
 InterestingInt16Mutator::InterestingInt16Mutator() {
   ptr_start_ = nullptr;
   ptr_end_ = nullptr;
@@ -137,6 +155,24 @@ MutationResult InterestingInt16Mutator::Mutate(uint8_t* data, size_t& size) {
   return MutationResult::kSuccess;
 }
 
+MutationResult InterestingInt16Mutator::RandomMutate(uint8_t* data, size_t &size) {
+  static bool recover_mode = false;
+  static uint32_t position = 0;
+  static uint16_t original = 0;
+  
+  if (recover_mode) {
+    data[position] = original;
+    recover_mode = false;
+    return MutationResult::kCycleDone;
+  }
+  position = rand() % (size - 1);
+  uint32_t rand_int_index = rand() % interesting_values_.size();
+  original = data[position];
+  data[position] = interesting_values_[rand_int_index]->GetLittleEndian<uint16_t>();
+  recover_mode = true;
+  return MutationResult::kSuccess;
+}
+
 InterestingInt32Mutator::InterestingInt32Mutator() {
   ptr_start_ = nullptr;
   ptr_end_ = nullptr;
@@ -185,6 +221,24 @@ MutationResult InterestingInt32Mutator::Mutate(uint8_t* data, size_t& size) {
   *window = (*iterator_)->GetLittleEndian<uint32_t>();
   iterator_++;
  
+  return MutationResult::kSuccess;
+}
+
+MutationResult InterestingInt32Mutator::RandomMutate(uint8_t* data, size_t &size) {
+  static bool recover_mode = false;
+  static uint32_t position = 0;
+  static uint32_t original = 0;
+
+  if (recover_mode) {
+    data[position] = original;
+    recover_mode = false;
+    return MutationResult::kCycleDone;
+  }
+  position = rand() % (size - 3);
+  uint32_t rand_int_index = rand() % interesting_values_.size();
+  original = data[position];
+  data[position] = interesting_values_[rand_int_index]->GetLittleEndian<uint32_t>();
+  recover_mode = true;
   return MutationResult::kSuccess;
 }
 

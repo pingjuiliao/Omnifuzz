@@ -1,7 +1,4 @@
 
-#include "omnifuzz/mutator/arithmetic.h"
-#include "omnifuzz/mutator/mutator.h"
-#include "omnifuzz/mutator/bit_flip.h"
 #include "omnifuzz/mutator/havoc_mutator.h"
 
 namespace omnifuzz {
@@ -15,6 +12,9 @@ HavocMutator::HavocMutator() {
   AddMutator(new ArithmeticMutator(MutationGranularity::kByte));
   AddMutator(new ArithmeticMutator(MutationGranularity::kWord));
   AddMutator(new ArithmeticMutator(MutationGranularity::kDword));
+  AddMutator(new InterestingInt8Mutator());
+  AddMutator(new InterestingInt16Mutator());
+  AddMutator(new InterestingInt32Mutator());
   srand(time(NULL));
 }
 
@@ -49,8 +49,9 @@ MutationResult HavocMutator::Mutate(uint8_t* data, size_t& size) {
 }
 
 MutationResult HavocMutator::RandomMutate(uint8_t* data, size_t& size) {
-  // TODO
-  return MutationResult::kAbort;
+  std::cerr << "HavocMutator does not have random mutation methods."\
+            << std::endl;
+  return MutationResult::kAbort; 
 }
 
 } // namespace omnifuzz

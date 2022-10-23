@@ -12,7 +12,7 @@ const size_t kNumBuffer = 2;
 const uint8_t buf_memset[kNumBuffer] = {0x00, 0xff};
 int main(int argc, char** argv) {
   uint8_t *buf = (uint8_t *) malloc(kBufSize);
-  omnifuzz::AflMutator mutator;
+  omnifuzz::AFLMutator mutator;
 
   for (int n = 0; n < kNumBuffer; ++n) {
     memset(buf, 0, sizeof(buf));
