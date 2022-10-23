@@ -32,8 +32,7 @@ AFLScheduler::~AFLScheduler() {
   top_rated_ = nullptr;
 }
 
-void AFLScheduler::Enqueue(Testcase testcase, 
-    std::unordered_map<std::string, std::pair<void*, size_t>> *fuzz_state) {
+void AFLScheduler::Enqueue(Testcase testcase, FuzzerState *fuzz_state) {
   
   AFLQueue* q = new AFLQueue;
   memset(q, 0, sizeof(AFLQueue));
@@ -103,8 +102,7 @@ Testcase* AFLScheduler::Dequeue(void) {
 // Same algorithm as afl-fuzz.c: update_bitmap_score(struct queue_entry *q)
 // Select the winner for the given path, and prioritize them if they are 
 //  not fuzzed.
-void AFLScheduler::UpdateBitmapScore(AFLQueue *q, 
-    std::unordered_map<std::string, std::pair<void*, size_t>> *fuzz_state) {
+void AFLScheduler::UpdateBitmapScore(AFLQueue *q, FuzzerState *fuzz_state) {
   
   // top_rated_ should be setup once 
   if (!top_rated_) {

@@ -6,6 +6,7 @@
 #include <utility>
 #include <vector>
 
+#include "omnifuzz/fuzzer_state.h"
 #include "omnifuzz/feedback/fuzz_score.h"
 
 namespace omnifuzz {
@@ -60,8 +61,7 @@ class FeedbackMechanism {
   // Post-execution functions: talks to the Fuzzer 
   virtual FuzzScore DeemInteresting(void*) = 0;
   virtual bool DeemUniqueCrash(void*) = 0;
-  virtual void InterpretFeedback(void*,
-      std::unordered_map<std::string, std::pair<void*, size_t>>*) = 0;
+  virtual void InterpretFeedback(void*, FuzzerState*) = 0;
 };
 
 class FeedbackMechanismComposite : public FeedbackMechanism {

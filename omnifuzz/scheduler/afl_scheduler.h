@@ -26,13 +26,10 @@ class AFLScheduler : public Scheduler {
  public:
   AFLScheduler();
   virtual ~AFLScheduler();
-  virtual void Enqueue(Testcase, 
-      std::unordered_map<std::string, std::pair<void*, size_t>>* 
-      = nullptr) override; 
+  virtual void Enqueue(Testcase, FuzzerState* = nullptr) override;
   virtual Testcase* Dequeue(void) override;
  protected:
-  void UpdateBitmapScore(AFLQueue *q, 
-      std::unordered_map<std::string, std::pair<void*, size_t>>*);
+  void UpdateBitmapScore(AFLQueue *q, FuzzerState*); 
   void CullQueue(void);
   uint64_t FitnessScore(AFLQueue*);
   AFLQueue* queue_;

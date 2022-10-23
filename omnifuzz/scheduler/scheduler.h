@@ -5,6 +5,7 @@
 #include <unordered_map>
 #include <utility>
 #include "omnifuzz/testcase.h"
+#include "omnifuzz/fuzzer_state.h"
 
 /* scheduler should aware of the feedback of exection */
 namespace omnifuzz {
@@ -12,9 +13,7 @@ namespace omnifuzz {
 class Scheduler {
  public:
   virtual ~Scheduler() = default;
-  virtual void Enqueue(Testcase, 
-      std::unordered_map<std::string, std::pair<void*, size_t>>*
-      = nullptr) = 0;
+  virtual void Enqueue(Testcase, FuzzerState* = nullptr) = 0; 
   virtual Testcase* Dequeue(void) = 0;
 };
 

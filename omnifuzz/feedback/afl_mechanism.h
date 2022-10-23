@@ -9,6 +9,7 @@
 
 #include "omnifuzz/feedback/fuzz_score.h"
 #include "omnifuzz/feedback/mechanism.h"
+#include "omnifuzz/fuzzer_state.h"
 #include "omnifuzz/testcase.h"
 
 namespace omnifuzz {
@@ -25,8 +26,7 @@ class AflFeedbackMechanism : public FeedbackMechanism {
 
   virtual FuzzScore DeemInteresting(void*) override;
   virtual bool DeemUniqueCrash(void*) override; 
-  virtual void InterpretFeedback(void*,
-      std::unordered_map<std::string, std::pair<void*,size_t>>*) override; 
+  virtual void InterpretFeedback(void*, FuzzerState*) override; 
 
  protected:
   const size_t kCoverageBitMapEntry = 64 * 1024;

@@ -5,6 +5,7 @@
 #include <iostream>
 #include <list>
 
+#include "omnifuzz/fuzzer_state.h"
 #include "omnifuzz/scheduler/scheduler.h"
 #include "omnifuzz/testcase.h"
 
@@ -14,9 +15,7 @@ class ListScheduler : public Scheduler {
  public:
   ListScheduler();
   virtual ~ListScheduler();
-  virtual void Enqueue(Testcase,
-      std::unordered_map<std::string, std::pair<void*, size_t>>* 
-      = nullptr) override;
+  virtual void Enqueue(Testcase, FuzzerState* = nullptr) override;
   virtual Testcase* Dequeue(void) override;
  private:
   std::list<Testcase> list_;

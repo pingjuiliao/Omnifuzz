@@ -16,8 +16,7 @@ ListScheduler::~ListScheduler() {
   list_.clear();
 }
 
-void ListScheduler::Enqueue(Testcase testcase, 
-    std::unordered_map<std::string, std::pair<void*, size_t>> *fuzz_state) {
+void ListScheduler::Enqueue(Testcase testcase, FuzzerState *fuzz_state) {
   testcase.was_fuzzed = false;
   list_.push_back(testcase);
 }
