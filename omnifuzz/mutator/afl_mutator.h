@@ -17,7 +17,11 @@ class AFLMutator: public MutatorComposite {
                              FuzzerState* = nullptr) override;
   virtual MutationResult RandomMutate(uint8_t*, size_t&) override;
  protected:
+#ifndef UNIT_TEST
+  const int kRandomStageMax = 1024;
+#else
   const int kRandomStageMax = 10;
+#endif
 };
 
 } // namespace omnifuzz

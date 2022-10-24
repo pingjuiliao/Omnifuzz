@@ -28,11 +28,6 @@ uint32_t Mutator::GetGranularitySize(MutationGranularity g) {
   return 0;
 }
 
-
-MutatorComposite::MutatorComposite() {
-  iterator_ = mutators_.end();
-}
-
 MutatorComposite::~MutatorComposite() {
   for (auto mutator: mutators_) {
     delete mutator;

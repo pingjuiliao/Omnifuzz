@@ -1,5 +1,5 @@
 CXX=g++
-CXXFLAGS= -I../../../ -std=c++17 -g -fsanitize=address -static-libasan
+CXXFLAGS= -I../../../ -std=c++17 -g -fsanitize=address -static-libasan -DUNIT_TEST
 all: deterministic_test afl_test havoc_test
 afl_test: afl_test.cc interesting arithmetic bit_flip mutator afl_mutator
 	$(CXX) $(CXXFLAGS) -c $< -o $@.o

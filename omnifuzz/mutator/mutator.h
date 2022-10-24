@@ -48,7 +48,6 @@ class Mutator {
 
 class MutatorComposite : public Mutator {
  public:
-  MutatorComposite();
   virtual ~MutatorComposite();
   virtual void AddMutator(Mutator*) override;
   virtual MutationResult Mutate(uint8_t*, size_t&,
